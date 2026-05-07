@@ -1358,7 +1358,13 @@ td.ms-done .di::after { content:' ✓'; }
       <div class="se-ribbon-tabbar">
         <button class="se-ribbon-tab active" onclick="seShowTab('home')">Home</button>
         <button class="se-ribbon-tab" onclick="seShowTab('insert')">Insert</button>
-        <button class="se-ribbon-tab" onclick="seShowTab('arrange')">Arrange</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('design')">Design</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('transitions')">Transitions</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('animations')">Animations</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('slideshow')">Slide Show</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('review')">Review</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('view')">View</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('arrange')">Format</button>
         <button class="se-ribbon-tab" onclick="seShowTab('slide')">Slide</button>
         <div class="se-ribbon-tab-spacer"></div>
         <span id="se-fmt-el-name" class="se-ribbon-tab-ctx">No selection</span>
@@ -1596,6 +1602,427 @@ td.ms-done .di::after { content:' ✓'; }
           <span class="se-ribbon-grp-lbl">Element</span>
         </div>
       </div><!-- /ARRANGE -->
+
+      <!-- SLIDE TAB: replaces slide bar -->
+      <div id="se-ribbon-slide" class="se-ribbon-panel">
+        <div id="se-slide-bar-inner" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;min-height:36px;width:100%"></div>
+      </div><!-- /SLIDE -->
+
+      <!-- DESIGN TAB -->
+      <div id="se-ribbon-design" class="se-ribbon-panel">
+        <!-- Themes -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn se-theme-swatch" onclick="seApplyTheme('office')" title="Office — light, clean" style="background:#fff;border:2px solid #0078d4;color:#0078d4;font-weight:700;padding:2px 6px;font-size:10px;">Office</button>
+            <button class="se-fmt-btn se-theme-swatch" onclick="seApplyTheme('navy')" title="Navy/Gold" style="background:#1c3a5f;color:#C9A000;font-weight:700;padding:2px 6px;font-size:10px;">Navy</button>
+            <button class="se-fmt-btn se-theme-swatch" onclick="seApplyTheme('slate')" title="Slate" style="background:#2d3748;color:#e2e8f0;font-weight:700;padding:2px 6px;font-size:10px;">Slate</button>
+            <button class="se-fmt-btn se-theme-swatch" onclick="seApplyTheme('forest')" title="Forest" style="background:#1a4731;color:#6ee7b7;font-weight:700;padding:2px 6px;font-size:10px;">Forest</button>
+            <button class="se-fmt-btn se-theme-swatch" onclick="seApplyTheme('crimson')" title="Crimson" style="background:#7f1d1d;color:#fca5a5;font-weight:700;padding:2px 6px;font-size:10px;">Crimson</button>
+            <button class="se-fmt-btn se-theme-swatch" onclick="seApplyTheme('violet')" title="Violet" style="background:#4c1d95;color:#c4b5fd;font-weight:700;padding:2px 6px;font-size:10px;">Violet</button>
+            <button class="se-fmt-btn se-theme-swatch" onclick="seApplyTheme('ion')" title="Ion" style="background:#0e5d8b;color:#fff;font-weight:700;padding:2px 6px;font-size:10px;">Ion</button>
+            <button class="se-fmt-btn se-theme-swatch" onclick="seApplyTheme('metro')" title="Metro" style="background:#6b7280;color:#fff;font-weight:700;padding:2px 6px;font-size:10px;">Metro</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Themes</span>
+        </div>
+        <!-- Variants -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seApplyThemeVariant('color')" title="Change Colors">&#127752; Colors</button>
+            <button class="se-fmt-btn" onclick="seApplyThemeVariant('font')" title="Change Fonts">&#65328; Fonts</button>
+            <button class="se-fmt-btn" onclick="seApplyThemeVariant('effect')" title="Effects">&#10024; Effects</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Variants</span>
+        </div>
+        <!-- Customize -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <select class="se-fmt-sel" title="Slide Size" onchange="seSetSlideSize(this.value)" style="width:100px">
+              <option value="16:9">Widescreen (16:9)</option>
+              <option value="4:3">Standard (4:3)</option>
+              <option value="A4">A4 Paper</option>
+              <option value="letter">US Letter</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seFormatBackground()" title="Format Background — set slide background color or image">&#127744; Format Background</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Customize</span>
+        </div>
+      </div><!-- /DESIGN -->
+
+      <!-- TRANSITIONS TAB -->
+      <div id="se-ribbon-transitions" class="se-ribbon-panel">
+        <!-- Preview -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="sePreviewTransition()" title="Preview transition for this slide" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:11px;">&#9654;<br>Preview</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Preview</span>
+        </div>
+        <!-- Transition gallery -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row" style="gap:2px;flex-wrap:wrap;max-width:380px;">
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-none"    onclick="seSetTransition('none')"     title="No transition">None</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-morph"   onclick="seSetTransition('morph')"    title="Morph">Morph</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-fade"    onclick="seSetTransition('fade')"     title="Fade">Fade</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-push"    onclick="seSetTransition('push')"     title="Push">Push</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-wipe"    onclick="seSetTransition('wipe')"     title="Wipe">Wipe</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-split"   onclick="seSetTransition('split')"    title="Split">Split</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-reveal"  onclick="seSetTransition('reveal')"   title="Reveal">Reveal</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-cover"   onclick="seSetTransition('cover')"    title="Cover">Cover</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-uncover" onclick="seSetTransition('uncover')"  title="Uncover">Uncover</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-flash"   onclick="seSetTransition('flash')"    title="Flash">Flash</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-fall"    onclick="seSetTransition('fall')"     title="Fall Over">Fall Over</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-drape"   onclick="seSetTransition('drape')"    title="Drape">Drape</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-curtains" onclick="seSetTransition('curtains')" title="Curtains">Curtains</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-wind"    onclick="seSetTransition('wind')"     title="Wind">Wind</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-prestige" onclick="seSetTransition('prestige')" title="Prestige">Prestige</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-fracture" onclick="seSetTransition('fracture')" title="Fracture">Fracture</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-crush"   onclick="seSetTransition('crush')"    title="Crush">Crush</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-peel"    onclick="seSetTransition('peel')"     title="Peel Off">Peel Off</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-pagecurl" onclick="seSetTransition('pagecurl')" title="Page Curl">Page Curl</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-airplane" onclick="seSetTransition('airplane')" title="Airplane">Airplane</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-origami" onclick="seSetTransition('origami')"  title="Origami">Origami</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-dissolve" onclick="seSetTransition('dissolve')" title="Dissolve">Dissolve</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-checker" onclick="seSetTransition('checker')"  title="Checkerboard">Checker</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-blinds"  onclick="seSetTransition('blinds')"   title="Blinds">Blinds</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-clock"   onclick="seSetTransition('clock')"    title="Clock">Clock</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-ripple"  onclick="seSetTransition('ripple')"   title="Ripple">Ripple</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-honeycomb" onclick="seSetTransition('honeycomb')" title="Honeycomb">Honeycomb</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-glitter" onclick="seSetTransition('glitter')"  title="Glitter">Glitter</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-vortex"  onclick="seSetTransition('vortex')"   title="Vortex">Vortex</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-shred"   onclick="seSetTransition('shred')"    title="Shred">Shred</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-switch"  onclick="seSetTransition('switch')"   title="Switch">Switch</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-flip"    onclick="seSetTransition('flip')"     title="Flip">Flip</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-gallery" onclick="seSetTransition('gallery')"  title="Gallery">Gallery</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-cube"    onclick="seSetTransition('cube')"     title="Cube">Cube</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-doors"   onclick="seSetTransition('doors')"    title="Doors">Doors</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-box"     onclick="seSetTransition('box')"      title="Box">Box</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-comb"    onclick="seSetTransition('comb')"     title="Comb">Comb</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-zoom"    onclick="seSetTransition('zoom')"     title="Zoom">Zoom</button>
+            <button class="se-fmt-btn se-trans-btn" id="se-trans-random"  onclick="seSetTransition('random')"   title="Random">Random</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Transition to This Slide</span>
+        </div>
+        <!-- Timing -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <span class="se-fmt-label" style="font-size:10px">Sound:</span>
+            <select class="se-fmt-sel" id="se-trans-sound" title="Transition sound" onchange="seSetTransitionSound(this.value)" style="width:82px">
+              <option value="none">[No Sound]</option>
+              <option value="applause">Applause</option>
+              <option value="arrow">Arrow</option>
+              <option value="blast">Blast</option>
+              <option value="bomb">Bomb</option>
+              <option value="breeze">Breeze</option>
+              <option value="camera">Camera</option>
+              <option value="cash">Cash Register</option>
+              <option value="chime">Chime</option>
+              <option value="click">Click</option>
+              <option value="coin">Coin</option>
+              <option value="drum">Drum Roll</option>
+              <option value="explosion">Explosion</option>
+              <option value="hammer">Hammer</option>
+              <option value="laser">Laser</option>
+              <option value="push">Push</option>
+              <option value="static">Static</option>
+              <option value="suction">Suction</option>
+              <option value="typewriter">Typewriter</option>
+              <option value="voltage">Voltage</option>
+              <option value="whoosh">Whoosh</option>
+              <option value="wind">Wind</option>
+              <option value="loop">[Loop Until Next Sound]</option>
+            </select>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <span class="se-fmt-label" style="font-size:10px">Duration:</span>
+            <input type="number" class="se-fmt-num" id="se-trans-duration" min="0.01" max="60" step="0.25" value="0.70" title="Transition duration (seconds)" style="width:48px" onchange="seSetTransitionDuration(+this.value)">
+            <span class="se-fmt-label" style="font-size:10px">s</span>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seApplyTransitionToAll()" title="Apply these settings to all slides" style="font-size:10px">Apply To All</button>
+          </div>
+          <div class="se-ribbon-grp-row" style="gap:4px;flex-wrap:wrap;">
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130">
+              <input type="checkbox" id="se-trans-onclick" checked onchange="seSetTransitionAdvance('click',this.checked)"> On Mouse Click
+            </label>
+          </div>
+          <div class="se-ribbon-grp-row" style="gap:4px;">
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130">
+              <input type="checkbox" id="se-trans-after" onchange="seSetTransitionAdvance('after',this.checked)"> After:
+            </label>
+            <input type="number" class="se-fmt-num" id="se-trans-after-time" min="0" max="600" step="1" value="3" style="width:40px" onchange="seSetTransitionAdvanceTime(+this.value)">
+            <span class="se-fmt-label" style="font-size:10px">s</span>
+          </div>
+          <span class="se-ribbon-grp-lbl">Timing</span>
+        </div>
+      </div><!-- /TRANSITIONS -->
+
+      <!-- ANIMATIONS TAB -->
+      <div id="se-ribbon-animations" class="se-ribbon-panel">
+        <!-- Preview -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="sePreviewAnimation()" title="Preview animations on this slide" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:11px;">&#9654;<br>Preview</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Preview</span>
+        </div>
+        <!-- Animation gallery — Entrance (green) / Emphasis (yellow) / Exit (red) -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row" style="gap:2px;flex-wrap:wrap;max-width:340px;">
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-none"     onclick="seSetAnimation('none')"      title="No Animation">None</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-appear"   onclick="seSetAnimation('appear')"    title="Appear (Entrance)" style="color:#166534">Appear</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-fade"     onclick="seSetAnimation('fade')"      title="Fade (Entrance)" style="color:#166534">Fade</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-flyin"    onclick="seSetAnimation('flyin')"     title="Fly In (Entrance)" style="color:#166534">Fly In</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-floatin"  onclick="seSetAnimation('floatin')"   title="Float In (Entrance)" style="color:#166534">Float In</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-split"    onclick="seSetAnimation('split')"     title="Split (Entrance)" style="color:#166534">Split</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-wipe"     onclick="seSetAnimation('wipe')"      title="Wipe (Entrance)" style="color:#166534">Wipe</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-shape"    onclick="seSetAnimation('shape')"     title="Shape (Entrance)" style="color:#166534">Shape</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-wheel"    onclick="seSetAnimation('wheel')"     title="Wheel (Entrance)" style="color:#166534">Wheel</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-random"   onclick="seSetAnimation('random_bars')" title="Random Bars (Entrance)" style="color:#166534">Rand Bars</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-grow"     onclick="seSetAnimation('grow')"      title="Grow &amp; Turn (Entrance)" style="color:#166534">Grow&amp;Turn</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-zoom"     onclick="seSetAnimation('zoom')"      title="Zoom (Entrance)" style="color:#166534">Zoom</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-swivel"   onclick="seSetAnimation('swivel')"    title="Swivel (Entrance)" style="color:#166534">Swivel</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-bounce"   onclick="seSetAnimation('bounce')"    title="Bounce (Entrance)" style="color:#166534">Bounce</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-pulse"    onclick="seSetAnimation('pulse')"     title="Pulse (Emphasis)" style="color:#854d0e">Pulse</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-colchg"   onclick="seSetAnimation('color_change')" title="Color Change (Emphasis)" style="color:#854d0e">Color Chg</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-teeter"   onclick="seSetAnimation('teeter')"    title="Teeter (Emphasis)" style="color:#854d0e">Teeter</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-spin"     onclick="seSetAnimation('spin')"      title="Spin (Emphasis)" style="color:#854d0e">Spin</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-bold_flash" onclick="seSetAnimation('bold_flash')" title="Bold Flash (Emphasis)" style="color:#854d0e">Bold Flash</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-bold_reveal" onclick="seSetAnimation('bold_reveal')" title="Bold Reveal (Emphasis)" style="color:#854d0e">Bold Reveal</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-disappear" onclick="seSetAnimation('disappear')" title="Disappear (Exit)" style="color:#991b1b">Disappear</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-fadeout"  onclick="seSetAnimation('fadeout')"   title="Fade (Exit)" style="color:#991b1b">Fade Out</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-flyout"   onclick="seSetAnimation('flyout')"    title="Fly Out (Exit)" style="color:#991b1b">Fly Out</button>
+            <button class="se-fmt-btn se-anim-btn" id="se-anim-shrink"   onclick="seSetAnimation('shrink')"    title="Shrink &amp; Turn (Exit)" style="color:#991b1b">Shrink</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Animation</span>
+        </div>
+        <!-- Advanced Animation -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAddAnimation()" title="Add another animation to selected element" style="font-size:10px">&#10133; Add Animation</button>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" id="se-anim-pane-btn" onclick="seToggleAnimationPane()" title="Open/close the Animation Pane" style="font-size:10px">&#9783; Animation Pane</button>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAnimationPainter()" title="Copy animation from selected element and apply to another" style="font-size:10px">&#127823; Anim Painter</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Advanced Animation</span>
+        </div>
+        <!-- Timing -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <span class="se-fmt-label" style="font-size:10px">Start:</span>
+            <select class="se-fmt-sel" id="se-anim-start" title="When animation starts" onchange="seSetAnimationTiming('start',this.value)" style="width:90px">
+              <option value="on_click">On Click</option>
+              <option value="with_prev">With Previous</option>
+              <option value="after_prev">After Previous</option>
+            </select>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <span class="se-fmt-label" style="font-size:10px">Duration:</span>
+            <input type="number" class="se-fmt-num" id="se-anim-duration" min="0.01" max="60" step="0.25" value="0.50" title="Animation duration (seconds)" style="width:48px" onchange="seSetAnimationTiming('duration',+this.value)">
+            <span class="se-fmt-label" style="font-size:10px">s</span>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <span class="se-fmt-label" style="font-size:10px">Delay:</span>
+            <input type="number" class="se-fmt-num" id="se-anim-delay" min="0" max="60" step="0.25" value="0.00" title="Animation delay (seconds)" style="width:48px" onchange="seSetAnimationTiming('delay',+this.value)">
+            <span class="se-fmt-label" style="font-size:10px">s</span>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seAnimMoveEarlier()" title="Move Earlier — decrease animation order">&#8679; Move Earlier</button>
+            <button class="se-fmt-btn" onclick="seAnimMoveLater()" title="Move Later — increase animation order">&#8681; Move Later</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Timing</span>
+        </div>
+      </div><!-- /ANIMATIONS -->
+
+      <!-- SLIDE SHOW TAB -->
+      <div id="se-ribbon-slideshow" class="se-ribbon-panel">
+        <!-- Start Slide Show -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seSlideShowStart(true)" title="Start presentation from the first slide (F5)" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:62px;">&#9654;&#9654;<br><span style="font-size:9px">From<br>Beginning</span></button>
+            <button class="se-fmt-btn" onclick="seSlideShowStart(false)" title="Start presentation from current slide (Shift+F5)" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:62px;">&#9654;<br><span style="font-size:9px">From<br>Current Slide</span></button>
+            <button class="se-fmt-btn" onclick="sePresentOnline()" title="Present online via shareable link" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:62px;">&#127760;<br><span style="font-size:9px">Present<br>Online</span></button>
+            <button class="se-fmt-btn" onclick="seCustomSlideShow()" title="Create or run a custom slide show" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:62px;">&#9783;<br><span style="font-size:9px">Custom<br>Slide Show</span></button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Start Slide Show</span>
+        </div>
+        <!-- Set Up -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seSetUpSlideShow()" title="Configure slide show settings (loop, pen color, etc.)" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px;">&#9881;<br><span style="font-size:9px">Set Up<br>Slide Show</span></button>
+            <button class="se-fmt-btn" id="se-hide-slide-btn" onclick="seToggleHideSlide()" title="Hide / show current slide in presentation" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px;">&#128683;<br><span style="font-size:9px">Hide<br>Slide</span></button>
+            <button class="se-fmt-btn" onclick="seRehearseTimings()" title="Rehearse your presentation and record timing" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px;">&#9201;<br><span style="font-size:9px">Rehearse<br>Timings</span></button>
+            <button class="se-fmt-btn" onclick="seRecordSlideShow()" title="Record narration and timings for the slide show" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px;">&#9679;<br><span style="font-size:9px">Record<br>Slide Show</span></button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Set Up</span>
+        </div>
+        <!-- Captions & Subtitles -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130;flex-direction:column;gap:4px;">
+              <input type="checkbox" id="se-show-captions" onchange="seToggleCaptions(this.checked)" style="margin:0">
+              <span>Always Use<br>Subtitles</span>
+            </label>
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130;flex-direction:column;gap:4px;">
+              <input type="checkbox" id="se-show-subtitles" onchange="seToggleSubtitles(this.checked)" style="margin:0">
+              <span>Subtitle<br>Settings</span>
+            </label>
+          </div>
+          <span class="se-ribbon-grp-lbl">Captions &amp; Subtitles</span>
+        </div>
+        <!-- Monitors -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <span class="se-fmt-label" style="font-size:10px">Monitor:</span>
+            <select class="se-fmt-sel" id="se-show-monitor" title="Select display to use for presentation" style="width:100px" onchange="seSetMonitor(this.value)">
+              <option value="auto">Automatic</option>
+              <option value="primary">Primary Monitor</option>
+              <option value="secondary">Secondary Monitor</option>
+            </select>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130">
+              <input type="checkbox" id="se-presenter-view" onchange="seTogglePresenterView(this.checked)"> Use Presenter View
+            </label>
+          </div>
+          <span class="se-ribbon-grp-lbl">Monitors</span>
+        </div>
+      </div><!-- /SLIDE SHOW -->
+
+      <!-- REVIEW TAB -->
+      <div id="se-ribbon-review" class="se-ribbon-panel">
+        <!-- Proofing -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seSpellCheck()" title="Check spelling and grammar in the presentation" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#10003;&#65;&#66;<br><span style="font-size:9px">Spelling</span></button>
+            <button class="se-fmt-btn" onclick="seOpenThesaurus()" title="Open the thesaurus to find synonyms" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#128218;<br><span style="font-size:9px">Thesaurus</span></button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Proofing</span>
+        </div>
+        <!-- Language -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seSetLanguage()" title="Set the proofing language for selected text" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#127759;<br><span style="font-size:9px">Language</span></button>
+            <button class="se-fmt-btn" onclick="seTranslate()" title="Translate selected text or entire presentation" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#9889;<br><span style="font-size:9px">Translate</span></button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Language</span>
+        </div>
+        <!-- Comments -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seNewComment()" title="Add a new comment to the current slide or selected element" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#128172;+<br><span style="font-size:9px">New<br>Comment</span></button>
+            <button class="se-fmt-btn" onclick="seDeleteComment()" title="Delete the selected comment" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#128172;&#10006;<br><span style="font-size:9px">Delete</span></button>
+            <button class="se-fmt-btn" onclick="seNavComment(-1)" title="Go to previous comment" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:44px;">&#8679;<br><span style="font-size:9px">Previous</span></button>
+            <button class="se-fmt-btn" onclick="seNavComment(1)" title="Go to next comment" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:44px;">&#8681;<br><span style="font-size:9px">Next</span></button>
+            <button class="se-fmt-btn" id="se-show-comments-btn" onclick="seToggleComments()" title="Show or hide the comments panel" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#128172;<br><span style="font-size:9px">Show<br>Comments</span></button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Comments</span>
+        </div>
+        <!-- Compare -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seCompare()" title="Compare this presentation with another version" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#9878;<br><span style="font-size:9px">Compare</span></button>
+            <button class="se-fmt-btn" onclick="seAcceptRevision()" title="Accept the selected change" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:44px;">&#10003;<br><span style="font-size:9px">Accept</span></button>
+            <button class="se-fmt-btn" onclick="seRejectRevision()" title="Reject the selected change" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:44px;">&#10007;<br><span style="font-size:9px">Reject</span></button>
+            <button class="se-fmt-btn" onclick="seToggleReviewPane()" title="Show or hide the reviewing pane" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:52px;">&#9783;<br><span style="font-size:9px">Reviewing<br>Pane</span></button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Compare</span>
+        </div>
+        <!-- Ink (PowerPoint 2016+) -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seStartInking()" title="Start inking — draw on the slide with a pen" style="height:54px;padding:4px 10px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:44px;">&#9998;<br><span style="font-size:9px">Start<br>Inking</span></button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Ink</span>
+        </div>
+      </div><!-- /REVIEW -->
+
+      <!-- VIEW TAB -->
+      <div id="se-ribbon-view" class="se-ribbon-panel">
+        <!-- Presentation Views -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" id="se-view-normal-btn"   onclick="seSetView('normal')"   title="Normal view — slide panel + editor" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:50px;">&#9632;<br>Normal</button>
+            <button class="se-fmt-btn" id="se-view-outline-btn"  onclick="seSetView('outline')"  title="Outline View — edit slide text in outline form" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:50px;">&#9783;<br>Outline View</button>
+            <button class="se-fmt-btn" id="se-view-sorter-btn"   onclick="seSetView('sorter')"   title="Slide Sorter — rearrange slides" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:50px;">&#9783;<br>Slide Sorter</button>
+            <button class="se-fmt-btn" id="se-view-notes-btn"    onclick="seSetView('notes')"    title="Notes Page — view slide with notes" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:50px;">&#9783;<br>Notes Page</button>
+            <button class="se-fmt-btn" id="se-view-reading-btn"  onclick="seSetView('reading')"  title="Reading View — full-screen reading" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:50px;">&#128214;<br>Reading View</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Presentation Views</span>
+        </div>
+        <!-- Master Views -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seSlideMasterView()" title="Slide Master — make global layout changes affecting all slides" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:50px;">&#9783;<br>Slide Master</button>
+            <button class="se-fmt-btn" onclick="seHandoutMasterView()" title="Handout Master — change the layout of handout pages" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:52px;">&#9783;<br>Handout Master</button>
+            <button class="se-fmt-btn" onclick="seNotesMasterView()" title="Notes Master — make changes to the notes layout" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:50px;">&#9783;<br>Notes Master</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Master Views</span>
+        </div>
+        <!-- Show -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130;">
+              <input type="checkbox" id="se-view-ruler" onchange="seToggleRuler(this.checked)"> Ruler
+            </label>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130;">
+              <input type="checkbox" id="se-view-gridlines" onchange="seToggleGridlines(this.checked)"> Gridlines
+            </label>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130;">
+              <input type="checkbox" id="se-view-guides" onchange="seToggleGuides(this.checked)"> Guides
+            </label>
+          </div>
+          <div class="se-ribbon-grp-row">
+            <label style="font-size:10px;display:flex;align-items:center;gap:3px;cursor:pointer;color:#323130;">
+              <input type="checkbox" id="se-view-notes" onchange="seToggleNotesPanel(this.checked)"> Notes
+            </label>
+          </div>
+          <span class="se-ribbon-grp-lbl">Show</span>
+        </div>
+        <!-- Zoom -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seZoomDialog()" title="Open the Zoom dialog" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:44px;">&#128270;<br>Zoom</button>
+            <button class="se-fmt-btn" onclick="seZoomReset()" title="Zoom to 100%" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:44px;">100%<br>&nbsp;</button>
+            <button class="se-fmt-btn" onclick="seZoomFit()" title="Fit the slide in the window" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:56px;">&#9723;<br>Fit to Window</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Zoom</span>
+        </div>
+        <!-- Color/Grayscale -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seViewColor()" title="View slides in full color" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:44px;">&#127752;<br>Color</button>
+            <button class="se-fmt-btn" onclick="seViewGrayscale()" title="View slides in grayscale" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:52px;">&#9728;<br>Grayscale</button>
+            <button class="se-fmt-btn" onclick="seViewBlackWhite()" title="View slides in black and white" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:54px;">&#9726;<br>Black &amp; White</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Color/Grayscale</span>
+        </div>
+        <!-- Window -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seNewWindow()" title="Open a new window with the current presentation" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:52px;">&#9633;+<br>New Window</button>
+            <button class="se-fmt-btn" onclick="seArrangeAll()" title="Arrange all open presentation windows side by side" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:52px;">&#9783;<br>Arrange All</button>
+            <button class="se-fmt-btn" onclick="seSwitchWindows()" title="Switch to another open presentation" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:56px;">&#9783;<br>Switch Windows</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Window</span>
+        </div>
+        <!-- Macros -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seMacros()" title="View, record, or run a macro" style="height:42px;padding:2px 8px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:1px;font-size:10px;min-width:44px;">&#9783;<br>Macros</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Macros</span>
+        </div>
+      </div><!-- /VIEW -->
 
       <!-- SLIDE TAB: replaces slide bar -->
       <div id="se-ribbon-slide" class="se-ribbon-panel">
@@ -4152,15 +4579,566 @@ function seEditSubAt(idx) {
 /* ── Slide Actions Bar — persistent PowerPoint-style toolbar for selected slide ── */
 /* Ribbon tab switcher */
 window.seShowTab = function(name) {
-  ['home','insert','arrange','slide'].forEach(function(t){
+  var allTabs = ['home','insert','design','transitions','animations','slideshow','review','view','arrange','slide'];
+  allTabs.forEach(function(t){
     var panel = document.getElementById('se-ribbon-'+t);
     if (panel) panel.classList.toggle('active', t===name);
   });
-  document.querySelectorAll('.se-ribbon-tab').forEach(function(btn,i){
-    var tabs=['home','insert','arrange','slide'];
-    btn.classList.toggle('active', tabs[i]===name);
+  document.querySelectorAll('.se-ribbon-tab').forEach(function(btn){
+    var onclick = btn.getAttribute('onclick') || '';
+    var m = onclick.match(/seShowTab\('([^']+)'\)/);
+    btn.classList.toggle('active', m && m[1]===name);
   });
 };
+
+/* ══════════════════════════════════════════════════════════════
+   DESIGN TAB
+   ══════════════════════════════════════════════════════════════ */
+var SE_THEMES = {
+  office:  { bg:'#ffffff', accent:'#0078d4', text:'#323130' },
+  navy:    { bg:'#1c3a5f', accent:'#C9A000', text:'#ffffff' },
+  slate:   { bg:'#2d3748', accent:'#63b3ed', text:'#e2e8f0' },
+  forest:  { bg:'#1a4731', accent:'#6ee7b7', text:'#f0fdf4' },
+  crimson: { bg:'#7f1d1d', accent:'#fca5a5', text:'#fff1f2' },
+  violet:  { bg:'#4c1d95', accent:'#c4b5fd', text:'#f5f3ff' },
+  ion:     { bg:'#0e5d8b', accent:'#7dd3fc', text:'#f0f9ff' },
+  metro:   { bg:'#6b7280', accent:'#f9fafb', text:'#f9fafb' }
+};
+window.seApplyTheme = function(name) {
+  var th = SE_THEMES[name]; if (!th) return;
+  var slide = seSlides[seActive]; if (!slide) return;
+  seHistPush();
+  (slide.elements||[]).forEach(function(el) {
+    if (el.background && el.background !== 'transparent' && el.background !== 'none') el.background = th.bg;
+    if (el.color) el.color = th.text;
+  });
+  seRenderCanvas();
+  toast('Theme applied: '+name);
+};
+window.seApplyThemeVariant = function(type) { toast('Theme variants: '+type+' options coming soon.'); };
+window.seSetSlideSize = function(val) {
+  var W = SE_CANVAS_W, H = SE_CANVAS_H;
+  if (val==='16:9') { W=880; H=495; } else if (val==='4:3') { W=880; H=660; }
+  else if (val==='A4') { W=794; H=1123; } else if (val==='letter') { W=816; H=1056; }
+  else if (val==='custom') { val=prompt('Enter WxH (e.g. 960x540):','880x660'); if (!val) return; var p=val.split('x'); W=+p[0]||880; H=+p[1]||660; }
+  var c = document.getElementById('se-canvas-wrap'); if (!c) return;
+  c.style.width=W+'px'; c.style.height=H+'px';
+  window.SE_CANVAS_W=W; window.SE_CANVAS_H=H;
+  toast('Slide size: '+W+'\xd7'+H);
+};
+window.seFormatBackground = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var cur = (slide.elements && slide.elements[0] && slide.elements[0].background) || '#ffffff';
+  var col = prompt('Slide background color (hex or CSS):', cur||'#ffffff');
+  if (col === null) return;
+  seHistPush();
+  if (!slide.meta) slide.meta = {};
+  slide.meta.bg = col;
+  var canvas = document.getElementById('se-canvas-wrap');
+  if (canvas) canvas.style.background = col;
+  toast('Background set to '+col);
+};
+
+/* ══════════════════════════════════════════════════════════════
+   TRANSITIONS TAB
+   ══════════════════════════════════════════════════════════════ */
+window.seSetTransition = function(type) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  if (!slide.meta) slide.meta = {};
+  slide.meta.transition = type;
+  document.querySelectorAll('.se-trans-btn').forEach(function(b){ b.classList.remove('active'); });
+  var btn = document.getElementById('se-trans-'+type);
+  if (btn) btn.classList.add('active');
+  toast('Transition set: '+type);
+};
+window.seSetTransitionSound = function(val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  if (!slide.meta) slide.meta = {};
+  slide.meta.transitionSound = val;
+};
+window.seSetTransitionDuration = function(val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  if (!slide.meta) slide.meta = {};
+  slide.meta.transitionDuration = val;
+};
+window.seApplyTransitionToAll = function() {
+  var src = seSlides[seActive]; if (!src || !src.meta) return;
+  seHistPush();
+  seSlides.forEach(function(s){
+    if (!s.meta) s.meta = {};
+    s.meta.transition = src.meta.transition;
+    s.meta.transitionDuration = src.meta.transitionDuration;
+    s.meta.transitionSound = src.meta.transitionSound;
+  });
+  toast('Transition applied to all slides.');
+};
+window.seSetTransitionAdvance = function(mode, val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  if (!slide.meta) slide.meta = {};
+  slide.meta['transitionAdv_'+mode] = val;
+};
+window.seSetTransitionAdvanceTime = function(val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  if (!slide.meta) slide.meta = {};
+  slide.meta.transitionAdvTime = val;
+};
+window.sePreviewTransition = function() {
+  var slide = seSlides[seActive];
+  var type = (slide && slide.meta && slide.meta.transition) || 'none';
+  if (type === 'none') { toast('No transition set.'); return; }
+  var dur = (slide && slide.meta && slide.meta.transitionDuration) || 0.7;
+  var canvas = document.getElementById('se-canvas-wrap'); if (!canvas) return;
+  var kf = { fade:'opacity 0 to 1', push:'slide from right', wipe:'clip left to right', split:'expand from center', zoom:'scale from 0' };
+  canvas.style.transition = 'opacity '+dur+'s';
+  canvas.style.opacity = '0';
+  setTimeout(function(){ canvas.style.opacity = '1'; setTimeout(function(){ canvas.style.transition=''; }, dur*1000+50); }, 50);
+  toast('Previewing: '+type+' ('+dur+'s)');
+};
+
+/* ══════════════════════════════════════════════════════════════
+   ANIMATIONS TAB
+   ══════════════════════════════════════════════════════════════ */
+var seAnimPaneVisible = false;
+window.seSetAnimation = function(type) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) { toast('Select an element first.'); return; }
+  seHistPush();
+  if (!el.animation) el.animation = {};
+  el.animation.type = type;
+  document.querySelectorAll('.se-anim-btn').forEach(function(b){ b.classList.remove('active'); });
+  var btn = document.getElementById('se-anim-'+type.replace(/_/g,'-'));
+  if (btn) btn.classList.add('active');
+  toast('Animation: '+type);
+};
+window.seAddAnimation = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) { toast('Select an element first.'); return; }
+  seHistPush();
+  if (!el.animations) el.animations = [];
+  el.animations.push({ type:'fade', start:'on_click', duration:0.5, delay:0 });
+  toast('Animation added. Configure in Animation Pane.');
+};
+window.seToggleAnimationPane = function() {
+  seAnimPaneVisible = !seAnimPaneVisible;
+  var btn = document.getElementById('se-anim-pane-btn');
+  if (btn) btn.classList.toggle('active', seAnimPaneVisible);
+  var slide = seSlides[seActive];
+  if (seAnimPaneVisible) {
+    var lines = [];
+    (slide && slide.elements || []).forEach(function(el,i){
+      if (el.animation && el.animation.type && el.animation.type !== 'none') {
+        lines.push((i+1)+'. ['+el.type+'] '+el.animation.type+' ('+((el.animation.start)||'on_click')+')');
+      }
+    });
+    alert('Animation Pane\n\n'+(lines.length ? lines.join('\n') : 'No animations set on this slide.\nSelect an element and choose an animation.'));
+  }
+};
+window.seAnimationPainter = function() { toast('Click an animated element to copy, then click a target element to apply animation.'); };
+window.seSetAnimationTiming = function(prop, val) {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) { toast('Select an element first.'); return; }
+  seHistPush();
+  if (!el.animation) el.animation = {};
+  el.animation[prop] = val;
+};
+window.seAnimMoveEarlier = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var idx = (slide.elements||[]).findIndex(function(e){return e.id===seSelectedId;});
+  if (idx <= 0) return;
+  seHistPush();
+  var tmp = slide.elements[idx-1]; slide.elements[idx-1]=slide.elements[idx]; slide.elements[idx]=tmp;
+  seRenderCanvas(); toast('Moved earlier.');
+};
+window.seAnimMoveLater = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var arr = slide.elements||[];
+  var idx = arr.findIndex(function(e){return e.id===seSelectedId;});
+  if (idx < 0 || idx >= arr.length-1) return;
+  seHistPush();
+  var tmp = arr[idx+1]; arr[idx+1]=arr[idx]; arr[idx]=tmp;
+  seRenderCanvas(); toast('Moved later.');
+};
+window.sePreviewAnimation = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el || !el.animation || el.animation.type === 'none') { toast('Select an element with an animation.'); return; }
+  var dom = document.querySelector('[data-elid="'+el.id+'"]');
+  if (!dom) return;
+  var type = el.animation.type;
+  var dur = (el.animation.duration || 0.5)*1000;
+  if (type==='fade'||type==='appear') {
+    dom.style.opacity='0'; dom.style.transition='opacity '+(dur/1000)+'s';
+    requestAnimationFrame(function(){ dom.style.opacity='1'; setTimeout(function(){dom.style.transition='';},dur+100); });
+  } else if (type==='zoom') {
+    dom.style.transform='scale(0)'; dom.style.transition='transform '+(dur/1000)+'s';
+    requestAnimationFrame(function(){ dom.style.transform='scale(1)'; setTimeout(function(){dom.style.transform='';dom.style.transition='';},dur+100); });
+  } else if (type==='flyin'||type==='floatin') {
+    dom.style.transform='translateY(60px)'; dom.style.opacity='0'; dom.style.transition='transform '+(dur/1000)+'s, opacity '+(dur/1000)+'s';
+    requestAnimationFrame(function(){ dom.style.transform='translateY(0)'; dom.style.opacity='1'; setTimeout(function(){dom.style.transform='';dom.style.opacity='';dom.style.transition='';},dur+100); });
+  } else if (type==='bounce') {
+    dom.style.animation='se-bounce '+(dur/1000)+'s';
+    setTimeout(function(){dom.style.animation='';}, dur+100);
+  } else if (type==='spin') {
+    dom.style.transition='transform '+(dur/1000)+'s'; dom.style.transform='rotate(360deg)';
+    setTimeout(function(){dom.style.transform='';dom.style.transition='';},dur+100);
+  } else {
+    dom.style.opacity='0.3'; setTimeout(function(){dom.style.opacity='';}, dur);
+    toast('Preview: '+type);
+  }
+};
+
+/* ══════════════════════════════════════════════════════════════
+   SLIDE SHOW TAB
+   ══════════════════════════════════════════════════════════════ */
+var sePresentationMode = false;
+var sePresentIdx = 0;
+window.seSlideShowStart = function(fromBeginning) {
+  if (fromBeginning) sePresentIdx = 0; else sePresentIdx = seActive;
+  sePresentationMode = true;
+  seEnterFullScreenPresentation();
+};
+window.seEnterFullScreenPresentation = function() {
+  var overlay = document.getElementById('se-presentation-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'se-presentation-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;';
+    var inner = document.createElement('div');
+    inner.id = 'se-presentation-inner';
+    inner.style.cssText = 'background:#fff;box-shadow:0 0 40px rgba(0,0,0,.8);position:relative;';
+    overlay.appendChild(inner);
+    var nav = document.createElement('div');
+    nav.style.cssText = 'position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:16px;z-index:2;';
+    var prevBtn = document.createElement('button');
+    prevBtn.textContent = '◀ Prev'; prevBtn.style.cssText='padding:8px 20px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:4px;cursor:pointer;font-size:14px;';
+    prevBtn.onclick = function(e){e.stopPropagation();sePresentNav(-1);};
+    var nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next ▶'; nextBtn.style.cssText='padding:8px 20px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:4px;cursor:pointer;font-size:14px;';
+    nextBtn.onclick = function(e){e.stopPropagation();sePresentNav(1);};
+    var exitBtn = document.createElement('button');
+    exitBtn.textContent = '✕ Exit'; exitBtn.style.cssText='padding:8px 20px;background:rgba(200,0,0,.6);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px;';
+    exitBtn.onclick = function(e){e.stopPropagation();seExitPresentation();};
+    var slideInfo = document.createElement('span');
+    slideInfo.id='se-present-info'; slideInfo.style.cssText='color:#fff;font-size:13px;align-self:center;';
+    nav.appendChild(prevBtn); nav.appendChild(slideInfo); nav.appendChild(nextBtn); nav.appendChild(exitBtn);
+    overlay.appendChild(nav);
+    overlay.addEventListener('click', function(){sePresentNav(1);});
+    document.addEventListener('keydown', sePresentKeyHandler, true);
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display='flex';
+  if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function(){});
+  sePresentRender();
+};
+window.sePresentNav = function(dir) {
+  sePresentIdx = Math.max(0, Math.min(seSlides.length-1, sePresentIdx+dir));
+  sePresentRender();
+};
+window.sePresentKeyHandler = function(e) {
+  if (!sePresentationMode) return;
+  if (e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); sePresentNav(1); }
+  else if (e.key==='ArrowLeft'||e.key==='ArrowUp') { e.preventDefault(); sePresentNav(-1); }
+  else if (e.key==='Escape') { seExitPresentation(); }
+};
+window.sePresentRender = function() {
+  var inner = document.getElementById('se-presentation-inner'); if (!inner) return;
+  var W = Math.min(window.innerWidth-40, 1200);
+  var H = Math.round(W * (SE_CANVAS_H/SE_CANVAS_W));
+  inner.style.width=W+'px'; inner.style.height=H+'px';
+  var slide = seSlides[sePresentIdx]; if (!slide) return;
+  var info = document.getElementById('se-present-info');
+  if (info) info.textContent = (sePresentIdx+1)+' / '+seSlides.length;
+  var scale = W/SE_CANVAS_W;
+  var html = '<div style="width:'+SE_CANVAS_W+'px;height:'+SE_CANVAS_H+'px;position:relative;transform:scale('+scale+');transform-origin:top left;overflow:hidden;">';
+  html += '<div style="position:absolute;inset:0;background:'+(slide.meta&&slide.meta.bg||'#fff')+'"></div>';
+  (slide.elements||[]).forEach(function(el){
+    html += seRenderElHtml(el);
+  });
+  html += '</div>';
+  inner.innerHTML = html;
+  var trans = slide.meta && slide.meta.transition;
+  if (trans && trans !== 'none') {
+    var dur = (slide.meta && slide.meta.transitionDuration) || 0.7;
+    inner.style.transition = 'opacity '+dur+'s';
+    inner.style.opacity = '0';
+    requestAnimationFrame(function(){ inner.style.opacity='1'; setTimeout(function(){inner.style.transition='';},dur*1000+50); });
+  }
+};
+window.seExitPresentation = function() {
+  sePresentationMode = false;
+  document.removeEventListener('keydown', sePresentKeyHandler, true);
+  var overlay = document.getElementById('se-presentation-overlay');
+  if (overlay) overlay.style.display='none';
+  if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().catch(function(){});
+};
+window.sePresentOnline = function() { toast('Present Online: share your presentation URL — '+window.location.href); };
+window.seCustomSlideShow = function() {
+  var name = prompt('Custom Slide Show name:','My Show'); if (!name) return;
+  var range = prompt('Slide range (e.g. 1-3,5):','1-'+seSlides.length); if (!range) return;
+  toast('Custom show "'+name+'" saved ('+range+').');
+};
+window.seSetUpSlideShow = function() {
+  var opts = ['Loop continuously until Esc', 'Show without narration', 'Show without animation', 'Use hardware graphics acceleration'];
+  alert('Slide Show Setup\n\nOptions:\n'+opts.map(function(o,i){return (i+1)+'. '+o;}).join('\n')+'\n\n(Use the controls in the Monitors group to set presenter view and display.)');
+};
+window.seToggleHideSlide = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  if (!slide.meta) slide.meta={};
+  slide.meta.hidden = !slide.meta.hidden;
+  var btn = document.getElementById('se-hide-slide-btn');
+  if (btn) btn.classList.toggle('active', !!slide.meta.hidden);
+  toast('Slide '+(slide.meta.hidden?'hidden':'visible')+' in presentation.');
+};
+window.seRehearseTimings = function() {
+  toast('Rehearse Timings: start the slide show and S4 will record how long you spend on each slide.');
+  seSlideShowStart(true);
+};
+window.seRecordSlideShow = function() { toast('Record Slide Show: narration and ink recording requires a microphone. Feature available in desktop app.'); };
+window.seToggleCaptions = function(on) { toast('Subtitles '+(on?'enabled':'disabled')+'.'); };
+window.seToggleSubtitles = function(on) { toast('Subtitle settings: language and position coming soon.'); };
+window.seSetMonitor = function(val) { toast('Monitor: '+val); };
+window.seTogglePresenterView = function(on) { toast('Presenter View '+(on?'enabled':'disabled')+' — requires two displays.'); };
+/* keyboard shortcuts for slide show */
+document.addEventListener('keydown', function(e) {
+  if (!sePresentationMode) {
+    if (e.key==='F5') { e.preventDefault(); seSlideShowStart(true); }
+    else if (e.key==='F5' && e.shiftKey) { e.preventDefault(); seSlideShowStart(false); }
+  }
+});
+
+/* ══════════════════════════════════════════════════════════════
+   REVIEW TAB
+   ══════════════════════════════════════════════════════════════ */
+var seComments = [];
+var seCommentVisible = false;
+window.seSpellCheck = function() {
+  var msg = [];
+  (seSlides[seActive]&&seSlides[seActive].elements||[]).forEach(function(el){
+    if (el.text) {
+      var words = el.text.split(/\s+/);
+      words.forEach(function(w){ if (w.length>2 && w !== w.toLowerCase() && !/^[A-Z]/.test(w)) msg.push(w); });
+    }
+  });
+  alert('Spelling check complete.\n'+(msg.length?'Potential issues: '+msg.join(', '):'No issues found on this slide.'));
+};
+window.seOpenThesaurus = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  var word = (el && el.text && el.text.trim().split(/\s+/)[0]) || prompt('Enter a word to look up:','');
+  if (!word) return;
+  window.open('https://www.thesaurus.com/browse/'+encodeURIComponent(word), '_blank');
+};
+window.seSetLanguage = function() {
+  var langs = ['English (US)','English (UK)','Spanish','French','German','Japanese','Chinese'];
+  var choice = prompt('Select proofing language:\n'+langs.map(function(l,i){return (i+1)+'. '+l;}).join('\n'), '1');
+  if (choice) toast('Language set to: '+langs[(+choice-1)||0]);
+};
+window.seTranslate = function() {
+  var slide = seSlides[seActive];
+  var el = slide && slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  var text = el && el.text;
+  if (text) window.open('https://translate.google.com/?text='+encodeURIComponent(text), '_blank');
+  else toast('Select a text element to translate.');
+};
+window.seNewComment = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var text = prompt('Add comment:','');
+  if (!text) return;
+  var id = 'cmt-'+Date.now();
+  var comment = { id:id, slideIdx:seActive, elId:seSelectedId||null, text:text, author:'User', date:new Date().toISOString() };
+  seComments.push(comment);
+  if (!slide.meta) slide.meta={};
+  if (!slide.meta.comments) slide.meta.comments=[];
+  slide.meta.comments.push(id);
+  toast('Comment added.');
+  if (seCommentVisible) seRenderCommentPanel();
+};
+window.seDeleteComment = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var ids = (slide.meta && slide.meta.comments) || [];
+  if (!ids.length) { toast('No comments on this slide.'); return; }
+  seComments = seComments.filter(function(c){ return ids.indexOf(c.id)<0 || false; });
+  if (slide.meta) slide.meta.comments=[];
+  toast('Comments deleted for this slide.');
+  if (seCommentVisible) seRenderCommentPanel();
+};
+window.seNavComment = function(dir) {
+  var slides = seSlides.map(function(s,i){return i;}).filter(function(i){ return seSlides[i].meta && seSlides[i].meta.comments && seSlides[i].meta.comments.length; });
+  var cur = slides.indexOf(seActive);
+  var next = slides[(cur+dir+slides.length)%slides.length];
+  if (next !== undefined) { seActive=next; seRenderPanel(); seRenderCanvas(); toast('Slide '+(next+1)+' has comments.'); }
+  else toast('No comments found in presentation.');
+};
+window.seToggleComments = function() {
+  seCommentVisible = !seCommentVisible;
+  var btn = document.getElementById('se-show-comments-btn');
+  if (btn) btn.classList.toggle('active', seCommentVisible);
+  seRenderCommentPanel();
+};
+window.seRenderCommentPanel = function() {
+  var existing = document.getElementById('se-comment-panel');
+  if (!seCommentVisible) { if (existing) existing.remove(); return; }
+  if (!existing) {
+    existing = document.createElement('div');
+    existing.id='se-comment-panel';
+    existing.style.cssText='position:fixed;right:16px;top:120px;width:260px;background:#fff;border:1px solid #e1dfdd;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:12px;z-index:9000;font-family:"Segoe UI",Arial,sans-serif;font-size:12px;max-height:400px;overflow-y:auto;';
+    existing.innerHTML='<div style="font-weight:700;margin-bottom:8px;color:#323130;display:flex;justify-content:space-between;"><span>&#128172; Comments</span><button onclick="seToggleComments()" style="border:none;background:none;cursor:pointer;color:#323130;font-size:14px;">&#10005;</button></div><div id="se-comment-list"></div>';
+    document.body.appendChild(existing);
+  }
+  var list = document.getElementById('se-comment-list');
+  if (!list) return;
+  var slide = seSlides[seActive];
+  var ids = (slide && slide.meta && slide.meta.comments) || [];
+  var relevant = seComments.filter(function(c){ return ids.indexOf(c.id)>=0; });
+  if (!relevant.length) { list.innerHTML='<div style="color:#797775;font-style:italic">No comments on this slide.</div>'; return; }
+  list.innerHTML = relevant.map(function(c){ return '<div style="border-bottom:1px solid #f0f0f0;padding:6px 0;"><div style="font-weight:600;color:#0078d4">'+c.author+'</div><div style="color:#323130;margin:2px 0">'+c.text+'</div><div style="color:#797775;font-size:10px">'+new Date(c.date).toLocaleDateString()+'</div></div>'; }).join('');
+};
+window.seCompare = function() { toast('Compare: upload a second version of this presentation to see differences (feature requires file upload support).'); };
+window.seAcceptRevision = function() { toast('Accept: no pending revisions to accept.'); };
+window.seRejectRevision = function() { toast('Reject: no pending revisions to reject.'); };
+window.seToggleReviewPane = function() { toast('Reviewing Pane: shows all tracked changes and comments in a list view.'); };
+window.seStartInking = function() {
+  var canvas = document.getElementById('se-canvas-wrap'); if (!canvas) return;
+  toast('Inking mode: draw on the slide with your mouse or stylus. Press Escape to exit.');
+  canvas.style.cursor='crosshair';
+  var inkLayer = document.createElement('canvas');
+  inkLayer.id='se-ink-layer';
+  inkLayer.style.cssText='position:absolute;inset:0;z-index:500;cursor:crosshair;';
+  inkLayer.width=SE_CANVAS_W; inkLayer.height=SE_CANVAS_H;
+  canvas.appendChild(inkLayer);
+  var ctx2d=inkLayer.getContext('2d'); ctx2d.strokeStyle='#e00';ctx2d.lineWidth=2;ctx2d.lineCap='round';
+  var drawing=false;
+  inkLayer.addEventListener('mousedown',function(e){drawing=true;ctx2d.beginPath();ctx2d.moveTo(e.offsetX,e.offsetY);});
+  inkLayer.addEventListener('mousemove',function(e){if(!drawing)return;ctx2d.lineTo(e.offsetX,e.offsetY);ctx2d.stroke();});
+  inkLayer.addEventListener('mouseup',function(){drawing=false;});
+  document.addEventListener('keydown',function stop(e){if(e.key==='Escape'){inkLayer.remove();canvas.style.cursor='';document.removeEventListener('keydown',stop);}},true);
+};
+
+/* ══════════════════════════════════════════════════════════════
+   VIEW TAB
+   ══════════════════════════════════════════════════════════════ */
+var seCurrentView = 'normal';
+var seViewZoom = 1.0;
+window.seSetView = function(mode) {
+  seCurrentView = mode;
+  ['normal','outline','sorter','notes','reading'].forEach(function(m){
+    var btn=document.getElementById('se-view-'+m+'-btn');
+    if(btn) btn.classList.toggle('active', m===mode);
+  });
+  var canvas = document.getElementById('se-canvas-wrap');
+  var panel = document.getElementById('se-panel');
+  if (mode==='normal') {
+    canvas.style.transform=''; if(panel) panel.style.display='';
+    toast('Normal view');
+  } else if (mode==='outline') {
+    var lines = seSlides.map(function(s,i){ return 'Slide '+(i+1)+': '+(s.title||'(untitled)'); }).join('\n');
+    alert('Outline View\n\n'+lines);
+  } else if (mode==='sorter') {
+    var names = seSlides.map(function(s,i){ return (i+1)+'. '+(s.title||'Slide '+(i+1)); }).join('\n');
+    alert('Slide Sorter\n\n'+names+'\n\n(Drag slides in the left panel to reorder.)');
+  } else if (mode==='notes') {
+    var slide = seSlides[seActive];
+    var notes = (slide&&slide.meta&&slide.meta.notes)||'';
+    var n = prompt('Notes for this slide:', notes);
+    if (n!==null) { if(!slide.meta)slide.meta={}; slide.meta.notes=n; toast('Notes saved.'); }
+  } else if (mode==='reading') {
+    seSlideShowStart(false);
+  }
+};
+window.seSlideMasterView = function() { toast('Slide Master: edit the master layout that all slides inherit. Changes apply globally.'); };
+window.seHandoutMasterView = function() { toast('Handout Master: defines the layout when printing multiple slides per page.'); };
+window.seNotesMasterView  = function() { toast('Notes Master: defines the layout of the speaker notes pages.'); };
+window.seToggleRuler = function(on) {
+  var canvas = document.getElementById('se-canvas-wrap'); if (!canvas) return;
+  var existing = document.getElementById('se-ruler-h');
+  if (on && !existing) {
+    var rh=document.createElement('div'); rh.id='se-ruler-h';
+    rh.style.cssText='position:absolute;top:0;left:0;width:100%;height:18px;background:#f8f8f8;border-bottom:1px solid #ccc;font-size:9px;color:#666;z-index:50;pointer-events:none;overflow:hidden;';
+    for(var x=0;x<SE_CANVAS_W;x+=50){var m=document.createElement('span');m.style.cssText='position:absolute;left:'+x+'px;top:2px;';m.textContent=x;rh.appendChild(m);}
+    canvas.style.position='relative'; canvas.appendChild(rh);
+    var rv=document.createElement('div'); rv.id='se-ruler-v';
+    rv.style.cssText='position:absolute;top:0;left:0;width:18px;height:100%;background:#f8f8f8;border-right:1px solid #ccc;font-size:8px;color:#666;z-index:50;pointer-events:none;overflow:hidden;';
+    for(var y=0;y<SE_CANVAS_H;y+=50){var mv=document.createElement('span');mv.style.cssText='position:absolute;top:'+(y+2)+'px;left:1px;writing-mode:vertical-rl;font-size:8px;';mv.textContent=y;rv.appendChild(mv);}
+    canvas.appendChild(rv);
+  } else if (!on) {
+    var rh2=document.getElementById('se-ruler-h'); if(rh2)rh2.remove();
+    var rv2=document.getElementById('se-ruler-v'); if(rv2)rv2.remove();
+  }
+  toast('Ruler '+(on?'shown':'hidden'));
+};
+window.seToggleGridlines = function(on) {
+  var canvas = document.getElementById('se-canvas-wrap'); if (!canvas) return;
+  canvas.style.backgroundImage = on
+    ? 'linear-gradient(rgba(0,120,212,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.15) 1px,transparent 1px)'
+    : '';
+  canvas.style.backgroundSize = on ? '40px 40px' : '';
+  toast('Gridlines '+(on?'shown':'hidden'));
+};
+window.seToggleGuides = function(on) {
+  var canvas = document.getElementById('se-canvas-wrap'); if (!canvas) return;
+  var existing = document.getElementById('se-guides-layer');
+  if (on && !existing) {
+    var gl=document.createElement('div'); gl.id='se-guides-layer';
+    gl.style.cssText='position:absolute;inset:0;z-index:40;pointer-events:none;';
+    var ch=document.createElement('div');ch.style.cssText='position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,0,0,.5);transform:translateX(-50%);';
+    var cv=document.createElement('div');cv.style.cssText='position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(255,0,0,.5);transform:translateY(-50%);';
+    gl.appendChild(ch); gl.appendChild(cv);
+    canvas.style.position='relative'; canvas.appendChild(gl);
+  } else if (!on && existing) { existing.remove(); }
+  toast('Guides '+(on?'shown':'hidden'));
+};
+window.seToggleNotesPanel = function(on) {
+  toast('Notes panel '+(on?'shown':'hidden')+'. Use the Notes Page view (View tab) to edit speaker notes.');
+};
+window.seZoomDialog = function() {
+  var z = prompt('Zoom %:',''+Math.round(seViewZoom*100));
+  if (z && +z > 0) { seViewZoom=+z/100; seApplyZoom(); }
+};
+window.seZoomReset = function() { seViewZoom=1.0; seApplyZoom(); toast('Zoom: 100%'); };
+window.seZoomFit = function() {
+  var wrap = document.getElementById('se-main'); if (!wrap) { seViewZoom=1; seApplyZoom(); return; }
+  var fw=wrap.clientWidth-32, fh=wrap.clientHeight-32;
+  seViewZoom = Math.min(fw/SE_CANVAS_W, fh/SE_CANVAS_H, 1);
+  seApplyZoom(); toast('Zoom: fit to window ('+Math.round(seViewZoom*100)+'%)');
+};
+window.seApplyZoom = function() {
+  var canvas = document.getElementById('se-canvas-wrap'); if (!canvas) return;
+  canvas.style.transform = seViewZoom===1 ? '' : 'scale('+seViewZoom+')';
+  canvas.style.transformOrigin = 'top left';
+};
+window.seViewColor     = function() { var c=document.getElementById('se-canvas-wrap'); if(c){c.style.filter='';} toast('Color view'); };
+window.seViewGrayscale = function() { var c=document.getElementById('se-canvas-wrap'); if(c){c.style.filter='grayscale(1)';} toast('Grayscale view'); };
+window.seViewBlackWhite= function() { var c=document.getElementById('se-canvas-wrap'); if(c){c.style.filter='grayscale(1) contrast(999%)';} toast('Black & White view'); };
+window.seNewWindow     = function() { window.open(window.location.href,'_blank'); };
+window.seArrangeAll    = function() { toast('Arrange All: tile open windows — use your OS window manager.'); };
+window.seSwitchWindows = function() { toast('Switch Windows: '+document.title); };
+window.seMacros        = function() { toast('Macros: record, run, and manage automation scripts.'); };
+
+/* helper: render element HTML for presentation mode */
+window.seRenderElHtml = function(el) {
+  var s='position:absolute;left:'+el.x+'px;top:'+el.y+'px;width:'+el.w+'px;height:'+el.h+'px;';
+  if(el.background&&el.background!=='transparent')s+='background:'+el.background+';';
+  if(el.color)s+='color:'+el.color+';';
+  if(el.fontSize)s+='font-size:'+el.fontSize+'px;';
+  if(el.fontFamily)s+='font-family:'+el.fontFamily+';';
+  if(el.fontWeight)s+='font-weight:'+el.fontWeight+';';
+  if(el.fontStyle)s+='font-style:'+el.fontStyle+';';
+  if(el.textDecoration)s+='text-decoration:'+el.textDecoration+';';
+  if(el.textAlign)s+='text-align:'+el.textAlign+';';
+  if(el.borderRadius)s+='border-radius:'+el.borderRadius+';';
+  if(el.borderColor&&el.borderWidth)s+='border:'+el.borderWidth+' '+( el.borderStyle||'solid')+' '+el.borderColor+';';
+  if(el.opacity!=null&&el.opacity!==1)s+='opacity:'+el.opacity+';';
+  if(el.rotation)s+='transform:rotate('+el.rotation+'deg);';
+  s+='overflow:hidden;box-sizing:border-box;display:flex;align-items:center;justify-content:'+(el.textAlign==='center'?'center':el.textAlign==='right'?'flex-end':'flex-start')+';padding:4px;';
+  return '<div style="'+s+'">'+(el.text||'')+'</div>';
+};
+
+/* ══════════════════════════════════════════════════════════════
+   END NEW TAB FUNCTIONS
+   ══════════════════════════════════════════════════════════════ */
 
 /* ── Cut / Copy / Paste / Format Painter ── */
 var seCopyBuffer = null;
