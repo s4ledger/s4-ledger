@@ -519,6 +519,98 @@ td.ms-done .di::after { content:' ✓'; }
   .panel-hdr { background:#1c3a5f!important; color:white!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   @page { margin:0.5in; size:landscape; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   SLIDE EDITOR — in-browser viewer + PptxGenJS PPTX export
+══════════════════════════════════════════════════════════════════ */
+#slide-editor-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.78); backdrop-filter:blur(8px);
+  z-index:9500; align-items:center; justify-content:center;
+}
+#slide-editor-overlay.se-open { display:flex; }
+#slide-editor {
+  background:var(--surface); border-radius:14px;
+  width:97vw; height:95vh; max-width:1400px;
+  display:flex; flex-direction:column; overflow:hidden;
+  box-shadow:0 28px 80px rgba(0,0,0,.65),0 4px 20px rgba(0,0,0,.3);
+}
+#se-header {
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  padding:7px 14px; border-bottom:1px solid var(--border);
+  background:var(--surface-2); flex-shrink:0; min-height:44px;
+}
+#se-header h3 { font-size:13px; font-weight:700; white-space:nowrap; }
+#se-slide-counter { font-size:11px; color:var(--steel); min-width:44px; text-align:center; white-space:nowrap; }
+.se-hdr-sep { width:1px; height:18px; background:var(--border); flex-shrink:0; }
+#se-body { display:flex; flex:1; overflow:hidden; }
+#se-panel {
+  width:180px; min-width:140px; border-right:1px solid var(--border);
+  overflow-y:auto; background:var(--surface-2); padding:8px 6px; flex-shrink:0;
+}
+#se-panel-label {
+  font-size:9px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.07em; color:var(--steel); padding:2px 4px 6px; display:block;
+}
+.se-thumb {
+  border-radius:7px; margin-bottom:8px; cursor:pointer;
+  border:2px solid transparent; transition:all .12s;
+  position:relative; background:white; overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.12);
+}
+.se-thumb:hover { border-color:rgba(0,122,255,.4); }
+.se-thumb.active { border-color:var(--accent); box-shadow:0 0 0 2px rgba(0,122,255,.18); }
+.se-thumb.se-hidden-slide { opacity:.35; }
+.se-thumb svg { display:block; width:100%; height:auto; pointer-events:none; }
+.se-thumb-label {
+  font-size:8px; text-align:center; color:var(--steel); padding:3px 5px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  background:var(--surface-2); border-top:1px solid var(--border);
+}
+.se-thumb-num {
+  position:absolute; top:3px; left:5px; font-size:8px; color:white;
+  background:rgba(0,0,0,.45); border-radius:3px; padding:1px 4px; z-index:1;
+}
+.se-thumb-hidden-badge {
+  position:absolute; top:3px; right:5px; font-size:7px; font-weight:700;
+  color:white; background:rgba(255,59,48,.8); border-radius:3px; padding:1px 4px; z-index:1;
+}
+#se-main {
+  flex:1; overflow:auto; display:flex; justify-content:center;
+  align-items:flex-start; padding:28px 24px; background:#181c24;
+}
+#se-preview-wrap { width:100%; max-width:880px; }
+#se-preview svg {
+  width:100%; height:auto; display:block; border-radius:4px;
+  box-shadow:0 8px 56px rgba(0,0,0,.7);
+}
+#se-ctx-menu {
+  display:none; position:fixed; z-index:9700;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:9px; padding:4px 0; min-width:172px;
+  box-shadow:0 6px 24px rgba(0,0,0,.14),0 2px 8px rgba(0,0,0,.08);
+}
+.se-ctx-item {
+  display:flex; align-items:center; gap:8px;
+  padding:7px 14px; font-size:12px; cursor:pointer; white-space:nowrap; color:var(--text);
+}
+.se-ctx-item:hover { background:rgba(0,122,255,.07); color:var(--accent); }
+.se-ctx-item.danger { color:var(--red); }
+.se-ctx-item.danger:hover { background:rgba(255,59,48,.05); color:var(--red); }
+.se-ctx-sep { height:1px; background:var(--border); margin:3px 0; }
+#se-add-wrap { position:relative; }
+#se-add-menu {
+  display:none; position:absolute; top:calc(100% + 5px); left:0;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:9px; padding:4px 0; min-width:210px;
+  box-shadow:var(--shadow-lg); z-index:9700;
+}
+.se-add-item {
+  display:flex; align-items:center; gap:8px;
+  padding:7px 14px; font-size:12px; cursor:pointer; color:var(--text); white-space:nowrap;
+}
+.se-add-item:hover { background:rgba(0,122,255,.07); color:var(--accent); }
+.se-add-sep { height:1px; background:var(--border); margin:3px 0; }
   </style>
 </head>
 <body>
@@ -617,6 +709,9 @@ td.ms-done .di::after { content:' ✓'; }
     </button>
     <button class="abtn btn-o" id="ai-btn" onclick="openDrawer('ai')" title="AI Schedule Assistant">
       <i class="fas fa-robot fa-xs"></i> AI Assist
+    </button>
+    <button class="abtn btn-o" onclick="openSlideEditor()" title="Generate &amp; manage PowerPoint slides for all programs">
+      <i class="fas fa-file-powerpoint fa-xs"></i> Slides
     </button>
     <button class="abtn btn-o" onclick="window.print()" title="Print / Export PDF">
       <i class="fas fa-print fa-xs"></i> Print
@@ -1077,8 +1172,89 @@ td.ms-done .di::after { content:' ✓'; }
 <!-- Gantt drag ghost (tiny SVG shape that follows cursor while dragging) -->
 <div id="gantt-drag-ghost"></div>
 
+<!-- ══ SLIDE EDITOR OVERLAY ══════════════════════════════════════════ -->
+<div id="slide-editor-overlay">
+  <div id="slide-editor">
+    <!-- Header toolbar -->
+    <div id="se-header">
+      <i class="fas fa-film" style="color:var(--accent);font-size:12px"></i>
+      <h3>Slide Editor</h3>
+      <span id="se-slide-counter">— / —</span>
+      <div class="se-hdr-sep"></div>
+      <div id="se-add-wrap">
+        <button class="abtn btn-o" onclick="seToggleAddMenu(event)" style="font-size:11px;padding:4px 10px">
+          <i class="fas fa-plus fa-xs"></i> Add Slide
+          <i class="fas fa-chevron-down" style="font-size:8px;margin-left:2px"></i>
+        </button>
+        <div id="se-add-menu">
+          <div id="se-add-type-items"></div>
+          <div class="se-add-sep"></div>
+          <div class="se-add-item" onclick="seAddSlide('acq');seCloseAddMenu()">
+            <i class="fas fa-chart-gantt fa-xs" style="color:#af52de"></i> Acquisition Events Template
+          </div>
+          <div class="se-add-sep"></div>
+          <div class="se-add-item" onclick="seAddSlide('blank');seCloseAddMenu()">
+            <i class="fas fa-file fa-xs" style="color:var(--steel)"></i> Blank Slide
+          </div>
+        </div>
+      </div>
+      <button class="abtn btn-o" onclick="seEditCurrentTitle()" style="font-size:11px;padding:4px 10px" title="Edit active slide title">
+        <i class="fas fa-pencil fa-xs"></i> Edit Title
+      </button>
+      <button class="abtn btn-o" onclick="seEditCurrentSubtitle()" style="font-size:11px;padding:4px 10px" title="Edit active slide subtitle">
+        <i class="fas fa-font fa-xs"></i> Subtitle
+      </button>
+      <div class="se-hdr-sep"></div>
+      <button class="abtn btn-o" id="se-prev-btn" onclick="seNavPrev()" style="font-size:11px;padding:4px 8px" title="Previous slide (&#8592;)">
+        <i class="fas fa-chevron-left fa-xs"></i>
+      </button>
+      <button class="abtn btn-o" id="se-next-btn" onclick="seNavNext()" style="font-size:11px;padding:4px 8px" title="Next slide (&#8594;)">
+        <i class="fas fa-chevron-right fa-xs"></i>
+      </button>
+      <div style="flex:1"></div>
+      <span style="font-size:10px;color:var(--steel);margin-right:4px">Right-click slide thumbnails for options</span>
+      <button class="abtn" style="background:#c0392b;color:white;border-color:#a93226;font-size:11px;padding:4px 12px;gap:5px" onclick="sePptxExport()" title="Export visible slides to PowerPoint (.pptx)">
+        <i class="fas fa-file-powerpoint fa-xs"></i> Export PPTX
+      </button>
+      <button class="abtn btn-o" onclick="closeSlideEditor()" style="font-size:11px;padding:4px 8px;color:var(--steel)" title="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <!-- Body -->
+    <div id="se-body">
+      <div id="se-panel">
+        <span id="se-panel-label">Slides</span>
+        <div id="se-slide-list"></div>
+      </div>
+      <div id="se-main">
+        <div id="se-preview-wrap">
+          <div id="se-preview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Slide editor right-click context menu -->
+<div id="se-ctx-menu">
+  <div class="se-ctx-item" onclick="seEditTitleCtx()"><i class="fas fa-pencil fa-xs"></i> Edit Title</div>
+  <div class="se-ctx-item" onclick="seEditSubtitleCtx()"><i class="fas fa-font fa-xs"></i> Edit Subtitle</div>
+  <div class="se-ctx-sep"></div>
+  <div class="se-ctx-item" onclick="seMoveSlide(seCtxIdx,-1)"><i class="fas fa-arrow-up fa-xs"></i> Move Up</div>
+  <div class="se-ctx-item" onclick="seMoveSlide(seCtxIdx,1)"><i class="fas fa-arrow-down fa-xs"></i> Move Down</div>
+  <div class="se-ctx-sep"></div>
+  <div class="se-ctx-item" onclick="seDuplicateSlide(seCtxIdx)"><i class="fas fa-copy fa-xs"></i> Duplicate</div>
+  <div class="se-ctx-item" id="se-ctx-hide-btn" onclick="seToggleHide(seCtxIdx)">
+    <i class="fas fa-eye-slash fa-xs"></i> <span id="se-ctx-hide-lbl">Hide Slide</span>
+  </div>
+  <div class="se-ctx-sep"></div>
+  <div class="se-ctx-item danger" onclick="seDeleteSlide(seCtxIdx)"><i class="fas fa-trash fa-xs"></i> Delete Slide</div>
+</div>
+
 <!-- ══ SUPABASE ═══════════════════════════════════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- ══ PPTXGENJS ════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 
 <!-- ══ APPLICATION ════════════════════════════════════════════════════ -->
 <script>
@@ -3392,6 +3568,568 @@ function toast(msg){
   var el=document.getElementById('toast');
   el.textContent=msg; el.style.display='block';
   clearTimeout(el._t); el._t=setTimeout(()=>el.style.display='none',2600);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   SLIDE EDITOR — in-browser per-program slide viewer + PptxGenJS export
+   APL type renders as "APL(S)" per NAVSEA program designation convention.
+   All exported shapes are real editable OOXML objects in the .pptx file.
+═════════════════════════════════════════════════════════════════ */
+var seSlides = [];
+var seActive = 0;
+var seCtxIdx = -1;
+
+/* Type label map — APL → "APL(S)" per NAVSEA convention */
+var SE_TYPE_LABEL = { APL:'APL(S)', YRBM:'YRBM', YFB:'YFB', YTB:'YTB' };
+function seTypeLabel(t){ return SE_TYPE_LABEL[t]||t; }
+function seTypeTitle(t){ return seTypeLabel(t)+' Program Schedule'; }
+
+/* ── Open / Close ─────────────────────────────────────────── */
+window.openSlideEditor = function() {
+  seSlides = seGenerateSlides();
+  seActive = 0;
+  sePopulateAddMenu();
+  document.getElementById('slide-editor-overlay').classList.add('se-open');
+  seRenderPanel();
+  seRenderPreview();
+};
+window.closeSlideEditor = function() {
+  document.getElementById('slide-editor-overlay').classList.remove('se-open');
+};
+
+/* ── Build initial slides (one per vessel type in current data) ── */
+function seGenerateSlides() {
+  var types = [];
+  vessels.forEach(function(v){ if (!types.includes(v.type)) types.push(v.type); });
+  return types.filter(function(t){
+    return vessels.some(function(v){ return v.type===t; });
+  }).map(function(t){
+    return { id:'sl-'+t+'-'+Date.now()+'-'+Math.random().toString(36).slice(2),
+             type:'program', vesselType:t, title:seTypeTitle(t), subtitle:'',
+             hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+  });
+}
+
+/* ── Populate the Add Slide dropdown with current types ── */
+function sePopulateAddMenu() {
+  var el = document.getElementById('se-add-type-items'); if (!el) return;
+  var types = [];
+  vessels.forEach(function(v){ if(!types.includes(v.type)) types.push(v.type); });
+  var icons = { APL:'fa-ship', YRBM:'fa-anchor', YFB:'fa-water', YTB:'fa-ferry' };
+  el.innerHTML = types.map(function(t){
+    var icon = icons[t]||'fa-ship';
+    var col  = (VT[t]&&VT[t].color)||'var(--accent)';
+    return '<div class="se-add-item" onclick="seAddSlide(\'prog_'+t+'\');seCloseAddMenu()">'
+      +'<i class="fas '+icon+' fa-xs" style="color:'+col+'"></i> '
+      +esc(seTypeLabel(t))+' Program Slide</div>';
+  }).join('');
+}
+
+/* ── Add a slide ── */
+window.seAddSlide = function(tpl) {
+  var id = 'sl-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+  var s;
+  if (tpl.startsWith('prog_')) {
+    var t = tpl.slice(5);
+    s = { id:id, type:'program', vesselType:t, title:seTypeTitle(t), subtitle:'',
+          hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+  } else if (tpl==='acq') {
+    s = { id:id, type:'acq', vesselType:null, title:'Acquisition Events Schedule',
+          subtitle:'', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+  } else {
+    s = { id:id, type:'custom', vesselType:null, title:'New Slide',
+          subtitle:'', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+  }
+  seSlides.push(s);
+  seActive = seSlides.length - 1;
+  seRenderPanel(); seRenderPreview();
+};
+
+/* ── Select slide ── */
+window.seSelectSlide = function(idx) {
+  seActive = Math.max(0, Math.min(idx, seSlides.length-1));
+  document.querySelectorAll('.se-thumb').forEach(function(el,i){
+    el.classList.toggle('active', i===seActive);
+  });
+  var thumb = document.querySelectorAll('.se-thumb')[seActive];
+  if (thumb) thumb.scrollIntoView({behavior:'smooth',block:'nearest'});
+  seRenderPreview();
+};
+
+/* ── Navigation ── */
+window.seNavPrev = function(){ if(seActive>0) seSelectSlide(seActive-1); };
+window.seNavNext = function(){ if(seActive<seSlides.length-1) seSelectSlide(seActive+1); };
+
+/* ── Hide / show ── */
+window.seToggleHide = function(idx) {
+  seSlides[idx].hidden = !seSlides[idx].hidden;
+  seRenderPanel();
+  if (seActive===idx) {
+    var first=seSlides.findIndex(function(s){return !s.hidden;}); if(first<0) first=idx;
+    seActive=first;
+  }
+  seRenderPreview();
+};
+
+/* ── Delete ── */
+window.seDeleteSlide = function(idx) {
+  if (seSlides.length<=1){ toast('Cannot delete the last slide'); return; }
+  if (!confirm('Delete slide "'+seSlides[idx].title+'"?')) return;
+  seSlides.splice(idx,1);
+  seActive=Math.min(seActive, seSlides.length-1);
+  seRenderPanel(); seRenderPreview();
+};
+
+/* ── Duplicate ── */
+window.seDuplicateSlide = function(idx) {
+  var copy=JSON.parse(JSON.stringify(seSlides[idx]));
+  copy.id='sl-dup-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+  copy.title+=' (Copy)';
+  seSlides.splice(idx+1,0,copy);
+  seActive=idx+1;
+  seRenderPanel(); seRenderPreview();
+};
+
+/* ── Reorder ── */
+window.seMoveSlide = function(idx,dir) {
+  var ni=idx+dir; if(ni<0||ni>=seSlides.length) return;
+  var tmp=seSlides[idx]; seSlides[idx]=seSlides[ni]; seSlides[ni]=tmp;
+  seActive=ni; seRenderPanel(); seRenderPreview();
+};
+
+/* ── Edit title / subtitle via prompt ── */
+window.seEditCurrentTitle   = function(){ seEditTitleAt(seActive); };
+window.seEditCurrentSubtitle= function(){ seEditSubAt(seActive); };
+window.seEditTitleCtx       = function(){ seEditTitleAt(seCtxIdx); };
+window.seEditSubtitleCtx    = function(){ seEditSubAt(seCtxIdx); };
+function seEditTitleAt(idx) {
+  var s=seSlides[idx]; if(!s) return;
+  var v=prompt('Edit slide title:',s.title);
+  if(v!==null){ s.title=(v.trim()||s.title); seRenderPanel(); seRenderPreview(); }
+}
+function seEditSubAt(idx) {
+  var s=seSlides[idx]; if(!s) return;
+  var v=prompt('Edit slide subtitle (leave blank to remove):',s.subtitle||'');
+  if(v!==null){ s.subtitle=v.trim(); seRenderPanel(); seRenderPreview(); }
+}
+
+/* ── Context menu ── */
+window.seThumbCtx = function(e,idx) {
+  e.preventDefault(); e.stopPropagation();
+  seCtxIdx=idx; seSelectSlide(idx);
+  var m=document.getElementById('se-ctx-menu');
+  var lbl=document.getElementById('se-ctx-hide-lbl');
+  if(lbl) lbl.textContent=seSlides[idx].hidden?'Show Slide':'Hide Slide';
+  m.style.display='block';
+  m.style.left=Math.min(e.clientX,window.innerWidth-185)+'px';
+  m.style.top =Math.min(e.clientY,window.innerHeight-260)+'px';
+};
+
+/* ── Add-slide dropdown ── */
+window.seToggleAddMenu = function(e) {
+  e.stopPropagation();
+  var m=document.getElementById('se-add-menu');
+  m.style.display=(m.style.display==='block')?'none':'block';
+};
+window.seCloseAddMenu = function() {
+  var m=document.getElementById('se-add-menu'); if(m) m.style.display='none';
+};
+
+/* Close menus on outside click */
+document.addEventListener('click',function(e){
+  var cm=document.getElementById('se-ctx-menu');
+  if(cm&&!cm.contains(e.target)) cm.style.display='none';
+  var am=document.getElementById('se-add-menu');
+  if(am&&!e.target.closest('#se-add-wrap')) am.style.display='none';
+});
+
+/* ── Render left panel thumbnails ── */
+function seRenderPanel() {
+  var list=document.getElementById('se-slide-list'); if(!list) return;
+  list.innerHTML = seSlides.map(function(slide,i){
+    return '<div class="se-thumb'+(i===seActive?' active':'')+(slide.hidden?' se-hidden-slide':'')+'"'
+      +' onclick="seSelectSlide('+i+')" oncontextmenu="seThumbCtx(event,'+i+')"'
+      +' title="'+esc(slide.title)+'">'
+      +'<div class="se-thumb-num">'+(i+1)+'</div>'
+      +(slide.hidden?'<div class="se-thumb-hidden-badge">HIDDEN</div>':'')
+      +'<svg viewBox="0 0 176 132" xmlns="http://www.w3.org/2000/svg"'
+      +' style="display:block;width:100%;height:auto">'
+      +seRenderSVGBody(slide,176,132,true)+'</svg>'
+      +'<div class="se-thumb-label">'+esc(slide.title)+'</div>'
+      +'</div>';
+  }).join('');
+  var ctr=document.getElementById('se-slide-counter');
+  if(ctr) ctr.textContent=seSlides.length?(seActive+1)+' / '+seSlides.length:'\u2014 / \u2014';
+}
+
+/* ── Render main preview ── */
+function seRenderPreview() {
+  var container=document.getElementById('se-preview'); if(!container) return;
+  var slide=seSlides[seActive];
+  if(!slide){ container.innerHTML='<p style="color:#888;text-align:center;padding:40px;font-size:14px">No slides. Click \u201cAdd Slide\u201d to get started.</p>'; return; }
+  container.innerHTML='<svg id="se-main-svg" viewBox="0 0 880 660"'
+    +' xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">'
+    +seRenderSVGBody(slide,880,660,false)+'</svg>';
+  var svg=document.getElementById('se-main-svg');
+  if(svg){
+    svg.setAttribute('tabindex','0');
+    svg.addEventListener('keydown',function(e){
+      if(e.key==='ArrowLeft'||e.key==='ArrowUp'  ){e.preventDefault();seNavPrev();}
+      if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();seNavNext();}
+    });
+    var titleEl=svg.querySelector('#se-title-txt');
+    if(titleEl){ titleEl.style.cursor='text'; titleEl.addEventListener('dblclick',function(){seEditTitleAt(seActive);}); }
+  }
+  var ctr=document.getElementById('se-slide-counter');
+  if(ctr) ctr.textContent=(seActive+1)+' / '+seSlides.length;
+  var p=document.getElementById('se-prev-btn'); if(p) p.disabled=(seActive===0);
+  var n=document.getElementById('se-next-btn'); if(n) n.disabled=(seActive===seSlides.length-1);
+}
+
+/* ── SVG body dispatcher (shared by thumbnail + preview) ── */
+function seRenderSVGBody(slide,W,H,isThumb){
+  if(slide.type==='acq')    return seAcqSVG(slide,W,H,isThumb);
+  if(slide.type==='custom') return seCustomSVG(slide,W,H,isThumb);
+  return seProgSVG(slide,W,H,isThumb);
+}
+
+/* ── Program Schedule SVG (main slide type) ── */
+function seProgSVG(slide,W,H,isThumb){
+  var vs=slide.vesselType?vessels.filter(function(v){return v.type===slide.vesselType;}):[],
+      nFY=Math.max(slide.fyEnd-slide.fyStart+1,1),
+      LW=Math.round(W*.225),CW=(W-LW)/nFY,
+      TH=Math.round(H*.079),HH=Math.round(H*.048),LH=Math.round(H*.088),
+      RH=vs.length>0?Math.floor((H-TH-HH-LH)/vs.length):(H-TH-HH-LH),
+      SR=Math.max(2,Math.min(Math.round(RH*.26),isThumb?5:10)),
+      tSz=isThumb?6.5:18,hSz=isThumb?5:10,lSz=isThumb?4.5:10,dSz=isThumb?3:7.5;
+  var r='';
+  /* background */
+  r+='<rect width="'+W+'" height="'+H+'" fill="#eef0f6"/>';
+  /* title bar */
+  r+='<rect x="0" y="0" width="'+W+'" height="'+TH+'" fill="#1c3a5f"/>';
+  r+='<text id="se-title-txt" x="'+(W/2)+'" y="'+(TH*.66)+'"'
+    +' font-size="'+tSz+'" font-weight="700" text-anchor="middle" fill="white"'
+    +' font-family="Inter,-apple-system,sans-serif" letter-spacing=".015em">'+esc(slide.title)+'</text>';
+  if(slide.subtitle&&!isThumb)
+    r+='<text x="'+(W/2)+'" y="'+(TH*.88)+'" font-size="'+(tSz*.5)+'"'
+      +' text-anchor="middle" fill="rgba(255,255,255,.55)"'
+      +' font-family="Inter,-apple-system,sans-serif">'+esc(slide.subtitle)+'</text>';
+  /* FY header */
+  r+='<rect x="0" y="'+TH+'" width="'+W+'" height="'+HH+'" fill="#243c5f"/>';
+  r+='<rect x="0" y="'+TH+'" width="'+LW+'" height="'+HH+'" fill="#1c3a5f"/>';
+  r+='<text x="'+(LW/2)+'" y="'+(TH+HH*.67)+'" font-size="'+hSz+'"'
+    +' font-weight="600" text-anchor="middle" fill="rgba(255,255,255,.6)"'
+    +' font-family="Inter,-apple-system,sans-serif">VESSEL</text>';
+  for(var fj=0;fj<nFY;fj++){
+    var cx=LW+fj*CW;
+    if(fj>0) r+='<line x1="'+cx+'" y1="'+TH+'" x2="'+cx+'" y2="'+(H-LH)+'" stroke="rgba(255,255,255,.07)" stroke-width=".5"/>';
+    r+='<text x="'+(cx+CW/2)+'" y="'+(TH+HH*.67)+'" font-size="'+hSz+'"'
+      +' font-weight="700" text-anchor="middle" fill="white"'
+      +' font-family="Inter,-apple-system,sans-serif">FY'+String(slide.fyStart+fj).slice(2)+'</text>';
+  }
+  if(vs.length===0){
+    r+='<text x="'+(W/2)+'" y="'+(TH+HH+(H-TH-HH-LH)/2)+'" font-size="'+(tSz*.65)+'"'
+      +' text-anchor="middle" fill="#a0aab4" font-family="Inter,-apple-system,sans-serif">No vessels of this type</text>';
+  }
+  /* vessel rows */
+  vs.forEach(function(v,ri){
+    var ry=TH+HH+ri*RH;
+    r+='<rect x="0" y="'+ry+'" width="'+W+'" height="'+RH+'" fill="'+(ri%2?'#ebeff7':'white')+'"/>';
+    r+='<rect x="0" y="'+ry+'" width="'+LW+'" height="'+RH+'" fill="'+(ri%2?'#e0e6f2':'#f3f5fb')+'"/>';
+    var fc=v.fleet==='USFF'?'#34c759':'#007AFF';
+    r+='<rect x="0" y="'+ry+'" width="3" height="'+RH+'" fill="'+fc+'"/>';
+    r+='<text x="'+(LW*.1+5)+'" y="'+(ry+RH*.57)+'" font-size="'+lSz+'"'
+      +' font-weight="600" fill="#1c3a5f" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation||'')+'</text>';
+    if(!isThumb||RH>18)
+      r+='<text x="'+(LW-7)+'" y="'+(ry+RH*.57)+'" font-size="'+(lSz*.78)+'"'
+        +' text-anchor="end" fill="'+fc+'" font-weight="600"'
+        +' font-family="Inter,-apple-system,sans-serif">'+esc(v.fleet||'')+'</text>';
+    r+='<line x1="0" y1="'+(ry+RH)+'" x2="'+W+'" y2="'+(ry+RH)+'" stroke="#d2d7e2" stroke-width=".5"/>';
+    /* span bar CA→DEL */
+    var caX=seYM2X(v.ms&&v.ms.CA,slide.fyStart,LW,CW),delX=seYM2X(v.ms&&v.ms.DEL,slide.fyStart,LW,CW);
+    if(caX>0&&delX>caX)
+      r+='<rect x="'+caX+'" y="'+(ry+RH*.41)+'" width="'+(delX-caX)+'"'
+        +' height="'+(RH*.18)+'" fill="rgba(28,58,95,.1)" rx="2"/>';
+    /* milestone symbols */
+    Object.keys(MS).forEach(function(key){
+      var d=v.ms&&v.ms[key]; if(!d) return;
+      var mx=seYM2X(d,slide.fyStart,LW,CW); if(mx<0) return;
+      var my=ry+RH*.5;
+      r+=seSymSVG(key,mx,my,SR);
+      if(!isThumb&&RH>26)
+        r+='<text x="'+mx+'" y="'+(my+SR+6.5)+'" font-size="'+dSz+'"'
+          +' text-anchor="middle" fill="#6a7a90"'
+          +' font-family="Inter,-apple-system,sans-serif">'+seShortDate(d)+'</text>';
+    });
+  });
+  /* legend */
+  var ly=H-LH;
+  r+='<rect x="0" y="'+ly+'" width="'+W+'" height="'+LH+'" fill="#e8ecf5"/>';
+  r+='<line x1="0" y1="'+ly+'" x2="'+W+'" y2="'+ly+'" stroke="#c4cad6" stroke-width="1"/>';
+  if(!isThumb){
+    var lx=10,lr=5,ly2=ly+LH/2,msKeys=Object.keys(MS),
+        liGap=Math.min(Math.floor((W-60)/msKeys.length),160);
+    msKeys.forEach(function(key){
+      r+=seSymSVG(key,lx+lr,ly2,lr);
+      r+='<text x="'+(lx+lr*2+4)+'" y="'+(ly2+3.5)+'" font-size="7.5"'
+        +' fill="#5a6a80" font-family="Inter,-apple-system,sans-serif">'+esc(MS[key].label)+'</text>';
+      lx+=liGap;
+    });
+    r+='<circle cx="'+(W-108)+'" cy="'+ly2+'" r="5" fill="rgba(0,122,255,.15)" stroke="#007AFF" stroke-width="1"/>';
+    r+='<text x="'+(W-99)+'" y="'+(ly2+3.5)+'" font-size="7.5" fill="#5a6a80" font-family="Inter,-apple-system,sans-serif">PACFLT</text>';
+    r+='<circle cx="'+(W-55)+'" cy="'+ly2+'" r="5" fill="rgba(52,199,89,.15)" stroke="#34c759" stroke-width="1"/>';
+    r+='<text x="'+(W-46)+'" y="'+(ly2+3.5)+'" font-size="7.5" fill="#5a6a80" font-family="Inter,-apple-system,sans-serif">USFF</text>';
+  }
+  return r;
+}
+
+/* ── Acquisition Events SVG ── */
+function seAcqSVG(slide,W,H,isThumb){
+  var vs=vessels,nFY=Math.max(slide.fyEnd-slide.fyStart+1,1),
+      LW=Math.round(W*.225),CW=(W-LW)/nFY,
+      TH=Math.round(H*.079),HH=Math.round(H*.048),LH=Math.round(H*.095),
+      RH=vs.length>0?Math.floor((H-TH-HH-LH)/vs.length):(H-TH-HH-LH),
+      SR=Math.max(2,Math.min(Math.round(RH*.26),isThumb?5:9)),
+      tSz=isThumb?6.5:18,hSz=isThumb?5:10,lSz=isThumb?4.5:10;
+  var r='';
+  r+='<rect width="'+W+'" height="'+H+'" fill="#f3f0f8"/>';
+  r+='<rect x="0" y="0" width="'+W+'" height="'+TH+'" fill="#2d1b5e"/>';
+  r+='<text x="'+(W/2)+'" y="'+(TH*.66)+'" font-size="'+tSz+'" font-weight="700"'
+    +' text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif">'+esc(slide.title)+'</text>';
+  r+='<rect x="0" y="'+TH+'" width="'+W+'" height="'+HH+'" fill="#3d2870"/>';
+  r+='<rect x="0" y="'+TH+'" width="'+LW+'" height="'+HH+'" fill="#2d1b5e"/>';
+  r+='<text x="'+(LW/2)+'" y="'+(TH+HH*.67)+'" font-size="'+hSz+'"'
+    +' font-weight="600" text-anchor="middle" fill="rgba(255,255,255,.6)"'
+    +' font-family="Inter,-apple-system,sans-serif">VESSEL</text>';
+  for(var fj=0;fj<nFY;fj++){
+    var cx=LW+fj*CW;
+    if(fj>0) r+='<line x1="'+cx+'" y1="'+TH+'" x2="'+cx+'" y2="'+(H-LH)+'" stroke="rgba(255,255,255,.07)" stroke-width=".5"/>';
+    r+='<text x="'+(cx+CW/2)+'" y="'+(TH+HH*.67)+'" font-size="'+hSz+'"'
+      +' font-weight="700" text-anchor="middle" fill="white"'
+      +' font-family="Inter,-apple-system,sans-serif">FY'+String(slide.fyStart+fj).slice(2)+'</text>';
+  }
+  vs.forEach(function(v,ri){
+    var ry=TH+HH+ri*RH;
+    r+='<rect x="0" y="'+ry+'" width="'+W+'" height="'+RH+'" fill="'+(ri%2?'#f0ecf8':'white')+'"/>';
+    r+='<rect x="0" y="'+ry+'" width="'+LW+'" height="'+RH+'" fill="'+(ri%2?'#e8e0f4':'#f5f2fb')+'"/>';
+    var fc=v.fleet==='USFF'?'#34c759':'#007AFF';
+    r+='<rect x="0" y="'+ry+'" width="3" height="'+RH+'" fill="'+fc+'"/>';
+    r+='<text x="'+(LW*.1+5)+'" y="'+(ry+RH*.57)+'" font-size="'+lSz+'"'
+      +' font-weight="600" fill="#2d1b5e" font-family="Inter,-apple-system,sans-serif">'+esc(v.designation||'')+'</text>';
+    r+='<line x1="0" y1="'+(ry+RH)+'" x2="'+W+'" y2="'+(ry+RH)+'" stroke="#d4cce0" stroke-width=".5"/>';
+    if(v.acqEvents) Object.keys(ACQMS).forEach(function(key){
+      var d=v.acqEvents[key]; if(!d) return;
+      var mx=seYM2X(d,slide.fyStart,LW,CW); if(mx<0) return;
+      var my=ry+RH*.5, col=ACQMS[key].color;
+      r+=seDiamondSVG(mx,my,SR,col);
+      if(!isThumb&&RH>22)
+        r+='<text x="'+mx+'" y="'+(my-SR-3)+'" font-size="7" text-anchor="middle"'
+          +' font-weight="700" fill="'+col+'" font-family="Inter,-apple-system,sans-serif">'+key+'</text>';
+    });
+  });
+  var ly=H-LH;
+  r+='<rect x="0" y="'+ly+'" width="'+W+'" height="'+LH+'" fill="#ece8f4"/>';
+  r+='<line x1="0" y1="'+ly+'" x2="'+W+'" y2="'+ly+'" stroke="#c8c0d8" stroke-width="1"/>';
+  if(!isThumb){
+    var lx=10,lr=5,ly2=ly+LH/2,
+        liGap=Math.min(Math.floor((W-20)/Object.keys(ACQMS).length),185);
+    Object.keys(ACQMS).forEach(function(key){
+      var col=ACQMS[key].color;
+      r+=seDiamondSVG(lx+lr,ly2,lr,col);
+      r+='<text x="'+(lx+lr*2+4)+'" y="'+(ly2+3.5)+'" font-size="7.5"'
+        +' fill="#5a6a80" font-family="Inter,-apple-system,sans-serif">'+key+': '+esc(ACQMS[key].label)+'</text>';
+      lx+=liGap;
+    });
+  }
+  return r;
+}
+
+/* ── Custom / blank SVG ── */
+function seCustomSVG(slide,W,H,isThumb){
+  var tH=Math.round(H*.09), tSz=isThumb?6.5:18;
+  var r='<rect width="'+W+'" height="'+H+'" fill="white"/>';
+  r+='<rect x="0" y="0" width="'+W+'" height="'+tH+'" fill="#1c3a5f"/>';
+  r+='<text id="se-title-txt" x="'+(W/2)+'" y="'+(tH*.66)+'" font-size="'+tSz+'" font-weight="700"'
+    +' text-anchor="middle" fill="white" font-family="Inter,-apple-system,sans-serif">'+esc(slide.title)+'</text>';
+  if(!isThumb)
+    r+='<text x="'+(W/2)+'" y="'+(H/2)+'" font-size="13" text-anchor="middle"'
+      +' fill="#b0bac8" font-family="Inter,-apple-system,sans-serif"'
+      +' style="font-style:italic">\u2014 Blank slide \u2014 double-click title or use Edit Title to customize \u2014</text>';
+  return r;
+}
+
+/* ── Drawing helpers ── */
+function seYM2X(ym,fys,lw,cw){
+  if(!ym) return -1;
+  var f=toFY(ym); if(!f) return -1;
+  var idx=f.fy-fys; if(idx<0) return -1;
+  return lw+idx*cw+((f.fyMo-.5)/12)*cw;
+}
+function seShortDate(ym){
+  if(!ym) return '';
+  var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var p=ym.split('-'); return M[parseInt(p[1])-1]+"\u00a0'"+p[0].slice(2);
+}
+function seSymSVG(key,cx,cy,r){
+  var def=MS[key]||{},c=def.color||'#999',s=def.shape||'circle';
+  if(s==='star')     return seStarSVG(cx,cy,r,c);
+  if(s==='triangle') return seTriSVG(cx,cy,r,c);
+  if(s==='diamond')  return seDiamondSVG(cx,cy,r,c);
+  return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+c+'" stroke="white" stroke-width="'+(r*.18)+'"/>';
+}
+function seStarSVG(cx,cy,r,color){
+  var pts='',o=r,i=r*.42;
+  for(var k=0;k<10;k++){var a=(k*Math.PI/5)-Math.PI/2,rad=k%2?i:o; pts+=(k?'L':'M')+((cx+rad*Math.cos(a)).toFixed(2))+','+(cy+rad*Math.sin(a)).toFixed(2);}
+  return '<path d="'+pts+'Z" fill="'+color+'" stroke="white" stroke-width="'+(r*.14)+'"/>';
+}
+function seTriSVG(cx,cy,r,color){
+  var h=r*1.12;
+  return '<polygon points="'+cx+','+(cy-h)+' '+(cx-r)+','+(cy+h*.5)+' '+(cx+r)+','+(cy+h*.5)+'" fill="'+color+'" stroke="white" stroke-width="'+(r*.14)+'"/>';
+}
+function seDiamondSVG(cx,cy,r,color){
+  return '<polygon points="'+cx+','+(cy-r)+' '+(cx+r)+','+cy+' '+cx+','+(cy+r)+' '+(cx-r)+','+cy+'" fill="'+color+'" stroke="white" stroke-width="'+(r*.14)+'"/>';
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   PPTX EXPORT — PptxGenJS  (all shapes are real editable OOXML objects)
+   Slide layout: LAYOUT_4x3  = 10" × 7.5"
+   Columns: 2" label  +  (8"/numFY) per FY column
+═════════════════════════════════════════════════════════════════ */
+window.sePptxExport = function() {
+  if(typeof PptxGenJS==='undefined'){ toast('PptxGenJS not loaded \u2014 check network'); return; }
+  var vis=seSlides.filter(function(s){return !s.hidden;});
+  if(!vis.length){ toast('No visible slides to export'); return; }
+  toast('Building PPTX\u2026');
+  setTimeout(function(){
+    try{
+      var pptx=new PptxGenJS();
+      pptx.layout='LAYOUT_4x3';
+      pptx.author='S4 Ledger \u2014 Program Schedule Tool';
+      pptx.title='Program Schedule Export';
+      vis.forEach(function(slide){
+        if(slide.type==='acq')    sePptxAcqSlide(pptx,slide);
+        else if(slide.type==='custom') sePptxCustomSlide(pptx,slide);
+        else sePptxProgSlide(pptx,slide);
+      });
+      pptx.writeFile({fileName:'program-schedule-'+new Date().toISOString().slice(0,10)+'.pptx'});
+      toast('PPTX exported \u2014 '+vis.length+' slide'+(vis.length===1?'':'s'));
+    }catch(err){
+      console.error('PPTX export error:',err);
+      alert('PPTX export failed: '+err.message);
+    }
+  },60);
+};
+
+/* shared geometry constants (inches, LAYOUT_4x3 = 10"×7.5") */
+function sePptxGeo(slide,vsCount){
+  var W=10,H=7.5,LBL=2.0,nFY=Math.max(slide.fyEnd-slide.fyStart+1,1),COL=(W-LBL)/nFY;
+  var TH=0.62,HH=0.3,LH=0.56,ROW=(H-TH-HH-LH)/Math.max(vsCount,1);
+  var SZ=Math.min(ROW*.42,.22);
+  return {W:W,H:H,LBL:LBL,nFY:nFY,COL:COL,TH:TH,HH:HH,LH:LH,ROW:ROW,SZ:SZ};
+}
+function sePptxX(ym,fys,lbl,colW){
+  if(!ym) return -1;
+  var f=toFY(ym); if(!f) return -1;
+  var idx=f.fy-fys; if(idx<0) return -1;
+  return lbl+idx*colW+((f.fyMo-.5)/12)*colW;
+}
+function sePptxShape(sld,pptx,msDef,x,y,sz){
+  var mc=msDef.color.replace('#','');
+  var opts={x:x,y:y,w:sz,h:sz,fill:{color:mc},line:{color:'FFFFFF',width:.5}};
+  if(msDef.shape==='star')     sld.addShape(pptx.ShapeType.star5Point,opts);
+  else if(msDef.shape==='triangle') sld.addShape(pptx.ShapeType.triangle,opts);
+  else if(msDef.shape==='diamond')  sld.addShape(pptx.ShapeType.diamond, opts);
+  else                               sld.addShape(pptx.ShapeType.ellipse, opts);
+}
+
+function sePptxProgSlide(pptx,slide){
+  var sld=pptx.addSlide();
+  var vs=slide.vesselType?vessels.filter(function(v){return v.type===slide.vesselType;}):[],
+      g=sePptxGeo(slide,vs.length);
+  /* title */
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:g.W,h:g.TH,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
+  sld.addText(slide.title,{x:.12,y:0,w:g.W-.24,h:g.TH,align:'center',valign:'middle',fontSize:22,bold:true,color:'FFFFFF',fontFace:'Calibri'});
+  if(slide.subtitle) sld.addText(slide.subtitle,{x:.5,y:g.TH*.65,w:g.W-1,h:g.TH*.35,align:'center',fontSize:10,color:'BBCCDD',fontFace:'Calibri'});
+  /* FY header */
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.W,h:g.HH,fill:{color:'243C5F'},line:{color:'243C5F'}});
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.LBL,h:g.HH,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
+  sld.addText('VESSEL',{x:0,y:g.TH,w:g.LBL,h:g.HH,align:'center',valign:'middle',fontSize:7.5,bold:true,color:'99AABB',fontFace:'Calibri'});
+  for(var fj=0;fj<g.nFY;fj++)
+    sld.addText('FY'+String(slide.fyStart+fj).slice(2),{x:g.LBL+fj*g.COL,y:g.TH,w:g.COL,h:g.HH,align:'center',valign:'middle',fontSize:9,bold:true,color:'FFFFFF',fontFace:'Calibri'});
+  /* rows */
+  vs.forEach(function(v,ri){
+    var ry=g.TH+g.HH+ri*g.ROW, rf=ri%2?'ECF0F8':'FFFFFF', lf=ri%2?'E0E6F2':'F3F5FB';
+    var fc=v.fleet==='USFF'?'34C759':'007AFF';
+    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:g.W,h:g.ROW,fill:{color:rf},line:{color:'DDDDE8',width:.25}});
+    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:g.LBL,h:g.ROW,fill:{color:lf},line:{color:'DDDDE8',width:.25}});
+    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:.04,h:g.ROW,fill:{color:fc},line:{color:fc}});
+    sld.addText(v.designation||'',{x:.12,y:ry,w:g.LBL-.7,h:g.ROW,valign:'middle',fontSize:9,bold:true,color:'1C3A5F',fontFace:'Calibri'});
+    sld.addText(v.fleet||'',{x:g.LBL-.65,y:ry,w:.6,h:g.ROW,align:'right',valign:'middle',fontSize:7,bold:true,color:fc,fontFace:'Calibri'});
+    /* span bar */
+    var caX=sePptxX(v.ms&&v.ms.CA,slide.fyStart,g.LBL,g.COL),
+        delX=sePptxX(v.ms&&v.ms.DEL,slide.fyStart,g.LBL,g.COL);
+    if(caX>0&&delX>caX)
+      sld.addShape(pptx.ShapeType.rect,{x:caX,y:ry+g.ROW*.42,w:delX-caX,h:g.ROW*.16,fill:{color:'B8CCE0',transparency:45},line:{color:'B8CCE0',transparency:45}});
+    /* milestone shapes */
+    Object.keys(MS).forEach(function(key){
+      var d=v.ms&&v.ms[key]; if(!d) return;
+      var mx=sePptxX(d,slide.fyStart,g.LBL,g.COL); if(mx<0) return;
+      sePptxShape(sld,pptx,MS[key],mx-g.SZ/2,ry+g.ROW/2-g.SZ/2,g.SZ);
+      sld.addText(seShortDate(d),{x:mx-g.SZ/2-.04,y:ry+g.ROW/2+g.SZ/2+.01,w:g.SZ+.08,h:.11,align:'center',fontSize:5,color:'6A7A90',fontFace:'Calibri'});
+    });
+  });
+  /* legend */
+  var ly=g.H-g.LH, liSz=.12, lx=.1;
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:ly,w:g.W,h:g.LH,fill:{color:'E8ECF5'},line:{color:'C4CAD6',width:.5}});
+  Object.keys(MS).forEach(function(key){
+    var mdef=MS[key];
+    sePptxShape(sld,pptx,mdef,lx,ly+(g.LH-liSz)/2,liSz);
+    sld.addText(mdef.label,{x:lx+liSz+.04,y:ly,w:1.35,h:g.LH,valign:'middle',fontSize:6,color:'5A6A80',fontFace:'Calibri'});
+    lx+=1.55;
+  });
+}
+
+function sePptxAcqSlide(pptx,slide){
+  var sld=pptx.addSlide();
+  var vs=vessels, g=sePptxGeo(slide,vs.length), liSz=.12;
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:g.W,h:g.TH,fill:{color:'2D1B5E'},line:{color:'2D1B5E'}});
+  sld.addText(slide.title,{x:.12,y:0,w:g.W-.24,h:g.TH,align:'center',valign:'middle',fontSize:22,bold:true,color:'FFFFFF',fontFace:'Calibri'});
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.W,h:g.HH,fill:{color:'3D2870'},line:{color:'3D2870'}});
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:g.TH,w:g.LBL,h:g.HH,fill:{color:'2D1B5E'},line:{color:'2D1B5E'}});
+  sld.addText('VESSEL',{x:0,y:g.TH,w:g.LBL,h:g.HH,align:'center',valign:'middle',fontSize:7.5,bold:true,color:'99AABB',fontFace:'Calibri'});
+  for(var fj=0;fj<g.nFY;fj++)
+    sld.addText('FY'+String(slide.fyStart+fj).slice(2),{x:g.LBL+fj*g.COL,y:g.TH,w:g.COL,h:g.HH,align:'center',valign:'middle',fontSize:9,bold:true,color:'FFFFFF',fontFace:'Calibri'});
+  vs.forEach(function(v,ri){
+    var ry=g.TH+g.HH+ri*g.ROW, fc=v.fleet==='USFF'?'34C759':'007AFF';
+    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:g.W,h:g.ROW,fill:{color:ri%2?'F0ECF8':'FFFFFF'},line:{color:'DDD8E8',width:.25}});
+    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:g.LBL,h:g.ROW,fill:{color:ri%2?'E8E0F4':'F5F2FB'},line:{color:'DDD8E8',width:.25}});
+    sld.addShape(pptx.ShapeType.rect,{x:0,y:ry,w:.04,h:g.ROW,fill:{color:fc},line:{color:fc}});
+    sld.addText(v.designation||'',{x:.12,y:ry,w:g.LBL-.7,h:g.ROW,valign:'middle',fontSize:9,bold:true,color:'2D1B5E',fontFace:'Calibri'});
+    if(v.acqEvents) Object.keys(ACQMS).forEach(function(key){
+      var d=v.acqEvents[key]; if(!d) return;
+      var mx=sePptxX(d,slide.fyStart,g.LBL,g.COL); if(mx<0) return;
+      var ac=ACQMS[key].color.replace('#','');
+      sld.addShape(pptx.ShapeType.diamond,{x:mx-g.SZ/2,y:ry+g.ROW/2-g.SZ/2,w:g.SZ,h:g.SZ,fill:{color:ac},line:{color:'FFFFFF',width:.5}});
+      sld.addText(key,{x:mx-g.SZ-.04,y:ry+g.ROW/2-g.SZ/2-g.SZ*.8,w:g.SZ*2+.08,h:.1,align:'center',fontSize:5.5,bold:true,color:ac,fontFace:'Calibri'});
+    });
+  });
+  var ly=g.H-g.LH, lx=.1;
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:ly,w:g.W,h:g.LH,fill:{color:'ECE8F4'},line:{color:'C8C0D8',width:.5}});
+  Object.keys(ACQMS).forEach(function(key){
+    var ac=ACQMS[key].color.replace('#','');
+    sld.addShape(pptx.ShapeType.diamond,{x:lx,y:ly+(g.LH-liSz)/2,w:liSz,h:liSz,fill:{color:ac},line:{color:'FFFFFF',width:.3}});
+    sld.addText(key+': '+ACQMS[key].label,{x:lx+liSz+.04,y:ly,w:1.85,h:g.LH,valign:'middle',fontSize:6,color:'5A6A80',fontFace:'Calibri'});
+    lx+=1.9;
+  });
+}
+
+function sePptxCustomSlide(pptx,slide){
+  var sld=pptx.addSlide();
+  sld.addShape(pptx.ShapeType.rect,{x:0,y:0,w:10,h:.65,fill:{color:'1C3A5F'},line:{color:'1C3A5F'}});
+  sld.addText(slide.title,{x:.12,y:0,w:9.76,h:.65,align:'center',valign:'middle',fontSize:22,bold:true,color:'FFFFFF',fontFace:'Calibri'});
+  if(slide.subtitle) sld.addText(slide.subtitle,{x:.5,y:.7,w:9,h:.4,align:'center',fontSize:12,color:'666677',fontFace:'Calibri'});
+  /* blank content area — editable in PowerPoint */
+  sld.addText('(blank — edit in PowerPoint)',{x:.5,y:1.4,w:9,h:5.6,align:'center',valign:'middle',fontSize:14,color:'B0BAC8',fontFace:'Calibri',italic:true});
 }
 
 /* ═════════════════════════════════════════════════════════════════
