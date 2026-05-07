@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<!-- S4 Program Schedule Tool v2.0.1 — 2026-05-07
-     UNCLASSIFIED // DEMO only — generic data, not operational schedule -->
+<!-- S4 Program Schedule Tool v2.1.0 — 2026-05-07
+     UNCLASSIFIED // DEMO only — generic data, not operational schedule
+     v2.1.0: PowerPoint-style narrow QAT header, Save (Ctrl+S),
+             right-click element context menu, New Slide moved to Home tab. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -539,13 +541,24 @@ td.ms-done .di::after { content:' ✓'; }
   box-shadow:0 28px 80px rgba(0,0,0,.65),0 4px 20px rgba(0,0,0,.3);
 }
 #se-header {
-  display:flex; align-items:center; gap:6px; flex-wrap:wrap;
-  padding:7px 14px; border-bottom:1px solid var(--border);
-  background:var(--surface-2); flex-shrink:0; min-height:44px;
+  display:flex; align-items:center; gap:6px; flex-wrap:nowrap;
+  padding:4px 10px; border-bottom:1px solid var(--border);
+  background:linear-gradient(to bottom, #f3f2f1, #ebe9e7); flex-shrink:0; min-height:30px; max-height:34px;
 }
-#se-header h3 { font-size:13px; font-weight:700; white-space:nowrap; }
+#se-header h3 { font-size:12px; font-weight:600; white-space:nowrap; color:#323130; margin:0; }
 #se-slide-counter { font-size:11px; color:var(--steel); min-width:44px; text-align:center; white-space:nowrap; }
-.se-hdr-sep { width:1px; height:18px; background:var(--border); flex-shrink:0; }
+.se-hdr-sep { width:1px; height:18px; background:#c8c6c4; flex-shrink:0; }
+.se-qat-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; background:transparent; border:1px solid transparent;
+  border-radius:2px; cursor:pointer; color:#323130; font-size:12px;
+  transition:background .08s,border-color .08s; padding:0;
+}
+.se-qat-btn:hover:not(:disabled) { background:rgba(0,0,0,.06); border-color:#c8c6c4; }
+.se-qat-btn:disabled { opacity:.38; cursor:not-allowed; }
+#se-save-status { font-size:10px; color:#107c10; white-space:nowrap; padding:0 6px; font-weight:500; }
+#se-save-status.saving { color:#605e5c; }
+#se-save-status.dirty { color:#c19c00; }
 #se-body { display:flex; flex:1; overflow:hidden; }
 #se-panel {
   width:180px; min-width:140px; border-right:1px solid var(--border);
@@ -1333,44 +1346,24 @@ td.ms-done .di::after { content:' ✓'; }
 <!-- ══ SLIDE EDITOR OVERLAY ══════════════════════════════════════════ -->
 <div id="slide-editor-overlay">
   <div id="slide-editor">
-    <!-- Header toolbar -->
+    <!-- PowerPoint-style title bar with Quick Access Toolbar -->
     <div id="se-header">
       <i class="fas fa-film" style="color:var(--accent);font-size:12px"></i>
       <h3>Slide Editor</h3>
+      <div class="se-hdr-sep"></div>
+      <!-- Quick Access Toolbar (icon-only, like PowerPoint) -->
+      <button class="se-qat-btn" onclick="seSaveNow()" title="Save (Ctrl+S)"><i class="fas fa-save"></i></button>
+      <button class="se-qat-btn" onclick="seUndo()" title="Undo (Ctrl+Z)"><i class="fas fa-undo"></i></button>
+      <button class="se-qat-btn" onclick="seRedo()" title="Redo (Ctrl+Y)"><i class="fas fa-redo"></i></button>
+      <div class="se-hdr-sep"></div>
+      <button class="se-qat-btn" id="se-prev-btn" onclick="seNavPrev()" title="Previous slide"><i class="fas fa-chevron-left"></i></button>
+      <button class="se-qat-btn" id="se-next-btn" onclick="seNavNext()" title="Next slide"><i class="fas fa-chevron-right"></i></button>
       <span id="se-slide-counter">— / —</span>
-      <div class="se-hdr-sep"></div>
-      <div id="se-add-wrap">
-        <button class="abtn btn-o" onclick="seOpenTemplateModal()" style="font-size:11px;padding:4px 10px">
-          <i class="fas fa-plus fa-xs"></i> New Slide
-        </button>
-      </div>
-      <div class="se-hdr-sep"></div>
-      <button class="abtn btn-o" id="se-prev-btn" onclick="seNavPrev()" style="font-size:11px;padding:4px 8px" title="Previous slide (&#8592;)">
-        <i class="fas fa-chevron-left fa-xs"></i>
-      </button>
-      <button class="abtn btn-o" id="se-next-btn" onclick="seNavNext()" style="font-size:11px;padding:4px 8px" title="Next slide (&#8594;)">
-        <i class="fas fa-chevron-right fa-xs"></i>
-      </button>
+      <span id="se-save-status">All changes saved</span>
       <div style="flex:1"></div>
-      <!-- Undo / Redo -->
-      <button class="abtn btn-o" onclick="seUndo()" title="Undo (Ctrl+Z)" style="font-size:11px;padding:4px 8px">
-        <i class="fas fa-undo fa-xs"></i> Undo
-      </button>
-      <button class="abtn btn-o" onclick="seRedo()" title="Redo (Ctrl+Y)" style="font-size:11px;padding:4px 8px">
-        <i class="fas fa-redo fa-xs"></i> Redo
-      </button>
+      <button class="se-qat-btn" onclick="sePptxExport()" title="Export to PowerPoint (.pptx)" style="color:#c0392b"><i class="fas fa-file-powerpoint"></i></button>
       <div class="se-hdr-sep"></div>
-      <!-- Insert Picture -->
-      <button class="abtn btn-o" onclick="seAddImage()" title="Insert Picture" style="font-size:11px;padding:4px 10px">
-        <i class="fas fa-image fa-xs"></i> Insert Picture
-      </button>
-      <div class="se-hdr-sep"></div>
-      <button class="abtn" style="background:#c0392b;color:white;border-color:#a93226;font-size:11px;padding:4px 12px;gap:5px" onclick="sePptxExport()" title="Export visible slides to PowerPoint (.pptx)">
-        <i class="fas fa-file-powerpoint fa-xs"></i> Export PPTX
-      </button>
-      <button class="abtn btn-o" onclick="closeSlideEditor()" style="font-size:11px;padding:4px 8px;color:var(--steel)" title="Close">
-        <i class="fas fa-times"></i>
-      </button>
+      <button class="se-qat-btn" onclick="closeSlideEditor()" title="Close" style="color:#605e5c"><i class="fas fa-times"></i></button>
     </div>
     <!-- ══ PowerPoint Ribbon (tabbed) ══════════════════════════════ -->
     <div id="se-format-bar">
@@ -1392,6 +1385,20 @@ td.ms-done .di::after { content:' ✓'; }
 
       <!-- HOME TAB -->
       <div id="se-ribbon-home" class="se-ribbon-panel active">
+        <!-- Slides (PowerPoint convention: New Slide first in Home tab) -->
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row" style="flex-direction:column;gap:2px">
+            <button class="se-rib-xl" onclick="seOpenTemplateModal()" title="Add a new slide" style="width:62px;min-height:54px">
+              <i class="fas fa-plus-square"></i>
+              <span>New<br>Slide</span>
+            </button>
+          </div>
+          <div class="se-ribbon-grp-row" style="margin-top:3px">
+            <button class="se-fmt-btn" onclick="seDuplicateActiveSlide()" title="Duplicate this slide"><i class="fas fa-copy fa-xs"></i> Duplicate</button>
+            <button class="se-fmt-btn danger" onclick="seDeleteActiveSlide()" title="Delete this slide"><i class="fas fa-trash fa-xs"></i> Delete</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Slides</span>
+        </div>
         <!-- Clipboard -->
         <div class="se-ribbon-grp">
           <div class="se-ribbon-grp-row">
@@ -2065,6 +2072,7 @@ td.ms-done .di::after { content:' ✓'; }
   </div>
 </div>
 <!-- Slide editor right-click context menu -->
+<!-- Slide thumbnail right-click menu -->
 <div id="se-ctx-menu">
   <div class="se-ctx-item" onclick="seEditTitleCtx()"><i class="fas fa-pencil fa-xs"></i> Edit Title</div>
   <div class="se-ctx-item" onclick="seEditSubtitleCtx()"><i class="fas fa-font fa-xs"></i> Edit Subtitle</div>
@@ -2078,6 +2086,25 @@ td.ms-done .di::after { content:' ✓'; }
   </div>
   <div class="se-ctx-sep"></div>
   <div class="se-ctx-item danger" onclick="seDeleteSlide(seCtxIdx)"><i class="fas fa-trash fa-xs"></i> Delete Slide</div>
+</div>
+
+<!-- Canvas element right-click menu (PowerPoint-style) -->
+<div id="se-el-ctx-menu" style="display:none;position:fixed;z-index:9700;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:4px 0;min-width:200px;box-shadow:0 6px 24px rgba(0,0,0,.14),0 2px 8px rgba(0,0,0,.08);">
+  <div class="se-ctx-item" onclick="seCutEl();seHideElCtx()"><i class="fas fa-cut fa-xs"></i> Cut <span style="margin-left:auto;color:#888;font-size:10px">Ctrl+X</span></div>
+  <div class="se-ctx-item" onclick="seCopyEl();seHideElCtx()"><i class="fas fa-copy fa-xs"></i> Copy <span style="margin-left:auto;color:#888;font-size:10px">Ctrl+C</span></div>
+  <div class="se-ctx-item" onclick="sePasteEl();seHideElCtx()"><i class="fas fa-paste fa-xs"></i> Paste <span style="margin-left:auto;color:#888;font-size:10px">Ctrl+V</span></div>
+  <div class="se-ctx-item" onclick="seElDuplicate();seHideElCtx()"><i class="fas fa-clone fa-xs"></i> Duplicate <span style="margin-left:auto;color:#888;font-size:10px">Ctrl+D</span></div>
+  <div class="se-ctx-sep"></div>
+  <div class="se-ctx-item" onclick="seZBringToFront();seHideElCtx()"><i class="fas fa-angle-double-up fa-xs"></i> Bring to Front</div>
+  <div class="se-ctx-item" onclick="seZSendToBack();seHideElCtx()"><i class="fas fa-angle-double-down fa-xs"></i> Send to Back</div>
+  <div class="se-ctx-item" onclick="seZBringForward();seHideElCtx()"><i class="fas fa-angle-up fa-xs"></i> Bring Forward</div>
+  <div class="se-ctx-item" onclick="seZSendBackward();seHideElCtx()"><i class="fas fa-angle-down fa-xs"></i> Send Backward</div>
+  <div class="se-ctx-sep"></div>
+  <div class="se-ctx-item" id="se-el-ctx-edittext" onclick="seElCtxEditText();seHideElCtx()"><i class="fas fa-i-cursor fa-xs"></i> Edit Text</div>
+  <div class="se-ctx-item" onclick="seShowTab('arrange');seHideElCtx()"><i class="fas fa-sliders-h fa-xs"></i> Format Shape…</div>
+  <div class="se-ctx-item" onclick="seToggleLock();seHideElCtx()"><i class="fas fa-lock fa-xs"></i> <span id="se-el-ctx-locklbl">Lock</span></div>
+  <div class="se-ctx-sep"></div>
+  <div class="se-ctx-item danger" onclick="seElDelete();seHideElCtx()"><i class="fas fa-trash fa-xs"></i> Delete <span style="margin-left:auto;color:#888;font-size:10px">Del</span></div>
 </div>
 
 <!-- ══ SUPABASE ═══════════════════════════════════════════════════════ -->
@@ -5149,6 +5176,15 @@ document.addEventListener('keydown', function(e) {
     else if (e.key==='F5' && e.shiftKey) { e.preventDefault(); seSlideShowStart(false); }
   }
 });
+/* Ctrl+S / Cmd+S → Save (only when slide editor is open) */
+document.addEventListener('keydown', function(e) {
+  var ed = document.getElementById('se-editor');
+  if (!ed || ed.style.display === 'none') return;
+  if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    if (window.seSaveNow) window.seSaveNow();
+  }
+});
 
 /* ══════════════════════════════════════════════════════════════
    REVIEW TAB
@@ -6078,6 +6114,12 @@ function seRenderElDiv(el, wrap, scaleX, scaleY, cW, cH) {
   if (el.editable) div.dataset.editable = '1';
   if (el.movable !== false) div.dataset.movable = '1';
 
+  /* PowerPoint-style right-click context menu on every element */
+  div.oncontextmenu = function(ev) {
+    if (window.seShowElCtx) window.seShowElCtx(ev, el.id);
+    return false;
+  };
+
   div.style.left   = (el.x * scaleX) + 'px';
   div.style.top    = (el.y * scaleY) + 'px';
   div.style.width  = (el.w * scaleX) + 'px';
@@ -6508,6 +6550,93 @@ window.seElToggleLock = window.seToggleLock;
 /* Safety alias: seRenderCanvas was mis-named in several places */
 window.seRenderCanvas = function() { seRenderPreview(); seRenderPanel(); };
 
+/* ── Z-order aliases (PowerPoint-style names used by context menu) ── */
+window.seZBringToFront = function() { window.seElBringToFront && window.seElBringToFront(); };
+window.seZSendToBack   = function() { window.seElSendToBack   && window.seElSendToBack();   };
+window.seZBringForward = function() { window.seElBringForward && window.seElBringForward(); };
+window.seZSendBackward = function() { window.seElSendBack     && window.seElSendBack();     };
+
+/* ── Save (Ctrl+S) ── */
+window.seSaveNow = function() {
+  try {
+    var snap = { slides: seSlides, savedAt: new Date().toISOString() };
+    localStorage.setItem('s4_se_slides', JSON.stringify(snap));
+    var st = document.getElementById('se-save-status');
+    if (st) { st.textContent = 'All changes saved'; st.className = ''; }
+    if (typeof toast === 'function') toast('Slides saved');
+  } catch(e) { if (typeof toast === 'function') toast('Save failed: '+e.message); }
+};
+window.seMarkDirty = function() {
+  var st = document.getElementById('se-save-status');
+  if (st) { st.textContent = 'Unsaved changes'; st.className = 'dirty'; }
+};
+
+/* ── Active-slide actions (PowerPoint Home > Slides group) ── */
+window.seDuplicateActiveSlide = function() {
+  if (typeof seDuplicateSlide === 'function') seDuplicateSlide(seActive);
+};
+window.seDeleteActiveSlide = function() {
+  if (typeof seDeleteSlide === 'function') {
+    if (confirm('Delete this slide? This cannot be undone (use Ctrl+Z).')) seDeleteSlide(seActive);
+  }
+};
+
+/* ── Element right-click context menu ── */
+window.seHideElCtx = function() {
+  var m = document.getElementById('se-el-ctx-menu');
+  if (m) m.style.display = 'none';
+};
+window.seShowElCtx = function(ev, elId) {
+  ev.preventDefault(); ev.stopPropagation();
+  /* Close slide thumbnail menu if open */
+  var thumbMenu = document.getElementById('se-ctx-menu');
+  if (thumbMenu) thumbMenu.style.display = 'none';
+  /* Select the element first */
+  if (elId) {
+    seSelectedId = elId;
+    seRenderPreview();
+    seUpdateFormatBar();
+  }
+  var m = document.getElementById('se-el-ctx-menu');
+  if (!m) return;
+  /* Update Lock label and Edit Text visibility */
+  var slide = seSlides[seActive];
+  var el = slide && slide.elements && slide.elements.find(function(e){return e.id===seSelectedId;});
+  var lockLbl = document.getElementById('se-el-ctx-locklbl');
+  if (lockLbl && el) lockLbl.textContent = el.locked ? 'Unlock' : 'Lock';
+  var editTxt = document.getElementById('se-el-ctx-edittext');
+  if (editTxt) editTxt.style.display = (el && (el.type==='text' || el.editable)) ? '' : 'none';
+  m.style.display = 'block';
+  m.style.left = ev.clientX + 'px';
+  m.style.top  = ev.clientY + 'px';
+  /* Clamp to viewport */
+  var r = m.getBoundingClientRect();
+  if (r.right > window.innerWidth)  m.style.left = (window.innerWidth - r.width - 6) + 'px';
+  if (r.bottom > window.innerHeight) m.style.top  = (window.innerHeight - r.height - 6) + 'px';
+};
+window.seElCtxEditText = function() {
+  var slide = seSlides[seActive]; if (!slide) return;
+  var el = slide.elements.find(function(e){return e.id===seSelectedId;});
+  if (!el) return;
+  var elDiv = document.querySelector('.se-el[data-id="'+el.id+'"]');
+  if (elDiv) {
+    elDiv.setAttribute('contenteditable','true');
+    elDiv.focus();
+    document.execCommand && document.execCommand('selectAll', false, null);
+  }
+};
+/* Hide element context menu when clicking elsewhere */
+document.addEventListener('click', function(ev) {
+  var m = document.getElementById('se-el-ctx-menu');
+  if (m && m.style.display === 'block' && !m.contains(ev.target)) m.style.display = 'none';
+});
+document.addEventListener('contextmenu', function(ev) {
+  /* If clicking outside any se-el or canvas, hide both menus */
+  if (!ev.target.closest('.se-el') && !ev.target.closest('.se-thumb')) {
+    window.seHideElCtx && window.seHideElCtx();
+  }
+});
+
 /* ═══════════════════════════════════════════════════════════════════
    UNDO / REDO HISTORY
    seHistPush() snapshots state BEFORE a mutation.
@@ -6522,6 +6651,7 @@ function seHistPush() {
   seHistory.push(snap);
   if (seHistory.length > SE_HIST_MAX) seHistory.shift();
   else seHistPos++;
+  if (window.seMarkDirty) window.seMarkDirty();
 }
 
 window.seUndo = function() {
