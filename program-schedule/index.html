@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<!-- S4 Program Schedule Tool v2.2.0 — 2026-05-07
+<!-- S4 Program Schedule Tool v2.2.1 — 2026-05-07
      UNCLASSIFIED // DEMO only — generic data, not operational schedule
-     v2.2.0: Table Add Row / Add Column / Delete Row / Delete Column
-             (ribbon Insert tab + element right-click menu).
-     v2.1.0: PowerPoint-style narrow QAT header, Save (Ctrl+S),
-             right-click element context menu, New Slide moved to Home tab. -->
+     v2.2.1: Fix slides 2-8 showing as blank — seEnsureElements now treats
+             empty array (length 0) as needing initialization, not just undefined.
+     v2.2.0: Table Add Row / Add Column / Delete Row / Delete Column. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -5811,7 +5810,8 @@ function seElId() { return 'el-'+Date.now()+'-'+Math.floor(Math.random()*9999); 
 
 /* Ensure every slide has an elements array with the default layout */
 function seEnsureElements(slide) {
-  if (!slide.elements) {
+  if (!slide) return;
+  if (!slide.elements || slide.elements.length === 0) {
     slide.elements = (slide.type === 'oneSlide')
       ? seOneSlideDefaultElements(slide)
       : seDefaultElements(slide);
