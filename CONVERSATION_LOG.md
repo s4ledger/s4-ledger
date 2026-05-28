@@ -1,5 +1,135 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 35 — Dark Mode Removal & Start My Day Fix (Commit 1f1a6c4)
+## Last Updated: Session 36 — Deliverables Tracker v2 Rebuild (2026-05-28)
+
+---
+
+## Session 36 — Deliverables Tracker v2 Rebuild (in progress)
+
+**Goal:** Rebuild the Deliverables Tracker tool from scratch, modeled on the
+`Analysis of CSY DRLs (5.7.2026).xlsx` workbook supplied by the user. Each of
+the workbook's 8 tabs becomes a feature inside the new tool, accessed via a
+left-side feature nav.
+
+**Locked decisions** (see `/memories/session/deliverables-tracker-v2.md`):
+- Target: React tool in `S4-DemoApplication/src/components/DeliverablesTracker.tsx`.
+- v1 archived (not deleted) to `S4-DemoApplication/archive/deliverables-tracker-v1/`.
+- IDE auto-pull via `nsercIdeService` preserved.
+- Terminology: generic. "Shipbuilder" (not CSY/Conrad), "Vessel Class A" (not
+  YRBM), Hulls 60–67, demo shipbuilder = "Acme Shipyard". No "CDRL" — use "DRL".
+- In-tool Activity Log persisted to `localStorage` (Supabase later).
+- Logging rule: every step is appended to CONVERSATION_LOG, CHANGE_LOG, and the
+  session memory file as work progresses.
+
+**Feature map (sheet → feature):**
+1. CSY Overdue → Deliverables Tracker (main grid, default view)
+2. Executive Brief → Executive Brief
+3. CSY Action Items → Action Items
+4. Analysis Dashboard → Analytics
+5. Historical Archive → Weekly Archive
+6. Historical Status → Prior Week Snapshot
+7. Deliverable Submittal Schedule → Submittal Schedule
+8. USN Submittals (Raw) → Submittals Library
+
+**Step 1 — COMPLETE (2026-05-28):** Archived v1.
+- Copied `S4-DemoApplication/src/components/DeliverablesTracker.tsx` (2,297 lines)
+  → `S4-DemoApplication/archive/deliverables-tracker-v1/DeliverablesTracker.tsx`.
+- Added README in archive folder explaining purpose and that it is outside the
+  build graph.
+- Original file remains in place to keep the app building until the v2 shell
+  replaces it in Step 3.
+- Created session memory file: `/memories/session/deliverables-tracker-v2.md`.
+- Updated CONVERSATION_LOG.md (this entry) and CHANGE_LOG.md.
+
+**Step 2 — COMPLETE (2026-05-28):** Demo data + types.
+- Created `S4-DemoApplication/src/types/deliverablesV2.ts` with v2-only types
+  (FeatureKey/FeatureDef, KPI, EscalationItem, ExecutiveBrief, ActionItem,
+  AnalyticsMetric/SeriesPoint/Snapshot, WeeklySnapshot, RowDiff,
+  SubmittalScheduleEntry, RawSubmittal, ActivityLogEntry). Main grid keeps
+  using the existing `DRLRow` from `src/types.ts` for App.tsx compatibility.
+- Created `S4-DemoApplication/src/data/deliverablesDemoData.ts` with seed data
+  for all eight features: 8 DRL rows, executive brief (totals/KPIs/escalations/
+  narrative/actions), 5 action items, analytics snapshot (7 weekly points + 4
+  top offenders), 7-week archive, 14-entry submittal schedule, 16-entry
+  submittals library. All terms genericized (Acme Shipyard, Vessel Class A,
+  Hulls 60–67, Program Office).
+- Pylance/TS: no errors.
+- Added design constraint to session memory: Apple.com / Steve Jobs aesthetic,
+  LIGHT MODE ONLY — no `dark:` Tailwind variants anywhere in v2.
+
+**Next steps:** v2 shell + left nav + activity log → feature views 1–8, one at
+a time with user review between each.
+
+**Step 3 — COMPLETE (2026-05-28):** v2 shell shipped.
+- Deleted v1 from `src/components/DeliverablesTracker.tsx` (v1 still preserved
+  in `archive/deliverables-tracker-v1/`).
+- New shell (~580 LOC) with:
+  - Apple aesthetic: white background, system font stack (-apple-system / SF),
+    `#0071e3` accent, `#e5e5e7` hairline borders, generous spacing,
+    rounded-xl/2xl/3xl. Light mode only — no `dark:` variants.
+  - Sticky 64px top bar: tool brand, NSERC IDE sync chip (live status dot,
+    last-sync relative time, click to manually re-pull), Activity toggle with
+    unread-style count badge, Portfolio exit button.
+  - Left rail (256px) with the 8-feature nav (icon tile + label +
+    description, active-state accent fill).
+  - Feature router renders a placeholder card for every view with live
+    demo-data counts ("8 deliverables loaded", "5 action items", etc.) —
+    each placeholder is replaced in Steps 4–11.
+  - Slide-out 384px Activity Log panel (right side), live-subscribed to
+    `services/activityLog.ts` (localStorage, 500-entry cap, color-coded
+    by event kind, Clear button).
+  - IDE sync preserved via `realSyncPipeline` on mount + every 5 min,
+    `useProgramSchedule()` kept alive for downstream views.
+- Props signature unchanged (App.tsx untouched).
+- Created `src/services/activityLog.ts` — tiny pub/sub log API
+  (`logActivity`, `getActivityLog`, `subscribe`, `clearActivityLog`).
+- `tsc --noEmit` passes clean across the workspace.
+
+**Step 4 — COMPLETE (2026-05-28):** Tracker view (main grid).
+- New file `src/components/deliverables/TrackerView.tsx`. Modeled on the
+  spreadsheet's "CSY Overdue" tab.
+- 4 status tiles at the top (Overdue / Need Clarification / Submitted-Received
+  / Not-Yet-Due) with live counts.
+- Filter bar: search input (DI number, title, notes) + 5 filter chips
+  (All / Overdue / Clarification / Received / Pending) + accent "Snapshot
+  This Week" button.
+- Apple-style table: status color rail on left of every row, scope, contract
+  due, submittal guidance, actual submission, received, days to review,
+  status chip, expand chevron. Truncation respected.
+- Click row → expand: full Notes pane + Anchor / Verify / Re-seal action
+  pills wired to v1's onAnchor / onVerify / onReseal props. Every action
+  logged.
+- Snapshot button computes week-ending Friday, builds a `WeeklySnapshot`,
+  updates shell state, logs activity. Snapshots store is in-memory in the
+  shell (seeded with DEMO_ARCHIVE); Weekly Archive view in Step 8 reads from
+  the same store.
+- Shell updated to forward `anchors / onAnchor / onVerify / onReseal /
+  snapshots / handleSnapshot` into `FeatureView`. Extracted reusable
+  `PageHeader` component.
+- `tsc --noEmit` passes clean.
+
+**Steps 5–11 — COMPLETE (2026-05-28):** Remaining seven feature views.
+- New components under `src/components/deliverables/`:
+  - `ExecutiveBriefView.tsx` — weekly program-office brief.
+  - `ActionItemsView.tsx` — priority-filtered action items with editable
+    response sub-tracker.
+  - `AnalyticsView.tsx` — metrics + pure-SVG stacked bar chart + top
+    offenders.
+  - `ArchiveView.tsx` — weekly-snapshot timeline.
+  - `SnapshotView.tsx` — prior-week diff engine.
+  - `ScheduleView.tsx` — DI catalog with cadence filter.
+  - `LibraryView.tsx` — submittals grouped by DI family with hull filter.
+- `DeliverablesTracker.tsx` FeatureView router now switches across all 8
+  features (placeholder card removed).
+- Apple aesthetic preserved throughout: white surfaces, hairline `#e5e5e7`
+  borders, system font stack, accent `#0071e3`, no `dark:` variants.
+- Every interactive event in every view calls `logActivity(…)` so the
+  in-tool Activity Log records views, edits, snapshots, anchors, exports.
+- Vercel deploy path verified: `vite build` succeeds (398 modules, 7.4s),
+  `dist/index.html` copied to `S4-DemoApplication/index.html` so the
+  `/S4-DemoApplication` URL on s4ledger.com will serve the rebuilt bundle.
+  Local preview works via `cd S4-DemoApplication && npm run dev` (Vite on
+  port 5180) or `npm run preview` against the built `dist/`.
+- `tsc --noEmit` passes clean.
 
 ---
 

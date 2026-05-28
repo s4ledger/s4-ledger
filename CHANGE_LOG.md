@@ -4,6 +4,125 @@
 
 ---
 
+### 2026-05-28 — Deliverables Tracker v2 Rebuild · Step 1: Archive v1
+**Commit:** (pending)
+**Files Changed:**
+- `S4-DemoApplication/archive/deliverables-tracker-v1/DeliverablesTracker.tsx` — copy of v1 (2,297 lines), kept for reference.
+- `S4-DemoApplication/archive/deliverables-tracker-v1/README.md` — explains the archive and that the folder is outside the build graph.
+- `CONVERSATION_LOG.md` — new Session 36 entry with full decision log.
+- `/memories/session/deliverables-tracker-v2.md` — session memory: locked decisions, feature map, build plan.
+
+**Why:** User requested a from-scratch rebuild of the Deliverables Tracker
+modeled on `Analysis of CSY DRLs (5.7.2026).xlsx`. Each of the workbook's 8
+tabs will become a feature view inside the new tool. The original tool is
+preserved verbatim in `archive/` rather than deleted. Work proceeds step-by-step
+with user review between each step.
+
+---
+
+### 2026-05-28 — Deliverables Tracker v2 Rebuild · Step 2: Demo data + types
+**Commit:** (pending)
+**Files Changed:**
+- `S4-DemoApplication/src/types/deliverablesV2.ts` (new) — v2-only types for
+  the seven companion feature views and the in-tool Activity Log. Main grid
+  reuses existing `DRLRow` from `src/types.ts` for App.tsx compatibility.
+- `S4-DemoApplication/src/data/deliverablesDemoData.ts` (new) — seeded demo
+  data for all eight features (Tracker rows, Executive Brief, Action Items,
+  Analytics series, Weekly Archive, Submittal Schedule, Submittals Library).
+  All terminology genericized: Acme Shipyard, Vessel Class A, Hulls 60–67,
+  Program Office. No CSY/Conrad/YRBM references.
+- `/memories/session/deliverables-tracker-v2.md` — added design constraint:
+  Apple.com / Steve Jobs aesthetic, LIGHT MODE ONLY (no `dark:` Tailwind variants).
+
+**Why:** Establishes the data layer before the UI shell. With these in place,
+Step 3 can scaffold the new `DeliverablesTracker.tsx` against real shapes and
+render meaningful demo content immediately.
+
+---
+
+### 2026-05-28 — Deliverables Tracker v2 Rebuild · Step 3: Shell
+**Commit:** (pending)
+**Files Changed:**
+- `S4-DemoApplication/src/components/DeliverablesTracker.tsx` (replaced; ~580 LOC
+  vs. 2,297 in v1). Apple-style shell: top bar (brand + NSERC IDE sync chip +
+  Activity toggle + Portfolio exit), 256-px left rail with 8-feature nav,
+  feature router (currently placeholders for views 2–8), slide-out 384-px
+  Activity Log panel, IDE auto-sync via `realSyncPipeline` (mount + every
+  5 min), `useProgramSchedule()` preserved. Light mode only — no `dark:`
+  Tailwind variants. Props identical to v1; App.tsx unchanged.
+- `S4-DemoApplication/src/services/activityLog.ts` (new) — localStorage-backed
+  activity log with pub/sub subscribe, 500-entry cap, Clear, ready for future
+  Supabase backend swap.
+
+**Why:** Foundation for the per-feature views in Steps 4–11. Ships a fully
+navigable Apple-style shell with working IDE sync and end-to-end activity
+logging behind it.
+
+---
+
+### 2026-05-28 — Deliverables Tracker v2 Rebuild · Step 4: Tracker view
+**Commit:** (pending)
+**Files Changed:**
+- `S4-DemoApplication/src/components/deliverables/TrackerView.tsx` (new) —
+  Apple-style main grid: 4 status tiles, search + 5 filter chips, "Snapshot
+  This Week" button, data table with status color rail / chip, expandable
+  row with Notes pane + Anchor / Verify / Re-seal action pills. Every user
+  action calls `logActivity` (activityLog.ts).
+- `S4-DemoApplication/src/components/DeliverablesTracker.tsx` — shell now
+  imports `TrackerView`, holds an in-memory `snapshots` state seeded with
+  `DEMO_ARCHIVE`, exposes `handleSnapshot`, and routes `featureKey ===
+  'tracker'` to the live view. Extracted reusable `PageHeader`. Other 7
+  features still render the placeholder card (Steps 5–11).
+
+**Why:** First fully-functional feature view, modeled on the spreadsheet's
+"CSY Overdue" tab. The snapshots store lives in the shell so the upcoming
+Weekly Archive (Step 8) and Prior Week Snapshot (Step 9) views can read from
+the same source of truth.
+
+---
+
+### 2026-05-28 — Deliverables Tracker v2 Rebuild · Steps 5–11: Remaining seven feature views
+**Commit:** (pending)
+**Files Changed:**
+- `S4-DemoApplication/src/components/deliverables/ExecutiveBriefView.tsx` (new) —
+  Apple-style weekly program-office brief. Header strip (report date + week
+  ending + print/export), three large health tiles, KPI table with trend
+  arrows + tone chips, critical escalations cards, three-panel narrative
+  (Progress / Concerns / Recommended Actions).
+- `S4-DemoApplication/src/components/deliverables/ActionItemsView.tsx` (new) —
+  Priority filter chips (Critical / High / Medium / Low) with live counts;
+  expandable cards with editable response sub-tracker (response text,
+  planned resolution date, POC, date submitted, receipt confirmed, notes).
+  Every edit calls `logActivity('action-response')`.
+- `S4-DemoApplication/src/components/deliverables/AnalyticsView.tsx` (new) —
+  Metric cards (current vs. historical with trend tone), pure-SVG stacked
+  bar chart for weekly trend, top-offenders table.
+- `S4-DemoApplication/src/components/deliverables/ArchiveView.tsx` (new) —
+  Timeline of weekly snapshots (latest first), 4 totals cells per row,
+  "Latest" pill on newest snapshot.
+- `S4-DemoApplication/src/components/deliverables/SnapshotView.tsx` (new) —
+  Diff engine over `currentRows` vs. most recent prior snapshot with rows.
+  Added / Removed / Changed / Unchanged classification with per-field diff
+  display (from → to).
+- `S4-DemoApplication/src/components/deliverables/ScheduleView.tsx` (new) —
+  Submittal catalog table with search + cadence dropdown filter.
+- `S4-DemoApplication/src/components/deliverables/LibraryView.tsx` (new) —
+  Submittals catalog grouped by DI family; search + hull filter.
+- `S4-DemoApplication/src/components/DeliverablesTracker.tsx` — FeatureView
+  router now switches across all 8 features (no more placeholder card).
+  Imports the 7 new views.
+- `S4-DemoApplication/index.html` — refreshed from `dist/index.html` so
+  Vercel’s `/S4-DemoApplication` route serves the rebuilt bundle hashes.
+
+**Why:** Completes the 8-tab spreadsheet → 8-feature tool mapping. Every
+view is Apple-aesthetic (light mode only, hairline borders, system font
+stack, accent `#0071e3`), every user interaction is recorded in the in-tool
+Activity Log, and the production build (`vite build`) succeeds with no
+TypeScript errors. Vercel `build.sh` re-runs and re-copies `index.html`
+automatically on deploy.
+
+---
+
 ## Format
 
 Each entry follows this structure:
