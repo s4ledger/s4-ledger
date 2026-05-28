@@ -28,7 +28,7 @@ export default function ExecutiveBriefView({ brief, actorName }: Props) {
   }, [actorName, brief.weekEnding])
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       {/* ── Header strip ─────────────────────────────── */}
       <div
         className="flex items-center justify-between rounded-2xl bg-white px-6 py-5"

@@ -219,8 +219,11 @@ export default function DeliverablesTracker(props: Props) {
 
   return (
     <div
-      className="min-h-screen w-full bg-white text-gray-900"
-      style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif' }}
+      className="min-h-screen w-full text-gray-900"
+      style={{
+        background: '#f5f5f7',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif',
+      }}
     >
       {/* ── Top bar ─────────────────────────────────────── */}
       <TopBar
@@ -246,7 +249,7 @@ export default function DeliverablesTracker(props: Props) {
         />
 
         {/* ── Main canvas ───────────────────────────────── */}
-        <main className="flex-1 min-w-0 px-12 py-10 overflow-x-auto">
+        <main className="flex-1 min-w-0 px-8 py-7 overflow-x-auto">
           <FeatureView
             featureKey={activeFeature}
             rows={rows}
@@ -413,39 +416,37 @@ function LeftRail({
 }) {
   return (
     <nav
-      className="w-64 shrink-0 bg-white py-8 px-3"
+      className="w-56 shrink-0 bg-white py-5 px-2.5"
       style={{ borderRight: `1px solid ${hairline}` }}
       aria-label="Feature navigation"
     >
-      <div className="px-3 mb-3 text-[11px] uppercase tracking-[0.08em] text-gray-400 font-semibold">
+      <div className="px-3 mb-3 text-[10px] uppercase tracking-[0.12em] text-gray-400 font-semibold">
         Features
       </div>
-      <ul className="space-y-1">
+      <ul className="space-y-0.5">
         {FEATURES.map(f => {
           const isActive = f.key === active
           return (
             <li key={f.key}>
               <button
                 onClick={() => onSelect(f.key)}
-                className="w-full flex items-start gap-3 px-3 py-2.5 rounded-xl text-left transition hover:bg-gray-50"
+                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition hover:bg-[#f5f5f7]"
                 style={{
                   background: isActive ? 'rgba(0,113,227,0.08)' : 'transparent',
                   color: isActive ? accent : '#1f2937',
                 }}
+                title={f.description}
               >
                 <span
-                  className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                  className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
                   style={{
                     background: isActive ? accent : '#f5f5f7',
                     color: isActive ? '#fff' : '#6b7280',
                   }}
                 >
-                  <i className={`fas ${f.icon} text-[12px]`} />
+                  <i className={`fas ${f.icon} text-[11px]`} />
                 </span>
-                <span className="leading-tight">
-                  <span className="block text-[13px] font-semibold tracking-tight">{f.label}</span>
-                  <span className="block text-[11px] text-gray-500 mt-0.5">{f.description}</span>
-                </span>
+                <span className="text-[13px] font-medium tracking-tight truncate">{f.label}</span>
               </button>
             </li>
           )
@@ -523,7 +524,7 @@ function FeatureView({
   })()
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-[1280px] mx-auto">
       <PageHeader def={def} />
       {body}
     </div>
@@ -534,16 +535,32 @@ function FeatureView({
    Page header (used by every feature view)
    ═══════════════════════════════════════════════════════════ */
 
-function PageHeader({ def }: { def: { label: string; description: string } }) {
+function PageHeader({ def }: { def: { label: string; description: string; icon: string } }) {
   return (
-    <div className="mb-10">
-      <div className="text-[11px] uppercase tracking-[0.12em] text-gray-400 font-semibold mb-2">
-        {DEMO_SHIPBUILDER} · {DEMO_VESSEL_CLASS}
+    <div className="mb-6 flex items-end justify-between gap-6">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-gray-400 font-semibold mb-2">
+          <span>{DEMO_SHIPBUILDER}</span>
+          <span className="text-gray-300">/</span>
+          <span>{DEMO_VESSEL_CLASS}</span>
+          <span className="text-gray-300">/</span>
+          <span className="text-gray-600">{def.label}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0"
+            style={{ background: ACCENT }}
+          >
+            <i className={`fas ${def.icon} text-[14px]`} />
+          </span>
+          <h1 className="text-[28px] leading-[1.1] tracking-[-0.02em] font-semibold text-gray-900">
+            {def.label}
+          </h1>
+        </div>
       </div>
-      <h1 className="text-[40px] leading-[1.05] tracking-[-0.02em] font-semibold text-gray-900">
-        {def.label}
-      </h1>
-      <p className="mt-3 text-[16px] text-gray-500 max-w-2xl">{def.description}</p>
+      <p className="text-[13px] text-gray-500 text-right max-w-md leading-snug pb-1">
+        {def.description}
+      </p>
     </div>
   )
 }

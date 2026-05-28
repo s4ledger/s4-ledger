@@ -34,7 +34,7 @@ export default function AnalyticsView({ snapshot, actorName }: Props) {
   }, [actorName, snapshot.series.length])
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       {/* ── Header ──────────────────────────────────── */}
       <div
         className="rounded-2xl bg-white px-6 py-4 flex items-center justify-between"
