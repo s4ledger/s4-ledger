@@ -7,10 +7,10 @@
  * status cells filled with traffic-light colors, click-to-expand inline.
  */
 
-import { useMemo, useState } from 'react'
-import type { AnchorRecord, DRLRow } from '../../types'
-import { logActivity } from '../../services/activityLog'
-import type { WeeklySnapshot } from '../../types/deliverablesV2'
+import { useEffect, useMemo, useState } from 'react'
+import type { DRLRow } from '../../types'
+import { getActivityLog, logActivity, subscribe } from '../../services/activityLog'
+import type { ActivityLogEntry, WeeklySnapshot } from '../../types/deliverablesV2'
 
 const HAIRLINE = '#e5e5e7'
 const GRID = '#ececef'
@@ -20,21 +20,13 @@ type StatusFilter = 'all' | DRLRow['status']
 
 interface Props {
   rows: DRLRow[]
-  anchors: Record<string, AnchorRecord>
   actorName: string
-  onAnchor: (row: DRLRow) => void
-  onVerify: (row: DRLRow) => void
-  onReseal: (row: DRLRow) => Promise<void>
   onSnapshot: (snap: WeeklySnapshot) => void
 }
 
 export default function TrackerView({
   rows,
-  anchors,
   actorName,
-  onAnchor,
-  onVerify,
-  onReseal,
   onSnapshot,
 }: Props) {
   const [search, setSearch] = useState('')
@@ -176,7 +168,6 @@ export default function TrackerView({
             </thead>
             <tbody>
               {visible.map((row, i) => {
-                const anchor = anchors[row.id]
                 const isOpen = expanded === row.id
                 const tone = STATUS_TONE[row.status]
                 return (
@@ -188,9 +179,6 @@ export default function TrackerView({
                       <Td muted center>{i + 1}</Td>
                       <Td mono>
                         <span className="font-semibold text-gray-900">{row.diNumber}</span>
-                        {anchor && (
-                          <i className="fas fa-anchor ml-1.5 text-[9px] text-[#0071e3]" title="Anchored" />
-                        )}
                       </Td>
                       <Td muted>
                         <span className="text-[11px] uppercase tracking-wide">
@@ -227,11 +215,7 @@ export default function TrackerView({
                         <td colSpan={11} style={{ background: '#fafafb', borderTop: `1px solid ${GRID}` }}>
                           <ExpandedDetail
                             row={row}
-                            anchor={anchor}
                             actorName={actorName}
-                            onAnchor={onAnchor}
-                            onVerify={onVerify}
-                            onReseal={onReseal}
                           />
                         </td>
                       </tr>
@@ -442,22 +426,26 @@ function RowGroup({ children }: { children: React.ReactNode; open: boolean }) {
 
 function ExpandedDetail({
   row,
-  anchor,
   actorName,
-  onAnchor,
-  onVerify,
-  onReseal,
 }: {
   row: DRLRow
-  anchor: AnchorRecord | undefined
   actorName: string
-  onAnchor: (row: DRLRow) => void
-  onVerify: (row: DRLRow) => void
-  onReseal: (row: DRLRow) => Promise<void>
 }) {
+  // Subscribe to live activity log entries for this row + merge with demo audit history.
+  const [, setTick] = useState(0)
+  useEffect(() => subscribe(() => setTick(t => t + 1)), [])
+
+  const timeline = useMemo<AuditEntry[]>(() => {
+    const live: AuditEntry[] = getActivityLog()
+      .filter(e => e.rowId === row.id)
+      .map(toAuditEntry)
+    const seeded = seedAuditFor(row)
+    return [...live, ...seeded].sort((a, b) => b.ts.localeCompare(a.ts))
+  }, [row])
+
   return (
     <div className="px-6 py-5">
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-5 gap-6">
         <div className="col-span-2 space-y-4">
           <Section label="Full title">
             <div className="text-[13px] text-gray-900">{row.title}</div>
@@ -475,73 +463,188 @@ function ExpandedDetail({
               </div>
             </Section>
           </div>
+          <div className="flex gap-2 pt-1">
+            <ActionPill
+              icon="fa-pen"
+              label="Log update"
+              primary
+              onClick={() => logActivity({
+                actor: actorName,
+                kind: 'edit',
+                feature: 'tracker',
+                summary: `Edited ${row.diNumber}`,
+                rowId: row.id,
+              })}
+            />
+            <ActionPill
+              icon="fa-comment"
+              label="Add comment"
+              onClick={() => logActivity({
+                actor: actorName,
+                kind: 'comment',
+                feature: 'tracker',
+                summary: `Commented on ${row.diNumber}`,
+                rowId: row.id,
+              })}
+            />
+          </div>
         </div>
-        <div className="space-y-4">
-          <Section label="Integrity actions">
-            <div className="flex flex-wrap gap-2">
-              <ActionPill
-                icon="fa-anchor"
-                label={anchor ? 'Re-anchor' : 'Anchor'}
-                onClick={() => {
-                  onAnchor(row)
-                  logActivity({
-                    actor: actorName,
-                    kind: 'anchor',
-                    feature: 'tracker',
-                    summary: `Anchored ${row.diNumber}`,
-                    rowId: row.id,
-                  })
-                }}
-                primary
-              />
-              {anchor && (
-                <ActionPill
-                  icon="fa-shield-halved"
-                  label="Verify"
-                  onClick={() => {
-                    onVerify(row)
-                    logActivity({
-                      actor: actorName,
-                      kind: 'verify',
-                      feature: 'tracker',
-                      summary: `Verified ${row.diNumber}`,
-                      rowId: row.id,
-                    })
-                  }}
-                />
-              )}
-              {anchor && (
-                <ActionPill
-                  icon="fa-rotate"
-                  label="Re-seal"
-                  onClick={async () => {
-                    await onReseal(row)
-                    logActivity({
-                      actor: actorName,
-                      kind: 'anchor',
-                      feature: 'tracker',
-                      summary: `Re-sealed ${row.diNumber}`,
-                      rowId: row.id,
-                    })
-                  }}
-                />
+        <div className="col-span-3">
+          <Section label={`Audit history · ${timeline.length} event${timeline.length === 1 ? '' : 's'}`}>
+            <div
+              className="rounded-xl bg-white max-h-[280px] overflow-y-auto"
+              style={{ border: `1px solid ${HAIRLINE}` }}
+            >
+              {timeline.length === 0 ? (
+                <div className="px-4 py-6 text-[12px] text-gray-500 text-center">
+                  No audit events for this deliverable yet.
+                </div>
+              ) : (
+                <ul>
+                  {timeline.map((e, idx) => (
+                    <li
+                      key={e.id}
+                      className="px-4 py-2.5 flex items-start gap-3"
+                      style={{ borderTop: idx === 0 ? 'none' : `1px solid ${GRID}` }}
+                    >
+                      <span
+                        className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                        style={{ background: AUDIT_TONE[e.kind].bg, color: AUDIT_TONE[e.kind].text }}
+                      >
+                        <i className={`fas ${AUDIT_TONE[e.kind].icon} text-[10px]`} />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[12px] font-semibold text-gray-900">{e.summary}</span>
+                          <span className="text-[10px] text-gray-400 tabular-nums shrink-0">
+                            {formatAuditTs(e.ts)}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-gray-500 mt-0.5">
+                          <span className="font-medium text-gray-700">{e.actor}</span>
+                          {e.detail && <span className="ml-1.5">· {e.detail}</span>}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           </Section>
-          {anchor && (
-            <Section label="Anchor record">
-              <div
-                className="rounded-xl px-3 py-2.5 text-[11px] font-mono text-gray-700 break-all"
-                style={{ background: '#f5f5f7', border: `1px solid ${HAIRLINE}` }}
-              >
-                {anchor.txHash || anchor.hash || '—'}
-              </div>
-            </Section>
-          )}
         </div>
       </div>
     </div>
   )
+}
+
+/* ─── Audit timeline helpers ─────────────── */
+
+type AuditKind = 'created' | 'edit' | 'status-change' | 'comment' | 'snapshot' | 'view'
+
+interface AuditEntry {
+  id: string
+  ts: string
+  actor: string
+  kind: AuditKind
+  summary: string
+  detail?: string
+}
+
+const AUDIT_TONE: Record<AuditKind, { bg: string; text: string; icon: string }> = {
+  created:        { bg: '#e0f2fe', text: '#0369a1', icon: 'fa-plus' },
+  edit:           { bg: '#ede9fe', text: '#6d28d9', icon: 'fa-pen' },
+  'status-change':{ bg: '#fef3c7', text: '#92400e', icon: 'fa-flag' },
+  comment:        { bg: '#f1f5f9', text: '#475569', icon: 'fa-comment' },
+  snapshot:       { bg: '#dcfce7', text: '#166534', icon: 'fa-camera' },
+  view:           { bg: '#f5f5f7', text: '#6b7280', icon: 'fa-eye' },
+}
+
+function toAuditEntry(e: ActivityLogEntry): AuditEntry {
+  const mapKind: Record<string, AuditKind> = {
+    edit: 'edit',
+    'status-change': 'status-change',
+    comment: 'comment',
+    snapshot: 'snapshot',
+    view: 'view',
+    'action-response': 'edit',
+  }
+  return {
+    id: e.id,
+    ts: e.ts,
+    actor: e.actor,
+    kind: mapKind[e.kind] ?? 'edit',
+    summary: e.summary,
+  }
+}
+
+function seedAuditFor(row: DRLRow): AuditEntry[] {
+  // Deterministic demo timeline for each row — builds a believable history.
+  const seed: AuditEntry[] = [
+    {
+      id: `seed-${row.id}-1`,
+      ts: '2026-04-03T09:12:00Z',
+      actor: 'Program Office',
+      kind: 'created',
+      summary: `Deliverable opened`,
+      detail: `Imported from contract DRL (${row.scope === 'series' ? 'Series' : 'Per Hull'})`,
+    },
+    {
+      id: `seed-${row.id}-2`,
+      ts: '2026-04-17T14:30:00Z',
+      actor: 'Shipbuilder Lead',
+      kind: 'status-change',
+      summary: `Status set to ${labelForStatus(row.status)}`,
+      detail: `Initial review window assigned`,
+    },
+  ]
+  if (row.status === 'red' || row.status === 'yellow') {
+    seed.push({
+      id: `seed-${row.id}-3`,
+      ts: '2026-05-08T10:45:00Z',
+      actor: 'Program Office',
+      kind: 'comment',
+      summary: 'Follow-up requested',
+      detail: 'Awaiting response from shipbuilder on outstanding items',
+    })
+  }
+  if (row.actualSubmissionDate) {
+    seed.push({
+      id: `seed-${row.id}-4`,
+      ts: `${row.actualSubmissionDate}T16:20:00Z`,
+      actor: 'Shipbuilder Lead',
+      kind: 'edit',
+      summary: 'Submitted to program office',
+      detail: row.calendarDaysToReview ? `Review window: ${row.calendarDaysToReview} days` : undefined,
+    })
+  }
+  if (row.status === 'red') {
+    seed.push({
+      id: `seed-${row.id}-5`,
+      ts: '2026-05-21T08:00:00Z',
+      actor: 'Program Office',
+      kind: 'status-change',
+      summary: 'Flagged as overdue',
+      detail: 'Auto-escalated by weekly cadence sweep',
+    })
+  }
+  return seed
+}
+
+function labelForStatus(s: DRLRow['status']): string {
+  return s === 'red' ? 'Overdue'
+    : s === 'yellow' ? 'Needs Clarification'
+    : s === 'green' ? 'Received'
+    : 'Not Yet Due'
+}
+
+function formatAuditTs(iso: string): string {
+  try {
+    const d = new Date(iso)
+    return d.toLocaleString(undefined, {
+      month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit',
+    })
+  } catch { return iso }
 }
 
 function Section({ label, children }: { label: string; children: React.ReactNode }) {

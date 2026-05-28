@@ -426,6 +426,46 @@ export const DEMO_ANALYTICS: AnalyticsSnapshot = {
     { diNumber: 'DI-010',    weeksOverdue: 8,  lastSeen: '2026-05-21' },
     { diNumber: 'DI-021-32', weeksOverdue: 3,  lastSeen: '2026-05-21' },
   ],
+  statusDistribution: [
+    { label: 'Overdue',        current: 3, historical: 7,  color: '#dc2626' },
+    { label: 'Clarification',  current: 2, historical: 2,  color: '#d97706' },
+    { label: 'Received',       current: 2, historical: 24, color: '#16a34a' },
+    { label: 'Not Yet Due',    current: 1, historical: 7,  color: '#0071e3' },
+  ],
+  typeBreakdown: [
+    { type: 'Per Hull', total: 2, overdue: 0, received: 0, clarification: 2 },
+    { type: 'Series',   total: 6, overdue: 3, received: 2, clarification: 0 },
+  ],
+  aging: [
+    { bucket: '0–14 days',  count: 1, pct: 0.20, risk: 'low' },
+    { bucket: '15–30 days', count: 1, pct: 0.20, risk: 'medium' },
+    { bucket: '31–60 days', count: 1, pct: 0.20, risk: 'high' },
+    { bucket: '60+ days',   count: 2, pct: 0.40, risk: 'critical' },
+  ],
+  hulls: [
+    { hull: 'Hull 60', total: 2, overdue: 0, received: 0, clarification: 2, notYetDue: 0 },
+    { hull: 'Hull 61', total: 1, overdue: 1, received: 0, clarification: 0, notYetDue: 0 },
+    { hull: 'Hull 63', total: 2, overdue: 1, received: 0, clarification: 0, notYetDue: 1 },
+    { hull: 'Hull 65', total: 1, overdue: 0, received: 1, clarification: 0, notYetDue: 0 },
+    { hull: 'Hull 67', total: 2, overdue: 1, received: 1, clarification: 0, notYetDue: 0 },
+  ],
+  kpis: [
+    { label: 'Overdue Rate',         value: '60%', status: 'crit', note: 'High' },
+    { label: 'Resolution Rate',      value: '0%',  status: 'crit', note: 'Poor' },
+    { label: 'Clarification Backlog',value: '40%', status: 'crit', note: 'High backlog' },
+    { label: 'Critical Risk (5)',    value: 2,     status: 'warn', note: 'Monitor closely' },
+    { label: 'Max Days Overdue',     value: 149,   status: 'crit', note: 'Critical delay' },
+    { label: 'Avg Days Overdue',     value: 71.4,  status: 'warn', note: 'Moderate' },
+    { label: 'Avg Review Days',      value: 12.6,  status: 'good', note: '↓ from 13.5' },
+    { label: 'Per Hull % Overdue',   value: '0%',  status: 'good', note: 'Series dominant' },
+  ],
+  priorityItems: [
+    { rank: 1, title: 'DI-021-03 STABILITY REPORT Rev B (Hull 60)',  scope: 'Per Hull', status: 'Clarification', daysOverdue: 149, risk: 5, action: 'URGENT: escalate immediately' },
+    { rank: 2, title: 'DI-021-03 STABILITY FINAL-AS-BUILT (Hull 60)', scope: 'Per Hull', status: 'Clarification', daysOverdue: 88,  risk: 5, action: 'URGENT: linked — resolve together' },
+    { rank: 3, title: 'DI-010 MASTER EQUIPMENT LIST (Hull 67)',       scope: 'Series',   status: 'Overdue',       daysOverdue: 53,  risk: 4, action: 'CSY action pending — ILS drumbeat updates' },
+    { rank: 4, title: 'DI-046-02 FIRE EXTINGUISHING (Resubmit)',      scope: 'Series',   status: 'Overdue',       daysOverdue: 43,  risk: 4, action: 'Technical issue — filter compliance gap' },
+    { rank: 5, title: 'DI-021-32 HVAC DIAGRAMS Rev D (Hull 63)',      scope: 'Series',   status: 'Overdue',       daysOverdue: 25,  risk: 3, action: 'Rev C comments require resubmission' },
+  ],
 }
 
 /* ─── Weekly Archive (snapshots) ──────────────────────────── */

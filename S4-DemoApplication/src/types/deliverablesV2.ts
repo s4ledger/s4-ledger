@@ -115,6 +115,18 @@ export interface AnalyticsSnapshot {
   series: AnalyticsSeriesPoint[]
   /** DI numbers most frequently overdue across history */
   topOffenders: { diNumber: string; weeksOverdue: number; lastSeen: string }[]
+  /** Status distribution: current snapshot vs historical baseline */
+  statusDistribution?: { label: string; current: number; historical: number; color: string }[]
+  /** Series vs Per Hull breakdown */
+  typeBreakdown?: { type: string; total: number; overdue: number; received: number; clarification: number }[]
+  /** Aging buckets for overdue items */
+  aging?: { bucket: string; count: number; pct: number; risk: 'low' | 'medium' | 'high' | 'critical' }[]
+  /** Hull-by-hull rollup */
+  hulls?: { hull: string; total: number; overdue: number; received: number; clarification: number; notYetDue: number }[]
+  /** KPI tiles with status indicator */
+  kpis?: { label: string; value: string | number; status: 'good' | 'warn' | 'crit'; note?: string }[]
+  /** Highest-priority items by risk score */
+  priorityItems?: { rank: number; title: string; scope: string; status: string; daysOverdue: number; risk: number; action: string }[]
 }
 
 /* ─── Weekly Archive ──────────────────────────────────────── */

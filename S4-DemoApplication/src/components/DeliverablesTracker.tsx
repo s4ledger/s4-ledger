@@ -488,7 +488,7 @@ function FeatureView({
   const def = FEATURES.find(f => f.key === featureKey)!
 
   // suppress unused-warnings for shell-only params on certain features
-  void role; void psHasData
+  void role; void psHasData; void anchors; void onAnchor; void onVerify; void onReseal
 
   const body = (() => {
     switch (featureKey) {
@@ -496,11 +496,7 @@ function FeatureView({
         return (
           <TrackerView
             rows={rows}
-            anchors={anchors}
             actorName={actorName}
-            onAnchor={onAnchor}
-            onVerify={onVerify}
-            onReseal={onReseal}
             onSnapshot={onSnapshot}
           />
         )
