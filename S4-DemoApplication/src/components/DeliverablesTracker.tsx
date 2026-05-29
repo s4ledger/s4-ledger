@@ -38,17 +38,9 @@ import {
   clearActivityLog,
 } from '../services/activityLog'
 import {
-  DEMO_ACTION_ITEMS,
-  DEMO_ANALYTICS,
-  DEMO_ARCHIVE,
-  DEMO_EXECUTIVE_BRIEF,
-  DEMO_ROWS,
-  DEMO_SHIPBUILDER,
-  DEMO_SUBMITTALS_LIBRARY,
-  DEMO_SUBMITTAL_SCHEDULE,
-  DEMO_VESSEL_CLASS,
   FEATURES,
 } from '../data/deliverablesDemoData'
+import { VESSELS, getVesselDataset, type VesselDataset, type VesselId } from '../data/vesselDatasets'
 import TrackerView from './deliverables/TrackerView'
 import ExecutiveBriefView from './deliverables/ExecutiveBriefView'
 import ActionItemsView from './deliverables/ActionItemsView'
@@ -79,6 +71,7 @@ interface Props {
 const ACCENT = '#0071e3' // Apple system blue
 const HAIRLINE = '#e5e5e7' // Apple hairline grey
 const IDE_AUTO_SYNC_MS = 5 * 60 * 1000 // 5 min
+void IDE_AUTO_SYNC_MS
 
 /* ─── Shell ───────────────────────────────────────────────── */
 
@@ -87,15 +80,18 @@ export default function DeliverablesTracker(props: Props) {
     data,
     role,
     anchors,
-    onAnchor,
+    onAnchor: _onAnchor,
     onAnchorAll: _onAnchorAll,
-    onVerify,
-    onReseal,
+    onVerify: _onVerify,
+    onReseal: _onReseal,
     onDataUpdate,
     onSyncAnchors,
     selectedContract,
     onTogglePortfolio,
   } = props
+  // Legacy props kept for App.tsx compatibility — tracker no longer uses
+  // anchor / seal actions.  Suppress unused warnings.
+  void _onAnchor; void _onAnchorAll; void _onVerify; void _onReseal
 
   const { user, profile } = useAuth()
   const actorName = profile?.display_name || user?.email || role
@@ -119,18 +115,44 @@ export default function DeliverablesTracker(props: Props) {
     [activeFeature, actorName],
   )
 
-  /* ─── Data: merge incoming `data` prop with demo seed ──── */
+  /* ─── Active vessel (platform / hull class) ──────── */
+  const [activeVesselId, setActiveVesselId] = useState<VesselId>('vessel-a')
+  const dataset: VesselDataset = useMemo(() => getVesselDataset(activeVesselId), [activeVesselId])
+
+  /* ─── Live tracker rows (vessel-scoped, IDE sim can mutate) ─ */
+  const [localRows, setLocalRows] = useState<DRLRow[]>(dataset.rows)
+  useEffect(() => {
+    // Re-seed when vessel changes
+    setLocalRows(dataset.rows)
+  }, [dataset])
+
+  /* ─── Data: merge incoming `data` prop with vessel rows ──── */
   // The prop may be empty (fresh load) or carry rows already injected by
-  // App.tsx.  We blend demo seed in for any IDs missing from the prop so
-  // every feature has something to render out-of-the-box.
+  // App.tsx.  We blend the active vessel dataset in for any IDs missing
+  // from the prop so every feature has something to render.
   const rows = useMemo<DRLRow[]>(() => {
-    if (!data || data.length === 0) return DEMO_ROWS
+    if (!data || data.length === 0) return localRows
     const propIds = new Set(data.map(r => r.id))
-    const fillers = DEMO_ROWS.filter(r => !propIds.has(r.id))
+    const fillers = localRows.filter(r => !propIds.has(r.id))
     return [...data, ...fillers]
-  }, [data])
-  /* ─── Weekly snapshots (in-memory; seeded with demo archive) ── */
-  const [snapshots, setSnapshots] = useState<WeeklySnapshot[]>(() => DEMO_ARCHIVE)
+  }, [data, localRows])
+  /* ─── Weekly snapshots (vessel-scoped) ─────────── */
+  const [snapshots, setSnapshots] = useState<WeeklySnapshot[]>(() => dataset.archive)
+  useEffect(() => {
+    setSnapshots(dataset.archive)
+  }, [dataset])
+
+  const switchVessel = useCallback((next: VesselId) => {
+    if (next === activeVesselId) return
+    const def = VESSELS.find(v => v.id === next)
+    setActiveVesselId(next)
+    logActivity({
+      actor: actorName,
+      kind: 'view',
+      feature: 'global',
+      summary: `Switched vessel to ${def?.label ?? next}`,
+    })
+  }, [activeVesselId, actorName])
 
   const handleSnapshot = useCallback((snap: WeeklySnapshot) => {
     setSnapshots(prev => {
@@ -186,13 +208,20 @@ export default function DeliverablesTracker(props: Props) {
     }
   }, [rows, role, anchors, onDataUpdate, onSyncAnchors])
 
+  /* ─── Simulated IDE drop (every ~45s in demo) ────── */
+  const [toasts, setToasts] = useState<ToastEntry[]>([])
+  const pushToast = useCallback((t: Omit<ToastEntry, 'id'>) => {
+    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+    setToasts(prev => [...prev, { ...t, id }])
+    window.setTimeout(() => setToasts(prev => prev.filter(x => x.id !== id)), 6000)
+  }, [])
+
   useEffect(() => {
-    // First pull + interval
-    runIdeSync()
-    const id = window.setInterval(runIdeSync, IDE_AUTO_SYNC_MS)
-    return () => window.clearInterval(id)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // intentionally mount-only; runIdeSync re-reads latest rows via closure
+    const interval = window.setInterval(() => {
+      setLocalRows(prev => simulateIdeDrop(prev, dataset, actorName, pushToast))
+    }, 45_000)
+    return () => window.clearInterval(interval)
+  }, [dataset, actorName, pushToast])
 
   /* ─── Activity Log panel ───────────────────────────────── */
   const [logOpen, setLogOpen] = useState(false)
@@ -232,11 +261,17 @@ export default function DeliverablesTracker(props: Props) {
         ideStatus={ideStatus}
         ideMessage={ideMessage}
         ideLastSync={ideLastSync}
-        onIdeSync={runIdeSync}
+        onIdeSync={() => {
+          runIdeSync()
+          // Also trigger an immediate simulated drop for visible feedback
+          setLocalRows(prev => simulateIdeDrop(prev, dataset, actorName, pushToast, true))
+        }}
         onToggleLog={() => setLogOpen(v => !v)}
         logCount={logEntries.length}
         onExit={onTogglePortfolio}
         selectedContract={selectedContract}
+        activeVesselId={activeVesselId}
+        onSelectVessel={switchVessel}
       />
 
       <div className="flex" style={{ minHeight: 'calc(100vh - 64px)' }}>
@@ -255,12 +290,11 @@ export default function DeliverablesTracker(props: Props) {
             rows={rows}
             role={role}
             actorName={actorName}
-            psHasData={!!psData}            anchors={anchors}
+            psHasData={!!psData}
+            dataset={dataset}
             snapshots={snapshots}
-            onAnchor={onAnchor}
-            onVerify={onVerify}
-            onReseal={onReseal}
-            onSnapshot={handleSnapshot}          />
+            onSnapshot={handleSnapshot}
+          />
         </main>
 
         {/* ── Activity Log slide-out ───────────────────── */}
@@ -282,6 +316,9 @@ export default function DeliverablesTracker(props: Props) {
           />
         )}
       </div>
+
+      {/* ── IDE sync toasts ──────────────────────────────── */}
+      <ToastStack toasts={toasts} />
     </div>
   )
 }
@@ -301,6 +338,8 @@ interface TopBarProps {
   logCount: number
   onExit?: () => void
   selectedContract?: Contract
+  activeVesselId: VesselId
+  onSelectVessel: (id: VesselId) => void
 }
 
 function TopBar({
@@ -314,6 +353,8 @@ function TopBar({
   logCount,
   onExit,
   selectedContract,
+  activeVesselId,
+  onSelectVessel,
 }: TopBarProps) {
   const statusDot = {
     idle: '#9ca3af',
@@ -321,13 +362,14 @@ function TopBar({
     ok: '#34c759',
     error: '#ff3b30',
   }[ideStatus]
+  const activeVessel = VESSELS.find(v => v.id === activeVesselId) ?? VESSELS[0]
 
   return (
     <header
       className="w-full bg-white/90 backdrop-blur sticky top-0 z-30"
       style={{ borderBottom: `1px solid ${hairline}`, height: 64 }}
     >
-      <div className="h-full flex items-center px-8 gap-8">
+      <div className="h-full flex items-center px-8 gap-6">
         <div className="flex items-center gap-3">
           <div
             className="w-9 h-9 rounded-2xl flex items-center justify-center text-white text-sm font-semibold"
@@ -338,11 +380,19 @@ function TopBar({
           <div className="leading-tight">
             <div className="text-[15px] font-semibold tracking-tight">Deliverables Tracker</div>
             <div className="text-[12px] text-gray-500">
-              {DEMO_SHIPBUILDER} · {DEMO_VESSEL_CLASS}
+              {activeVessel.shipbuilder}
               {selectedContract ? ` · ${selectedContract.contractNumber}` : ''}
             </div>
           </div>
         </div>
+
+        {/* Vessel switcher */}
+        <VesselSwitcher
+          accent={accent}
+          hairline={hairline}
+          activeVesselId={activeVesselId}
+          onSelect={onSelectVessel}
+        />
 
         <div className="flex-1" />
 
@@ -466,11 +516,8 @@ function FeatureView({
   role,
   actorName,
   psHasData,
-  anchors,
+  dataset,
   snapshots,
-  onAnchor,
-  onVerify,
-  onReseal,
   onSnapshot,
 }: {
   featureKey: FeatureKey
@@ -478,17 +525,14 @@ function FeatureView({
   role: UserRole
   actorName: string
   psHasData: boolean
-  anchors: Record<string, AnchorRecord>
+  dataset: VesselDataset
   snapshots: WeeklySnapshot[]
-  onAnchor: (row: DRLRow) => void
-  onVerify: (row: DRLRow) => void
-  onReseal: (row: DRLRow) => Promise<void>
   onSnapshot: (snap: WeeklySnapshot) => void
 }) {
   const def = FEATURES.find(f => f.key === featureKey)!
 
   // suppress unused-warnings for shell-only params on certain features
-  void role; void psHasData; void anchors; void onAnchor; void onVerify; void onReseal
+  void role; void psHasData
 
   const body = (() => {
     switch (featureKey) {
@@ -501,19 +545,19 @@ function FeatureView({
           />
         )
       case 'executive':
-        return <ExecutiveBriefView brief={DEMO_EXECUTIVE_BRIEF} actorName={actorName} />
+        return <ExecutiveBriefView brief={dataset.brief} actorName={actorName} />
       case 'actions':
-        return <ActionItemsView items={DEMO_ACTION_ITEMS} actorName={actorName} />
+        return <ActionItemsView items={dataset.actions} actorName={actorName} />
       case 'analytics':
-        return <AnalyticsView snapshot={DEMO_ANALYTICS} actorName={actorName} />
+        return <AnalyticsView snapshot={dataset.analytics} actorName={actorName} />
       case 'archive':
         return <ArchiveView snapshots={snapshots} actorName={actorName} />
       case 'snapshot':
         return <SnapshotView currentRows={rows} snapshots={snapshots} actorName={actorName} />
       case 'schedule':
-        return <ScheduleView entries={DEMO_SUBMITTAL_SCHEDULE} actorName={actorName} />
+        return <ScheduleView entries={dataset.schedule} actorName={actorName} />
       case 'library':
-        return <LibraryView items={DEMO_SUBMITTALS_LIBRARY} actorName={actorName} />
+        return <LibraryView items={dataset.library} actorName={actorName} />
       default:
         return null
     }
@@ -521,7 +565,7 @@ function FeatureView({
 
   return (
     <div className="max-w-[1280px] mx-auto">
-      <PageHeader def={def} />
+      <PageHeader def={def} dataset={dataset} />
       {body}
     </div>
   )
@@ -531,14 +575,20 @@ function FeatureView({
    Page header (used by every feature view)
    ═══════════════════════════════════════════════════════════ */
 
-function PageHeader({ def }: { def: { label: string; description: string; icon: string } }) {
+function PageHeader({
+  def,
+  dataset,
+}: {
+  def: { label: string; description: string; icon: string }
+  dataset: VesselDataset
+}) {
   return (
     <div className="mb-6 flex items-end justify-between gap-6">
       <div className="min-w-0">
         <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-gray-400 font-semibold mb-2">
-          <span>{DEMO_SHIPBUILDER}</span>
+          <span>{dataset.shipbuilder}</span>
           <span className="text-gray-300">/</span>
-          <span>{DEMO_VESSEL_CLASS}</span>
+          <span>{dataset.label}</span>
           <span className="text-gray-300">/</span>
           <span className="text-gray-600">{def.label}</span>
         </div>
@@ -672,4 +722,230 @@ function formatRelative(d: Date): string {
   const days = Math.round(h / 24)
   if (days < 7) return `${days}d ago`
   return d.toLocaleDateString()
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Vessel switcher (segmented control in TopBar)
+   ═══════════════════════════════════════════════════════════ */
+
+function VesselSwitcher({
+  accent,
+  hairline,
+  activeVesselId,
+  onSelect,
+}: {
+  accent: string
+  hairline: string
+  activeVesselId: VesselId
+  onSelect: (id: VesselId) => void
+}) {
+  return (
+    <div
+      className="hidden md:flex items-center gap-1 p-1 rounded-full bg-gray-50"
+      style={{ border: `1px solid ${hairline}` }}
+      role="tablist"
+      aria-label="Select vessel class"
+    >
+      {VESSELS.map(v => {
+        const active = v.id === activeVesselId
+        return (
+          <button
+            key={v.id}
+            onClick={() => onSelect(v.id)}
+            className="flex items-center gap-2 px-3 py-1 rounded-full text-[12px] font-medium transition"
+            style={{
+              background: active ? '#ffffff' : 'transparent',
+              color: active ? accent : '#374151',
+              boxShadow: active ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+              border: active ? `1px solid ${hairline}` : '1px solid transparent',
+            }}
+            title={`${v.label} · ${v.shipbuilder}`}
+            role="tab"
+            aria-selected={active}
+          >
+            <i className={`fas ${v.icon} text-[11px]`} />
+            <span>{v.shortLabel}</span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Toast stack (IDE sync drops)
+   ═══════════════════════════════════════════════════════════ */
+
+export interface ToastEntry {
+  id: string
+  kind: 'info' | 'success' | 'warn'
+  icon: string
+  title: string
+  detail: string
+  ts: number
+}
+
+function ToastStack({ toasts }: { toasts: ToastEntry[] }) {
+  if (toasts.length === 0) return null
+  return (
+    <div
+      className="fixed z-50 flex flex-col gap-2"
+      style={{ right: 20, bottom: 20, width: 320 }}
+    >
+      {toasts.map(t => {
+        const colour =
+          t.kind === 'success' ? '#34c759' :
+          t.kind === 'warn'    ? '#ff9500' :
+                                 '#0071e3'
+        return (
+          <div
+            key={t.id}
+            className="bg-white rounded-xl shadow-lg overflow-hidden"
+            style={{ border: '1px solid #e5e5e7' }}
+          >
+            <div className="flex items-start gap-3 p-3">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: `${colour}1a`, color: colour }}
+              >
+                <i className={`fas ${t.icon} text-[13px]`} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[12px] font-semibold text-gray-900 leading-tight">
+                  {t.title}
+                </div>
+                <div className="mt-0.5 text-[11px] text-gray-600 leading-snug">
+                  {t.detail}
+                </div>
+                <div className="mt-1 text-[10px] text-gray-400">
+                  NSERC IDE · {formatRelative(new Date(t.ts))}
+                </div>
+              </div>
+            </div>
+            <div className="h-0.5" style={{ background: colour, opacity: 0.5 }} />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Simulated IDE drop — mutates rows + logs + toasts
+   ═══════════════════════════════════════════════════════════ */
+
+function simulateIdeDrop(
+  current: DRLRow[],
+  dataset: VesselDataset,
+  actorName: string,
+  pushToast: (t: Omit<ToastEntry, 'id'>) => void,
+  forceAction = false,
+): DRLRow[] {
+  void actorName
+  const roll = forceAction ? Math.random() * 0.95 : Math.random()
+
+  // 35% – flip a yellow row → green
+  if (roll < 0.35) {
+    const yellows = current.filter(r => r.status === 'yellow')
+    if (yellows.length > 0) {
+      const target = yellows[Math.floor(Math.random() * yellows.length)]
+      const next = current.map(r =>
+        r.id === target.id
+          ? { ...r, status: 'green' as const, received: new Date().toISOString().slice(0, 10) }
+          : r
+      )
+      logActivity({
+        actor: 'NSERC IDE',
+        kind: 'ide-sync',
+        feature: 'tracker',
+        summary: `Received submission for ${target.diNumber} — status cleared to green`,
+        rowId: target.id,
+      })
+      pushToast({
+        kind: 'success',
+        icon: 'fa-circle-check',
+        title: `${target.diNumber} cleared`,
+        detail: `${target.title} marked received in ${dataset.shortLabel}.`,
+        ts: Date.now(),
+      })
+      return next
+    }
+  }
+
+  // 35% – inject a new row at the top
+  if (roll < 0.70) {
+    const seq = (current.length + 1).toString().padStart(3, '0')
+    const titles = [
+      'Trim & Stability Report',
+      'Habitability Survey',
+      'Cable Block Diagram',
+      'Weight Estimate Update',
+      'Welding Procedure Specification',
+      'Coatings Test Plan',
+    ]
+    const title = titles[Math.floor(Math.random() * titles.length)]
+    const diPrefix = dataset.id === 'vessel-a' ? 'DI-0' : dataset.id === 'vessel-b' ? 'DI-1' : 'DI-2'
+    const newRow: DRLRow = {
+      id: `${dataset.id}-ide-${Date.now()}`,
+      diNumber: `${diPrefix}${seq}`,
+      title,
+      contractDueFinish: '2026-06-30',
+      calculatedDueDate: '60 DAC',
+      submittalGuidance: '2026-05-31',
+      actualSubmissionDate: '',
+      received: '',
+      calendarDaysToReview: null,
+      notes: 'Detected from latest IDE sync.',
+      status: 'pending',
+      scope: 'per-hull',
+    }
+    const next = [newRow, ...current]
+    logActivity({
+      actor: 'NSERC IDE',
+      kind: 'ide-sync',
+      feature: 'tracker',
+      summary: `New deliverable detected: ${newRow.diNumber} — ${newRow.title}`,
+      rowId: newRow.id,
+    })
+    pushToast({
+      kind: 'info',
+      icon: 'fa-file-circle-plus',
+      title: `New DRL · ${newRow.diNumber}`,
+      detail: `${title} synced from IDE for ${dataset.shortLabel}.`,
+      ts: Date.now(),
+    })
+    return next
+  }
+
+  // 25% – add a comment to a random row
+  if (roll < 0.95) {
+    if (current.length === 0) return current
+    const target = current[Math.floor(Math.random() * current.length)]
+    const notes = [
+      'Reviewer flagged minor formatting issue.',
+      'Government QA requested supporting calculations.',
+      'Shipbuilder uploaded revised drawing pack.',
+      'Cross-reference to NAVSEA spec confirmed.',
+      'Awaiting subcontractor sign-off.',
+    ]
+    const note = notes[Math.floor(Math.random() * notes.length)]
+    logActivity({
+      actor: 'NSERC IDE',
+      kind: 'comment',
+      feature: 'tracker',
+      summary: `${target.diNumber}: ${note}`,
+      rowId: target.id,
+    })
+    pushToast({
+      kind: 'info',
+      icon: 'fa-comment-dots',
+      title: `Comment on ${target.diNumber}`,
+      detail: note,
+      ts: Date.now(),
+    })
+    return current
+  }
+
+  // 5% – silent no-op
+  return current
 }
