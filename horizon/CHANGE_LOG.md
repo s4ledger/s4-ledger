@@ -1,81 +1,75 @@
 # HORIZON — Change Log
 
-A scoped, append-only log for the HORIZON tool only. Every meaningful
-change to anything inside `/horizon/` must be appended here. Do not
-delete entries.
+Append-only log scoped to the HORIZON tool. Do not delete entries.
 
 Versioning policy:
 - **v1.0.0** = initial public availability on s4ledger.com.
-- Any change after the user's first interaction with v1.0.0 becomes
-  v1.1, then v1.2, and so on (semver minor for feature work, patch
-  for fixes).
-
-Format:
-```
-## YYYY-MM-DD — short title (vX.Y.Z)
-- bullet 1
-- bullet 2
-```
+- Any change after the user's first interaction becomes v1.1, then
+  v1.2, etc.
 
 ---
 
 ## 2026-06-16 — Initial release (v1.0.0)
 
-**Identity**
-- Locked the tool name: **HORIZON** — the foresight / forecasting
-  analyst module inside the S4 Systems MANIFEST platform.
+**Re-scoped to a true Program Schedule sibling**
+
+Prior scaffolds (Python agent backend, SQLite, chat-only UI, "buy
+list" template terminology) were the wrong target. HORIZON is now a
+Program Schedule tool for PMS 300T styled to the MANIFEST design
+system. Single-file delivery: `horizon/index.html` + `horizon/client.js`.
+
+**Identity & data**
 - Banner: `MANIFEST · HORIZON · INTERNAL · S4 SYSTEMS · OPERATIONAL
   CONTINUITY`.
-- Frozen identifiers baked into `agent_config.json`:
-  - `agent_id`: `mppt-001`
-  - `persona_name`: `procurement_pipeline_analyst`
-  - `dataset_name`: `mppt_knowledge_base`
-  - `proxy_route_base`: `/api/horizon`
+- Hull classes: APL, YRBM, YFB, YTB. 16 seeded hulls across PACFLT and
+  USFF.
+- Milestones: CA, SOC, LCH, BT, AT, DEL.
+- Acquisition events: SRR, PDR, CDR, SDP, IOTE.
+- Status chips: On Track, At Risk, Delayed, Not Planned.
 
-**Layout (Replit-portable, self-contained at `/horizon/`)**
-- `agent_config.json`, `.env.example`, `.gitignore`, `system_prompt.md`.
-- `knowledge_base/` — MANIFEST overview, pipeline stages, terminology.
-- `seed_data/seed_pipeline.json` — 4 hulls × 10 pipeline records.
-- `schema.sql` — sessions, messages, audit_log, pipeline_records, hulls.
-- `src/` — `config.py`, `db.py`, `memory.py`, `tools.py`, `agent.py`,
-  `audit.py`, `server.py`, `routes/api.py`.
-- `index.html` + `client.js` at the tool root (Vercel + FastAPI share
-  the same files).
-- `Dockerfile`, `replit.nix`, `.replit`, `requirements.txt`, `README.md`.
+**UI**
+- Classification banner, sidebar (Views / Status / Tools / Footer),
+  toolbar (craft filter, FY range, milestone chips, search, Acq
+  toggle), KPI ribbon, Gantt card, Spreadsheet card, Acq Events card.
 
-**Agent**
-- Five tools: `search_records`, `get_pipeline_snapshot`,
-  `forecast_slip`, `get_hull_status`, `summarize_pipeline`.
-- Deterministic stub LLM; provider-switchable later via `.env` without
-  touching memory, tools, audit, routes, or frontend.
-- SQLite persistence for sessions + audit. KB retrieval via in-process
-  keyword overlap.
+**Gantt**
+- SVG. Frozen left column with hull/fleet, scrollable right timeline.
+- Milestone symbols (star/triangle/diamonds/circle).
+- CA→DEL span colored by status. Today line. FY column shading +
+  quarter ticks. Baseline variance grey ticks. Zoom +/− (50%–200%).
+
+**Spreadsheet**
+- Inline edit: designation, fleet, status, builder, contract, UIC.
+- Milestone cells open Modal. Variance deltas in days against
+  baseline. Per-row delete. Right-click context menu (edit / toggle
+  complete / clear / cycle status / delete hull).
+
+**Modals**
+- Milestone Edit (smart date parser + day + complete + note).
+- Add Hull. Add Custom Milestone Type. Confirm dialog.
+
+**Drawer**
+- Audit Log (searchable, capped at 800, CSV export).
+- AI Assist (rule-based, local). Understands hull lookups,
+  `pipeline snapshot`, `at risk`, `delayed`, `next deliveries`, `help`.
+
+**I/O**
+- CSV export/import of the schedule.
+- Set Baseline snapshot for variance tracking.
+- Print / PDF via browser print stylesheet.
+- Sample Data action.
+
+**Persistence**
+- localStorage key `horizon_v1` with auto-save (700 ms debounce).
 
 **Deployment**
-- **Static** at `/horizon/` on s4ledger.com (Vercel). `client.js`
-  detects no backend and runs an in-browser engine bundled with the
-  seed dataset — fully interactive.
-- **Live** via FastAPI (Docker / Replit / local). `client.js` detects
-  the backend via `GET /api/horizon/health` and routes chat turns to
-  `/api/horizon/chat`.
-- FastAPI server whitelists only `index.html` + `client.js` for static
-  serving — no full-directory mount, so source/config never leaks.
-- `vercel.json` has a no-cache rule for `/horizon(.*)` matching the
-  one used by `/program-schedule(.*)`.
-
-**Discoverability on s4ledger.com**
-- HORIZON button added to the home-page hero (deep-teal gradient
-  `#0c4a6e → #075985`) and to the CTA section as a ghost button,
-  alongside Program Schedule and Deliverables Tracker.
+- Static at `/horizon/` on s4ledger.com. No backend required.
+- Replit-portable: `/horizon/` folder is the entire deliverable.
 
 **Style**
-- Frontend follows `MANIFEST_Design_System.md` verbatim: IBM Plex
-  stack, warm off-white canvas, deep-teal accent, navy nav chrome,
-  sharp corners except pills, navy 3px accent on modals.
+- IBM Plex Sans/Serif/Mono. Warm off-white canvas. Deep-teal accent.
+  Navy nav chrome. Sharp corners except pills. Navy 3px modal accent.
+  Verbatim per `MANIFEST_Design_System.md`.
 
-**Terminology — explicit non-references**
-- HORIZON does not borrow vocabulary from any other module's example
-  UI. It uses `pipeline_records` and `PR-#####`, never `buy_list`,
-  `BL-#####`, or `BuyListTracker`. The MANIFEST design-system .md
-  contained those as a template example; they were intentionally not
-  carried over.
+**Terminology**
+- No references to BuyListTracker or buy-list vocabulary anywhere.

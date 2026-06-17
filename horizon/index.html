@@ -1,35 +1,43 @@
 <!DOCTYPE html>
 <!--
-  HORIZON — MANIFEST module
-  Procurement pipeline analyst surface for the S4 Systems MANIFEST
-  platform. Visual language is locked to MANIFEST_Design_System.md
-  (IBM Plex stack, warm off-white canvas, deep-teal accent, navy
-  nav chrome, sharp corners except pills, navy 3px modal accent).
+  HORIZON — Program Schedule for PMS 300T
+  S4 Systems · MANIFEST module · v1.0.0
+  Single-file build. No external runtime deps (only Google Fonts CDN).
+  Replit-portable: drop this entire /horizon/ folder anywhere and it works.
 
-  This page works two ways:
-    - As a static page served by Vercel at /horizon/ — uses an
-      in-browser fallback engine (see client.js).
-    - As a page served by the FastAPI server (src/server.py) — talks
-      to the live agent at /api/horizon/chat.
+  Feature parity with /program-schedule (functionally), MANIFEST styled:
+    - Classification banner (sticky)
+    - Sidebar nav (Operations / Reference / Footer)
+    - Toolbar: craft filter, FY range, milestone toggles, save state
+    - KPI ribbon (4 tiles)
+    - Gantt: SVG, frozen left column + scrollable timeline, milestone
+      symbols (star/triangle/diamonds/circle), CA→DEL spans, zoom +/-
+    - Spreadsheet: search, status filter, inline edit, status/craft/loc
+      selects, milestone date cells -> modal, baseline + variance, CSV
+      export/import, acquisition events sub-panel
+    - Modals: milestone edit (smart date), add hull, add milestone type
+    - Drawer: audit log (search/export) + AI Assist (rule-based locally)
+    - Persistence: localStorage key `horizon_v1`
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HORIZON — MANIFEST</title>
-  <meta name="description" content="HORIZON — procurement pipeline foresight for the S4 Systems MANIFEST platform." />
+  <meta name="description" content="HORIZON — Program Schedule for PMS 300T inside the S4 Systems MANIFEST platform." />
   <meta name="robots" content="noindex,nofollow" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* ─── MANIFEST tokens (verbatim from design system) ─── */
+    /* ═══════════════════════════════════════════════════════════════
+        MANIFEST tokens — verbatim from MANIFEST_Design_System.md
+       ═══════════════════════════════════════════════════════════════ */
     :root {
       --bg:              #fafaf9;
       --surface-0:       #ffffff;
@@ -57,12 +65,30 @@
       --blue-action-dk:  #185ea5;
       --blue-action-lt:  #e8f0fe;
       --blue-action-txt: #1557b0;
+      --destructive:     #d93025;
+      --destructive-lt:  #fce8e6;
+      --destructive-bdr: #f5c6c3;
       --ease:     cubic-bezier(.4, 0, .2, 1);
       --m-fast:   100ms;
       --m:        180ms;
       --sidebar-w:  220px;
-      --content-px: 28px;
-      --content-py: 22px;
+      --content-px: 24px;
+      --content-py: 18px;
+
+      /* Milestone palette (MANIFEST-toned) */
+      --ms-ca:   #92400e;  /* burnt amber */
+      --ms-soc:  #c2410c;  /* deep orange */
+      --ms-lch:  #1d4ed8;  /* royal blue */
+      --ms-bt:   #075985;  /* deep teal (=accent-2) */
+      --ms-at:   #6d28d9;  /* deep violet */
+      --ms-del:  #166534;  /* deep green */
+
+      /* Acq event palette */
+      --acq-srr: #1d4ed8;
+      --acq-pdr: #166534;
+      --acq-cdr: #c2410c;
+      --acq-sdp: #6d28d9;
+      --acq-iote:#0c4a6e;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -73,42 +99,43 @@
       color: var(--text-1);
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
+      overflow: hidden;
     }
-    button { font: inherit; cursor: pointer; }
-    a { color: var(--accent); }
+    button { font: inherit; cursor: pointer; color: inherit; }
+    input, select, textarea { font: inherit; color: inherit; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-2); }
 
-    /* App shell */
-    .app { min-height: 100vh; }
+    /* ── App shell ───────────────────────────────────────────────── */
+    .app { display: flex; flex-direction: column; height: 100vh; }
 
     /* Classification banner */
-    .app::before {
-      content: "MANIFEST · HORIZON · INTERNAL · S4 SYSTEMS · OPERATIONAL CONTINUITY";
-      position: sticky; top: 0; z-index: 150;
-      display: block;
-      padding: 5px 28px;
+    .banner {
+      flex: 0 0 auto;
       background: var(--nav-bg); color: var(--banner-text);
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
-      text-align: center;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 1.5px; text-align: center;
+      padding: 5px 28px;
       border-bottom: 1px solid #44403c;
+      z-index: 200;
     }
+
+    .shell { flex: 1; display: flex; min-height: 0; }
 
     /* Sidebar */
     .header {
-      position: fixed;
-      left: 0; top: 0; bottom: 0;
-      width: var(--sidebar-w);
+      flex: 0 0 var(--sidebar-w);
       background: var(--nav-bg);
-      z-index: 200;
       overflow-y: auto;
-      padding-top: 26px;
       display: flex; flex-direction: column;
+      z-index: 150;
     }
-    .brand { padding: 14px 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .brand { padding: 16px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
     .brand h1 {
       font-family: 'IBM Plex Serif', Georgia, serif;
-      font-size: 18px; font-weight: 500; color: var(--banner-text);
-      letter-spacing: 0.2px;
+      font-size: 18px; font-weight: 500;
+      color: var(--banner-text); letter-spacing: 0.2px;
     }
     .brand .sub {
       margin-top: 4px;
@@ -122,27 +149,25 @@
       font-family: 'IBM Plex Mono', monospace;
       font-size: 9px; font-weight: 500;
       letter-spacing: 1px; text-transform: uppercase;
-      color: rgba(250,250,249,0.40);
+      color: rgba(250,250,249,0.4);
     }
-    .hull-picker {
-      margin-top: 12px;
-      width: 100%;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px; font-weight: 500; letter-spacing: 0.5px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 3px;
-      color: rgba(250,250,249,0.80);
-      padding: 6px 10px;
-      text-transform: uppercase;
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
+      padding: 8px 14px;
+      margin: 10px 16px 4px;
+      border-radius: 99px; border: none;
+      background: var(--blue-action); color: #fff;
+      width: calc(100% - 32px);
+      justify-content: center;
     }
-    .hull-picker option { background: var(--nav-bg); color: var(--banner-text); }
+    .nav-cta:hover { background: #1463cf; }
 
-    .nav-section { padding: 18px 0 6px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .nav-section { padding: 14px 0 4px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .nav-section::before {
-      content: attr(data-label);
-      display: block;
-      padding: 0 20px 8px;
+      content: attr(data-label); display: block;
+      padding: 0 20px 6px;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 9px; font-weight: 600;
       letter-spacing: 1.6px; text-transform: uppercase;
@@ -169,54 +194,132 @@
       border-left-color: var(--accent);
       font-weight: 500;
     }
-    .nav-cta {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 12px; font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 99px; border: none;
-      background: var(--blue-action); color: #fff;
-      margin: 8px 16px;
-    }
-    .nav-cta:hover { background: #1463cf; }
-
     .nav-footer {
       padding: 14px 20px 18px;
       margin-top: auto;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 9px; font-weight: 500; line-height: 1.8;
       letter-spacing: 0.8px; text-transform: uppercase;
-      color: rgba(250,250,249,0.25);
-      border-top: 1px solid rgba(255,255,255,0.05);
+      color: rgba(250,250,249,0.32);
+      border-top: 1px solid rgba(255,255,255,0.06);
     }
-    .nav-footer a { color: rgba(250,250,249,0.55); text-decoration: none; }
+    .nav-footer a { color: rgba(250,250,249,0.55); }
     .save-dot {
       display: inline-block; width: 7px; height: 7px;
       border-radius: 50%;
       background: rgba(250,250,249,0.25);
-      margin-right: 6px;
-      vertical-align: middle;
+      margin-right: 6px; vertical-align: middle;
     }
     .save-dot.ok   { background: #34a853; }
     .save-dot.busy { background: #fbbc04; animation: pulse 1.4s var(--ease) infinite; }
     .save-dot.err  { background: #ea4335; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
-    /* Main */
+    /* ── Main area ───────────────────────────────────────────────── */
     .main {
-      margin-left: var(--sidebar-w);
-      padding: var(--content-py) var(--content-px) 64px;
-      min-height: 100vh;
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      padding: var(--content-py) var(--content-px) 0;
+      gap: 12px;
     }
-    .page-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+
+    .page-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
     .page-head h2 {
       font-family: 'IBM Plex Serif', serif;
-      font-size: 22px; font-weight: 500; letter-spacing: 0.1px; color: var(--text-1);
+      font-size: 22px; font-weight: 500;
+      letter-spacing: 0.1px; color: var(--text-1);
     }
     .page-head .meta {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 11px; color: var(--text-4); letter-spacing: 0.2px;
     }
+    .page-head .right { margin-left: auto; display: flex; gap: 8px; }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px;
+      background: var(--surface-0);
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .tg { display: flex; align-items: center; gap: 6px; }
+    .tlbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9.5px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--text-4);
+    }
+    .tdiv { width: 1px; height: 22px; background: var(--border); }
+
+    /* Inputs */
+    .sel, .inp {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px;
+      padding: 5px 9px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface-0);
+      color: var(--text-1);
+      border-radius: 0;
+      outline: none;
+    }
+    .sel:focus, .inp:focus { border-color: var(--accent); }
+    .sel.mono, .inp.mono { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.4px; }
+    .yr-sel { min-width: 78px; }
+
+    /* Pill / chip buttons */
+    .chip-btn {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 11px; font-weight: 500;
+      padding: 4px 11px;
+      border: 1px solid var(--border-strong);
+      border-radius: 99px;
+      background: var(--surface-0); color: var(--text-2);
+      transition: all var(--m-fast) var(--ease);
+    }
+    .chip-btn:hover { background: var(--surface-1); }
+    .chip-btn.active {
+      background: var(--nav-bg);
+      border-color: var(--nav-bg);
+      color: #fff; font-weight: 600;
+    }
+
+    /* Action buttons */
+    .btn {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 11px; font-weight: 500;
+      padding: 6px 12px;
+      border: 1px solid transparent;
+      border-radius: 0;
+      background: var(--surface-0); color: var(--text-2);
+      transition: all var(--m-fast) var(--ease);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn:hover { background: var(--surface-1); border-color: var(--border-strong); }
+    .btn.primary {
+      background: var(--blue-action); color: #fff; border-color: var(--blue-action);
+      border-radius: 99px; padding: 6px 14px;
+    }
+    .btn.primary:hover { background: #1463cf; }
+    .btn.dark {
+      background: var(--blue-action-dk); color: #fff; border-color: var(--blue-action-dk);
+      border-radius: 99px; padding: 6px 14px;
+    }
+    .btn.ghost {
+      background: var(--blue-action-lt); color: var(--blue-action-txt); border-color: transparent;
+      border-radius: 99px; padding: 6px 14px;
+    }
+    .btn.danger {
+      background: var(--destructive-lt); color: var(--destructive);
+      border: 1px solid var(--destructive-bdr); border-radius: 6px;
+    }
+    .btn.outline {
+      background: var(--surface-0); color: var(--text-1);
+      border: 1px solid var(--border-strong);
+    }
+    .btn.tiny { font-size: 10px; padding: 3px 9px; }
+    .btn.iconic { padding: 5px 8px; }
 
     /* KPI ribbon */
     .kpis {
@@ -225,53 +328,44 @@
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
-      margin-bottom: 24px;
     }
-    .kpi { background: var(--surface-0); padding: 14px 16px; }
+    .kpi { background: var(--surface-0); padding: 12px 14px; }
     .kpi:hover { background: var(--surface-1); }
     .kpi-lbl {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 9px; font-weight: 500;
       letter-spacing: 1.2px; text-transform: uppercase;
-      color: var(--text-4); margin-bottom: 8px;
+      color: var(--text-4); margin-bottom: 6px;
     }
     .kpi-val {
       font-family: 'IBM Plex Serif', Georgia, serif;
-      font-size: 30px; font-weight: 500; line-height: 1;
+      font-size: 26px; font-weight: 500; line-height: 1;
       letter-spacing: -0.4px; font-variant-numeric: tabular-nums;
       color: var(--text-1);
     }
-    .kpi-val.blue  { color: var(--accent); }
     .kpi-val.green { color: var(--success); }
     .kpi-val.amber { color: var(--warning); }
     .kpi-val.red   { color: var(--error); }
+    .kpi-val.blue  { color: var(--accent); }
 
-    /* Split */
-    .split {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 360px;
-      gap: 14px;
-    }
-    @media (max-width: 1080px) { .split { grid-template-columns: 1fr; } }
-
-    /* Cards */
+    /* Content card with header */
     .card {
       background: var(--surface-0);
       border: 1px solid var(--border);
       border-radius: 0;
-      overflow: hidden;
-      transition: border-color var(--m-fast) var(--ease);
+      display: flex; flex-direction: column;
+      min-height: 0;
     }
     .card:hover { border-color: var(--border-strong); }
     .chd {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 18px;
-      background: var(--surface-0);
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px;
       border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
     }
     .chd h3 {
       font-family: 'IBM Plex Serif', serif;
-      font-size: 17px; font-weight: 500; letter-spacing: 0.1px;
+      font-size: 16px; font-weight: 500; letter-spacing: 0.1px;
       color: var(--text-1);
     }
     .chd .count {
@@ -285,120 +379,376 @@
     }
     .chd .spacer { flex: 1; }
 
-    /* Conversation */
-    .convo {
+    /* Scroll body inside the main column */
+    .scroll {
+      flex: 1; overflow-y: auto;
       display: flex; flex-direction: column;
-      height: 540px; overflow-y: auto;
-      padding: 16px 18px; gap: 14px;
-      background: var(--bg);
+      gap: 12px;
+      padding-bottom: 24px;
     }
-    .msg { max-width: 86%; display: flex; flex-direction: column; gap: 4px; }
-    .msg.user { align-self: flex-end; }
-    .msg.bot  { align-self: flex-start; }
-    .msg .who {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px; font-weight: 600;
-      letter-spacing: 0.8px; text-transform: uppercase;
-      color: var(--text-4);
-    }
-    .msg .body {
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 0;
-      background: var(--surface-0);
-      color: var(--text-1);
-      font-size: 13px; line-height: 1.5;
-      white-space: pre-wrap; word-break: break-word;
-    }
-    .msg.user .body {
-      background: var(--accent-bg);
-      border-color: var(--accent);
-      color: var(--text-1);
-    }
-    .msg .body code {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      background: var(--surface-1);
-      padding: 1px 5px;
-      color: var(--text-2);
-    }
-    .msg .body pre {
-      background: var(--surface-1);
-      border: 1px solid var(--border-subtle);
-      padding: 10px 12px;
-      overflow-x: auto;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-    }
-    .msg .body strong { font-weight: 600; }
-    .msg .body em { color: var(--text-3); font-style: italic; }
 
-    /* Composer */
-    .composer {
-      display: flex; gap: 10px;
-      padding: 12px 14px 14px;
+    /* ── Gantt ────────────────────────────────────────────────────── */
+    .gantt-wrap {
+      display: flex; min-height: 0;
       background: var(--surface-0);
-      border-top: 1px solid var(--border);
     }
-    .composer textarea {
+    .gantt-left {
+      flex: 0 0 200px;
+      background: var(--surface-1);
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .gantt-right {
       flex: 1;
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 14px;
-      padding: 10px 12px;
-      border: 1px solid var(--border-strong);
-      border-radius: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
       background: var(--surface-0);
-      color: var(--text-1);
-      resize: none;
-      min-height: 44px; max-height: 160px;
-      outline: none;
     }
-    .composer textarea:focus { border-color: var(--accent); }
-    .send-btn {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 12px; font-weight: 500;
-      padding: 8px 18px;
-      border-radius: 99px; border: none;
-      background: var(--blue-action); color: #fff;
-      align-self: flex-end;
-    }
-    .send-btn:hover { background: #1463cf; }
-    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* Brief panel */
-    .brief-body { padding: 14px 18px 18px; font-size: 12px; color: var(--text-2); }
-    .brief-body h4 {
+    .gantt-left-hdr, .gantt-right-hdr {
+      height: 36px;
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px; font-weight: 700;
-      letter-spacing: 1.2px; text-transform: uppercase;
-      color: var(--text-4);
-      margin: 14px 0 6px;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--text-2);
     }
-    .brief-body h4:first-child { margin-top: 0; }
-    .brief-row {
-      display: flex; justify-content: space-between;
-      padding: 6px 0; border-bottom: 1px solid var(--border-subtle);
+    .gantt-left-hdr { padding: 0 12px; justify-content: space-between; }
+    .gantt-left-svg, .gantt-right-svg { display: block; }
+    .gantt-row-name {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px; font-variant-numeric: tabular-nums;
+      font-size: 12px; font-weight: 500;
+      fill: var(--text-1);
     }
-    .brief-row:last-child { border-bottom: none; }
-    .brief-row .lbl { color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; font-size: 10px; }
-    .brief-row .val { color: var(--text-1); font-weight: 500; }
+    .gantt-row-fleet {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      fill: var(--text-4);
+      letter-spacing: 0.6px; text-transform: uppercase;
+    }
+    .gantt-group-bar {
+      fill: var(--surface-1);
+    }
+    .gantt-group-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; font-weight: 700;
+      fill: var(--text-2);
+      letter-spacing: 0.8px; text-transform: uppercase;
+    }
+    .gantt-fy-tick {
+      stroke: var(--border-subtle); stroke-width: 1;
+    }
+    .gantt-fy-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; font-weight: 600;
+      fill: var(--text-3);
+      letter-spacing: 0.8px;
+    }
+    .gantt-row-stripe { fill: var(--surface-0); }
+    .gantt-row-stripe.alt { fill: #fbfaf8; }
+    .gantt-span { stroke: none; opacity: 0.55; }
+    .gantt-now-line { stroke: var(--destructive); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .gantt-now-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px; font-weight: 700;
+      fill: var(--destructive);
+      letter-spacing: 0.8px;
+    }
+    .gantt-symbol { cursor: pointer; }
+    .gantt-symbol:hover { filter: brightness(1.1); }
+    .gantt-complete-badge { fill: var(--success); }
 
+    /* Legend */
+    .legend {
+      display: flex; align-items: center; gap: 16px;
+      padding: 8px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--surface-1);
+      flex-wrap: wrap;
+    }
+    .li {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; letter-spacing: 0.6px;
+      text-transform: uppercase; color: var(--text-3);
+    }
+
+    /* ── Spreadsheet ──────────────────────────────────────────────── */
+    .sheet-wrap {
+      overflow: auto;
+      background: var(--surface-0);
+      max-height: 480px;
+    }
+    table.sheet { width: 100%; border-collapse: collapse; min-width: 1200px; }
+    .sheet th {
+      position: sticky; top: 0; z-index: 2;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; font-weight: 700;
+      color: var(--text-2);
+      text-align: left;
+      padding: 9px 12px;
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      letter-spacing: 0.8px; text-transform: uppercase;
+    }
+    .sheet td {
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-1);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .sheet td:first-child {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 500;
+    }
+    .sheet tr:last-child td { border-bottom: none; }
+    .sheet tr.dr:hover td { background: var(--surface-1); }
+    .sheet td.editable { cursor: pointer; }
+    .sheet td.editable:hover { background: var(--accent-bg); outline: 1px dashed var(--accent); outline-offset: -1px; }
+    .sheet td.complete {
+      background: var(--success-bg);
+      color: var(--success);
+      font-weight: 600;
+    }
+    .sheet td.delta-late { color: var(--error); font-weight: 600; }
+    .sheet td.delta-early { color: var(--success); }
+    .sheet td.empty-date { color: var(--text-5); font-style: italic; }
+    .sheet td.no-pad { padding: 4px 8px; }
+    .sheet td .row-del {
+      opacity: 0; transition: opacity var(--m-fast) var(--ease);
+    }
+    .sheet tr.dr:hover .row-del { opacity: 1; }
+
+    /* Status chips */
     .chip {
       display: inline-flex; align-items: center; gap: 5px;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 9px; font-weight: 600;
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 99px;
       border: 1px solid;
-      text-transform: uppercase; letter-spacing: 0.8px; line-height: 1.5;
+      text-transform: uppercase; letter-spacing: 0.7px; line-height: 1.4;
     }
     .chip.on-track { color: var(--success); border-color: var(--success); background: var(--success-bg); }
     .chip.at-risk  { color: var(--warning); border-color: var(--warning); background: var(--warning-bg); }
-    .chip.overdue  { color: var(--error);   border-color: var(--error);   background: var(--error-bg); }
-    .chip.complete { color: var(--accent);  border-color: var(--accent);  background: var(--accent-bg); }
+    .chip.delayed  { color: var(--error);   border-color: var(--error);   background: var(--error-bg); }
+    .chip.not-planned {
+      color: var(--text-4); border-color: var(--border-strong);
+      background: var(--surface-1);
+    }
+    .chip.complete { color: var(--accent); border-color: var(--accent); background: var(--accent-bg); }
+    .chip.craft {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 0;
+      border: 1px solid var(--border);
+      background: var(--surface-1);
+      color: var(--text-2);
+    }
 
+    /* Acq events sub-panel */
+    .acq-panel { display: none; }
+    .acq-panel.open { display: block; }
+    table.acq { width: 100%; border-collapse: collapse; min-width: 760px; }
+    .acq th, .acq td {
+      padding: 7px 12px;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      text-align: left;
+    }
+    .acq th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      background: var(--surface-1);
+      color: var(--text-2);
+    }
+    .acq td:first-child { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+
+    /* ── Modal ────────────────────────────────────────────────────── */
+    .mbg {
+      position: fixed; inset: 0;
+      background: rgba(28,25,23,0.55);
+      backdrop-filter: blur(4px);
+      display: none; align-items: flex-start; justify-content: center;
+      padding: 48px 24px;
+      z-index: 400;
+    }
+    .mbg.open { display: flex; }
+    .modal {
+      background: var(--surface-0);
+      border-radius: 0;
+      padding: 22px 24px;
+      max-width: 520px; width: 100%;
+      border: 1px solid var(--border-strong);
+      border-top: 3px solid var(--nav-bg);
+      box-shadow: 0 12px 24px rgba(28,25,23,0.15);
+    }
+    .modal h4 {
+      font-family: 'IBM Plex Serif', serif;
+      font-size: 17px; font-weight: 500;
+      color: var(--text-1); margin-bottom: 14px;
+    }
+    .modal .fld { margin-bottom: 12px; }
+    .modal .fld label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--text-4); margin-bottom: 4px;
+    }
+    .modal .fld input, .modal .fld select, .modal .fld textarea {
+      width: 100%;
+      font-size: 13px; padding: 8px 10px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface-0);
+      color: var(--text-1);
+      border-radius: 0; outline: none;
+    }
+    .modal .fld input:focus, .modal .fld select:focus, .modal .fld textarea:focus { border-color: var(--accent); }
+    .modal .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .modal .actions {
+      display: flex; gap: 8px; justify-content: flex-end;
+      margin-top: 14px; padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .modal .hint {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; color: var(--text-4);
+      letter-spacing: 0.4px; margin-top: 3px;
+    }
+
+    /* ── Drawer ───────────────────────────────────────────────────── */
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 380px;
+      background: var(--surface-0);
+      border-left: 1px solid var(--border-strong);
+      box-shadow: -8px 0 20px rgba(28,25,23,0.10);
+      transform: translateX(100%);
+      transition: transform var(--m) var(--ease);
+      z-index: 350;
+      display: flex; flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-hd {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--nav-bg); color: var(--banner-text);
+    }
+    .drawer-hd h3 {
+      font-family: 'IBM Plex Serif', serif;
+      font-size: 16px; font-weight: 500;
+    }
+    .drawer-hd .close-btn {
+      margin-left: auto;
+      border: none; background: transparent;
+      color: rgba(250,250,249,0.7);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px; font-weight: 600;
+    }
+    .drawer-hd .close-btn:hover { color: var(--banner-text); }
+    .drawer-tabs {
+      display: flex;
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+    }
+    .drawer-tab {
+      flex: 1;
+      padding: 9px 12px;
+      background: transparent; border: none;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
+      color: var(--text-3);
+      border-bottom: 2px solid transparent;
+    }
+    .drawer-tab.active {
+      color: var(--text-1); font-weight: 600;
+      border-bottom-color: var(--accent);
+      background: var(--surface-0);
+    }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 12px 14px; }
+    .drawer-pane { display: none; }
+    .drawer-pane.active { display: block; }
+
+    .audit-toolbar {
+      display: flex; gap: 6px; margin-bottom: 10px;
+    }
+    .audit-search {
+      flex: 1;
+      font-size: 12px; padding: 6px 9px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface-0);
+      border-radius: 0; outline: none;
+    }
+    .audit-search:focus { border-color: var(--accent); }
+    .audit-entry {
+      padding: 8px 10px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 6px;
+      background: var(--surface-0);
+      font-size: 11px;
+    }
+    .audit-entry .ae-hd {
+      display: flex; justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.6px; text-transform: uppercase;
+      color: var(--text-4);
+      margin-bottom: 4px;
+    }
+    .audit-entry .ae-action { color: var(--text-2); font-weight: 500; }
+    .audit-entry .ae-detail { color: var(--text-3); margin-top: 2px; }
+    .audit-entry .ae-cat {
+      display: inline-block; padding: 1px 5px;
+      background: var(--surface-1); border: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 8px; letter-spacing: 0.8px;
+    }
+
+    /* AI assist */
+    .ai-log { display: flex; flex-direction: column; gap: 10px; min-height: 240px; }
+    .ai-msg {
+      max-width: 92%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-0);
+      font-size: 12px; line-height: 1.5;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .ai-msg.user { align-self: flex-end; background: var(--accent-bg); border-color: var(--accent); }
+    .ai-msg .who {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.7px; text-transform: uppercase;
+      color: var(--text-4); margin-bottom: 4px; display: block;
+    }
+    .ai-msg code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      background: var(--surface-1); padding: 1px 4px;
+    }
+    .ai-composer {
+      display: flex; gap: 6px; margin-top: 10px;
+      padding-top: 10px; border-top: 1px solid var(--border-subtle);
+    }
+    .ai-composer textarea {
+      flex: 1;
+      font-size: 12px; padding: 6px 9px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface-0); resize: none;
+      border-radius: 0; outline: none;
+      min-height: 38px; max-height: 110px;
+    }
+    .ai-composer textarea:focus { border-color: var(--accent); }
+
+    /* Toast */
     .toast {
       position: fixed; bottom: 24px; right: 24px;
       background: var(--nav-bg); color: var(--banner-text);
@@ -407,12 +757,47 @@
       padding: 11px 18px;
       letter-spacing: 0.6px; text-transform: uppercase;
       box-shadow: 0 8px 16px rgba(28,25,23,0.20);
-      z-index: 300;
+      z-index: 500;
       transform: translateY(20px); opacity: 0;
       transition: all var(--m) var(--ease);
       pointer-events: none;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.err  { background: var(--destructive); }
+
+    /* Context menu */
+    .ctx {
+      position: fixed; z-index: 600;
+      background: var(--surface-0);
+      border: 1px solid var(--border-strong);
+      box-shadow: 0 8px 20px rgba(28,25,23,0.18);
+      padding: 4px 0; min-width: 180px;
+      display: none;
+    }
+    .ctx.open { display: block; }
+    .ctx button {
+      display: block; width: 100%; text-align: left;
+      padding: 7px 14px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px;
+      background: transparent; border: none;
+      color: var(--text-1);
+    }
+    .ctx button:hover { background: var(--surface-1); }
+    .ctx button.danger { color: var(--destructive); }
+    .ctx hr {
+      border: none; height: 1px;
+      background: var(--border-subtle);
+      margin: 4px 0;
+    }
+
+    /* Print */
+    @media print {
+      .banner, .header, .toolbar, .drawer, .mbg, .toast, .ctx, .nav-cta, .legend { display: none !important; }
+      .main { padding: 0; }
+      body { overflow: visible; }
+      .sheet-wrap { max-height: none; overflow: visible; }
+    }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -420,95 +805,347 @@
   </style>
 </head>
 <body>
+
   <div class="app">
-    <!-- Sidebar -->
-    <aside class="header">
-      <div class="brand">
-        <h1>HORIZON</h1>
-        <div class="sub">Procurement · Pipeline · Foresight</div>
-        <div class="powered">S4 Systems · MANIFEST module</div>
-        <select class="hull-picker" id="hull-picker" aria-label="Scope by hull">
-          <option value="">All hulls</option>
-        </select>
-      </div>
+    <!-- ── Classification banner ──────────────────────────────── -->
+    <div class="banner">
+      MANIFEST · HORIZON · INTERNAL · S4 SYSTEMS · OPERATIONAL CONTINUITY
+    </div>
 
-      <button class="nav-cta" id="snap-btn">+ Pipeline Snapshot</button>
+    <div class="shell">
+      <!-- ── Sidebar ─────────────────────────────────────────── -->
+      <aside class="header">
+        <div class="brand">
+          <h1>HORIZON</h1>
+          <div class="sub">Program · Schedule · Foresight</div>
+          <div class="powered">PMS 300T · S4 Systems · MANIFEST</div>
+        </div>
 
-      <nav class="nav-section" data-label="Operations">
-        <button class="nav-item active" data-cmd="snapshot">Snapshot</button>
-        <button class="nav-item" data-cmd="risks">At Risk</button>
-        <button class="nav-item" data-cmd="overdue">Overdue</button>
-        <button class="nav-item" data-cmd="tools">Tools</button>
-      </nav>
+        <button class="nav-cta" id="btn-add-hull">＋ Add Hull</button>
+        <button class="nav-cta" id="btn-add-ms" style="background:var(--surface-1);color:var(--text-1)">＋ Add Milestone</button>
 
-      <nav class="nav-section" data-label="Reference">
-        <button class="nav-item" data-cmd="stages">Pipeline Stages</button>
-        <button class="nav-item" data-cmd="terms">Terminology</button>
-      </nav>
+        <nav class="nav-section" data-label="Views">
+          <button class="nav-item active" data-view="all">All Hulls</button>
+          <button class="nav-item" data-view="apl">APL</button>
+          <button class="nav-item" data-view="yrbm">YRBM</button>
+          <button class="nav-item" data-view="yfb">YFB</button>
+          <button class="nav-item" data-view="ytb">YTB</button>
+        </nav>
 
-      <div class="nav-footer">
-        <div><span class="save-dot ok" id="save-dot"></span><span id="save-label">Connected</span></div>
-        <div id="session-id-foot">Session: —</div>
-        <div id="version-foot">HORIZON · v1.0.0</div>
-        <div><a href="/">Return to s4ledger.com</a></div>
-      </div>
-    </aside>
+        <nav class="nav-section" data-label="Status">
+          <button class="nav-item" data-status="all">All Status</button>
+          <button class="nav-item" data-status="on-track">On Track</button>
+          <button class="nav-item" data-status="at-risk">At Risk</button>
+          <button class="nav-item" data-status="delayed">Delayed</button>
+          <button class="nav-item" data-status="not-planned">Not Planned</button>
+        </nav>
 
-    <!-- Main -->
-    <main class="main">
-      <div class="page-head">
-        <h2>Procurement Pipeline Analyst</h2>
-        <div class="meta" id="mode-meta">MODE: STUB · Agent mppt-001</div>
-      </div>
+        <nav class="nav-section" data-label="Tools">
+          <button class="nav-item" id="open-log">Audit Log</button>
+          <button class="nav-item" id="open-ai">AI Assist</button>
+          <button class="nav-item" id="btn-print">Print / PDF</button>
+          <button class="nav-item" id="btn-baseline">Set Baseline</button>
+          <button class="nav-item" id="btn-export-csv">Export CSV</button>
+          <button class="nav-item" id="btn-import-csv">Import CSV</button>
+          <input type="file" id="csv-input" accept=".csv,text/csv" hidden>
+        </nav>
 
-      <div class="kpis" id="kpi-ribbon">
-        <div class="kpi"><div class="kpi-lbl">Total Records</div><div class="kpi-val" id="kpi-total">—</div></div>
-        <div class="kpi"><div class="kpi-lbl">On Track</div><div class="kpi-val green" id="kpi-ok">—</div></div>
-        <div class="kpi"><div class="kpi-lbl">At Risk</div><div class="kpi-val amber" id="kpi-risk">—</div></div>
-        <div class="kpi"><div class="kpi-lbl">Overdue</div><div class="kpi-val red" id="kpi-late">—</div></div>
-      </div>
+        <div class="nav-footer">
+          <div><span class="save-dot ok" id="save-dot"></span><span id="save-label">Saved</span></div>
+          <div id="last-saved">—</div>
+          <div>HORIZON · v1.0.0</div>
+          <div><a href="/">Return to s4ledger.com</a></div>
+        </div>
+      </aside>
 
-      <div class="split">
-        <section class="card chat-card">
-          <div class="chd">
-            <h3>Conversation</h3>
-            <span class="count" id="turn-count">0 turns</span>
-            <div class="spacer"></div>
+      <!-- ── Main content ────────────────────────────────────── -->
+      <main class="main">
+        <div class="page-head">
+          <h2>Program Schedule</h2>
+          <div class="meta" id="ctx-meta">PMS 300T · All Hulls · FY26–FY28</div>
+          <div class="right">
+            <button class="btn outline" id="btn-zoom-out" title="Zoom out">−</button>
+            <button class="btn outline" id="btn-zoom-100" title="Reset zoom"><span id="zoom-label">100%</span></button>
+            <button class="btn outline" id="btn-zoom-in" title="Zoom in">＋</button>
+            <button class="btn ghost" id="btn-sample">Sample Data</button>
+            <button class="btn primary" id="btn-save">Save</button>
           </div>
-          <div class="convo" id="convo" aria-live="polite"></div>
-          <div class="composer">
-            <textarea
-              id="composer"
-              placeholder="Ask HORIZON — e.g. 'forecast PR-00042', 'show overdue', 'T-AO 209 status', 'pipeline snapshot'"
-              rows="2"
-            ></textarea>
-            <button class="send-btn" id="send-btn">Send</button>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="tg">
+            <span class="tlbl">Craft</span>
+            <select class="sel mono" id="filter-craft">
+              <option value="">All Types</option>
+              <option value="APL">APL</option>
+              <option value="YRBM">YRBM</option>
+              <option value="YFB">YFB</option>
+              <option value="YTB">YTB</option>
+            </select>
           </div>
-        </section>
 
-        <aside class="card brief-card">
-          <div class="chd"><h3>Active Brief</h3></div>
-          <div class="brief-body" id="brief-body">
-            <h4>Status</h4>
-            <div class="brief-row"><span class="lbl">Agent</span><span class="val" id="b-agent">mppt-001</span></div>
-            <div class="brief-row"><span class="lbl">Persona</span><span class="val">procurement_pipeline_analyst</span></div>
-            <div class="brief-row"><span class="lbl">Runtime</span><span class="val" id="b-mode">detecting…</span></div>
+          <div class="tdiv"></div>
 
-            <h4>Last tool</h4>
-            <div id="b-tool" style="color: var(--text-4); font-family: 'IBM Plex Mono', monospace; font-size: 11px;">
-              No tool invoked yet.
+          <div class="tg">
+            <span class="tlbl">FY</span>
+            <select class="sel mono yr-sel" id="filter-fy-start"></select>
+            <span style="color:var(--text-4);font-family:'IBM Plex Mono',monospace;font-size:10px;">→</span>
+            <select class="sel mono yr-sel" id="filter-fy-end"></select>
+          </div>
+
+          <div class="tdiv"></div>
+
+          <div class="tg" id="ms-toggles">
+            <span class="tlbl">Milestones</span>
+            <!-- chips injected by JS -->
+          </div>
+
+          <div class="tdiv"></div>
+
+          <div class="tg">
+            <span class="tlbl">Search</span>
+            <input class="inp" id="filter-search" placeholder="Hull, builder, contract…" style="width:200px">
+          </div>
+
+          <div class="tdiv"></div>
+
+          <button class="chip-btn" id="toggle-acq">Acq Events</button>
+        </div>
+
+        <!-- KPI ribbon -->
+        <div class="kpis">
+          <div class="kpi"><div class="kpi-lbl">Hulls Tracked</div><div class="kpi-val blue" id="kpi-total">—</div></div>
+          <div class="kpi"><div class="kpi-lbl">On Track</div><div class="kpi-val green" id="kpi-ok">—</div></div>
+          <div class="kpi"><div class="kpi-lbl">At Risk</div><div class="kpi-val amber" id="kpi-risk">—</div></div>
+          <div class="kpi"><div class="kpi-lbl">Delayed</div><div class="kpi-val red" id="kpi-late">—</div></div>
+        </div>
+
+        <!-- Scrollable content -->
+        <div class="scroll">
+          <!-- Gantt -->
+          <section class="card">
+            <div class="chd">
+              <h3>Gantt</h3>
+              <span class="count" id="gantt-count">0 hulls</span>
+              <div class="spacer"></div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4);" id="gantt-range">FY26 → FY28</span>
             </div>
-
-            <h4>References</h4>
-            <div id="b-refs" style="color: var(--text-4); font-family: 'IBM Plex Mono', monospace; font-size: 11px;">
-              No knowledge-base hits yet.
+            <div class="gantt-wrap" id="gantt">
+              <div class="gantt-left">
+                <div class="gantt-left-hdr"><span>Hull</span><span>Fleet</span></div>
+                <svg id="gantt-left-svg" width="200" height="40"></svg>
+              </div>
+              <div class="gantt-right" id="gantt-right-wrap">
+                <div class="gantt-right-hdr" id="gantt-right-hdr"></div>
+                <svg id="gantt-right-svg" width="800" height="40"></svg>
+              </div>
             </div>
-          </div>
-        </aside>
-      </div>
-    </main>
+            <div class="legend" id="gantt-legend"></div>
+          </section>
+
+          <!-- Spreadsheet -->
+          <section class="card">
+            <div class="chd">
+              <h3>Schedule</h3>
+              <span class="count" id="sheet-count">0 rows</span>
+              <div class="spacer"></div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4);" id="baseline-meta">No baseline set</span>
+            </div>
+            <div class="sheet-wrap">
+              <table class="sheet" id="sheet"></table>
+            </div>
+          </section>
+
+          <!-- Acq events sub-panel -->
+          <section class="card acq-panel" id="acq-card">
+            <div class="chd">
+              <h3>Acquisition Events</h3>
+              <span class="count">SRR · PDR · CDR · SDP · IOTE</span>
+            </div>
+            <div class="sheet-wrap">
+              <table class="acq" id="acq-table"></table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
   </div>
 
+  <!-- ── Drawer ──────────────────────────────────────────────────── -->
+  <aside class="drawer" id="drawer">
+    <div class="drawer-hd">
+      <h3 id="drawer-title">Audit Log</h3>
+      <button class="close-btn" id="drawer-close">✕</button>
+    </div>
+    <div class="drawer-tabs">
+      <button class="drawer-tab active" data-pane="log">Log</button>
+      <button class="drawer-tab" data-pane="ai">AI Assist</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-pane active" data-pane="log">
+        <div class="audit-toolbar">
+          <input class="audit-search" id="audit-search" placeholder="Search log…">
+          <button class="btn outline tiny" id="export-audit">Export</button>
+        </div>
+        <div id="audit-list"></div>
+      </div>
+      <div class="drawer-pane" data-pane="ai">
+        <div class="ai-log" id="ai-log"></div>
+        <div class="ai-composer">
+          <textarea id="ai-input" placeholder="Ask HORIZON — e.g. 'show risks for APL-101', 'next delivery', 'YRBM-51 status'"></textarea>
+          <button class="btn primary" id="ai-send">Send</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Modals ──────────────────────────────────────────────────── -->
+  <!-- Milestone edit -->
+  <div class="mbg" id="ms-mbg">
+    <div class="modal">
+      <h4 id="ms-modal-title">Edit Milestone</h4>
+      <div class="fld">
+        <label id="ms-date-lbl">Date</label>
+        <input class="inp" id="ms-date-input" placeholder='e.g. "May 2026", "5/15/26", "FY26 Q2"' />
+        <div class="hint" id="ms-date-hint">Smart parser: month-year, MM/YY, FY quarters, or "TBD" to clear.</div>
+      </div>
+      <div class="row2">
+        <div class="fld">
+          <label>Day (optional)</label>
+          <input class="inp" id="ms-day-input" placeholder="15" />
+        </div>
+        <div class="fld">
+          <label>Status flag</label>
+          <select class="sel" id="ms-complete-input">
+            <option value="0">Planned / forecast</option>
+            <option value="1">Mark complete</option>
+          </select>
+        </div>
+      </div>
+      <div class="fld">
+        <label>Note (optional)</label>
+        <input class="inp" id="ms-note-input" placeholder="Free text — appears in audit log" />
+      </div>
+      <div class="actions">
+        <button class="btn danger" id="ms-clear">Clear Date</button>
+        <span style="flex:1"></span>
+        <button class="btn outline" id="ms-cancel">Cancel</button>
+        <button class="btn primary" id="ms-save">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add hull -->
+  <div class="mbg" id="hull-mbg">
+    <div class="modal">
+      <h4>Add Hull</h4>
+      <div class="row2">
+        <div class="fld">
+          <label>Designation</label>
+          <input class="inp" id="hull-designation" placeholder="APL-106" />
+        </div>
+        <div class="fld">
+          <label>Craft type</label>
+          <select class="sel" id="hull-type">
+            <option value="APL">APL</option>
+            <option value="YRBM">YRBM</option>
+            <option value="YFB">YFB</option>
+            <option value="YTB">YTB</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fld">
+          <label>Fleet</label>
+          <select class="sel" id="hull-fleet">
+            <option value="PACFLT">PACFLT</option>
+            <option value="USFF">USFF</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Status</label>
+          <select class="sel" id="hull-status">
+            <option value="on-track">On Track</option>
+            <option value="at-risk">At Risk</option>
+            <option value="delayed">Delayed</option>
+            <option value="not-planned" selected>Not Planned</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fld">
+          <label>Builder</label>
+          <input class="inp" id="hull-builder" placeholder="e.g. Bollinger" />
+        </div>
+        <div class="fld">
+          <label>Contract #</label>
+          <input class="inp" id="hull-contract" placeholder="N00024-26-C-0000" />
+        </div>
+      </div>
+      <div class="actions">
+        <span style="flex:1"></span>
+        <button class="btn outline" id="hull-cancel">Cancel</button>
+        <button class="btn primary" id="hull-save">Add Hull</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add custom milestone type -->
+  <div class="mbg" id="addms-mbg">
+    <div class="modal">
+      <h4>Add Custom Milestone</h4>
+      <div class="row2">
+        <div class="fld">
+          <label>Code</label>
+          <input class="inp" id="addms-code" maxlength="6" placeholder="ICR" />
+        </div>
+        <div class="fld">
+          <label>Label</label>
+          <input class="inp" id="addms-label" placeholder="In-Service Cert Review" />
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fld">
+          <label>Symbol</label>
+          <select class="sel" id="addms-shape">
+            <option value="diamond">Diamond</option>
+            <option value="triangle">Triangle</option>
+            <option value="circle">Circle</option>
+            <option value="star">Star</option>
+            <option value="square">Square</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Color</label>
+          <input class="inp" id="addms-color" type="color" value="#0c4a6e" style="height:36px;padding:2px" />
+        </div>
+      </div>
+      <div class="actions">
+        <span style="flex:1"></span>
+        <button class="btn outline" id="addms-cancel">Cancel</button>
+        <button class="btn primary" id="addms-save">Add Milestone</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm dialog -->
+  <div class="mbg" id="confirm-mbg">
+    <div class="modal" style="max-width:420px">
+      <h4 id="confirm-title">Confirm</h4>
+      <p id="confirm-msg" style="font-size:13px;color:var(--text-2);margin-bottom:10px"></p>
+      <div class="actions">
+        <span style="flex:1"></span>
+        <button class="btn outline" id="confirm-no">Cancel</button>
+        <button class="btn danger" id="confirm-yes">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context menu -->
+  <div class="ctx" id="row-ctx"></div>
+
+  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <script src="client.js"></script>
