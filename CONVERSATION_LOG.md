@@ -3,6 +3,42 @@
 
 ---
 
+## Session 37 — HORIZON Slide Editor Gantt Geometry Fix (2026-06-17)
+
+**Goal:** Correct milestone program/acquisition slides so Gantt symbols, labels,
+and dates auto-generate from HORIZON schedule data with the same geometry as
+the source charts.
+
+**Root causes fixed:**
+- Slide editor fiscal conversion helper `toFY()` returned a numeric fraction,
+  while all slide Gantt renderers expected an object (`f.fy`, `f.fyMo`). This
+  broke X-position calculations for milestone symbols/labels/dates.
+- Program/acq preview canvas used a custom element path that drifted from the
+  authoritative SVG renderer used for generated slide visuals.
+
+**Fixes applied:**
+- `horizon/index.html`
+  - Replaced program/acq preview element generation with an authoritative SVG
+    layer generated from `seProgSVG` / `seAcqSVG` (`seProgramSvgLayerElements`).
+    This ensures slide preview math stays aligned with generated chart output.
+  - Rewrote `toFY()` to return structured fiscal data:
+    `{ fy, fyMo, fyFrac }` with robust parsing fallback for loose date strings.
+    This restores correct month-in-FY placement for milestones.
+  - Retained live schedule→slide sync path (`seSyncFromHorizon`) so slide
+    content refreshes automatically when schedule data updates.
+
+**Validation:**
+- Local slide editor now renders program slide milestones at correct FY-month
+  positions with symbols, labels, and dates aligned in-row.
+- Left slide rail remains fully visible and scrollable; active slide preview
+  shows 10 generated slides and correctly populated chart content.
+
+**Portability / Replit note:**
+- Changes stay in the single-file `horizon/index.html` architecture for direct
+  transferability to Replit.
+
+---
+
 ## Session 36 — Deliverables Tracker v2 Rebuild (in progress)
 
 **Goal:** Rebuild the Deliverables Tracker tool from scratch, modeled on the

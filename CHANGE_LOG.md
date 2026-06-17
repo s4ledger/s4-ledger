@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-06-17 — HORIZON Slide Editor: Program/Acq Gantt Positioning + Data-Sync Fix
+**Commit:** (pending)
+**Files Changed:**
+- `horizon/index.html`
+  - Added `seProgramSvgLayerElements(slide)` and routed program/acq slide
+    defaults through the authoritative SVG generators (`seProgSVG`, `seAcqSVG`)
+    to keep preview geometry aligned with generated charts.
+  - Fixed `toFY()` return contract to provide structured fiscal values used by
+    Gantt coordinate math (`fy`, `fyMo`, `fyFrac`), with fallback parsing for
+    loosely formatted date strings.
+  - Preserved/used live sync wiring so slide content regenerates from HORIZON
+    schedule updates while the slide editor is open.
+
+- `CONVERSATION_LOG.md`
+  - Added Session 37 implementation notes and validation summary.
+
+**Why:** Milestone symbols, labels, and dates in program/acquisition slides were
+mispositioned because fiscal conversion output and downstream chart math were
+out of sync. This change restores deterministic placement and keeps slide
+generation tied directly to HORIZON schedule data.
+
+---
+
 ### 2026-05-28 — Deliverables Tracker v2 Rebuild · Step 1: Archive v1
 **Commit:** (pending)
 **Files Changed:**
