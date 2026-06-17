@@ -604,8 +604,13 @@ td.ms-done .di::after { content:' ✓'; }
 /* ══ INTERACTIVE SLIDE CANVAS ══════════════════════════════════ */
 /* ══ PowerPoint Ribbon ═══════════════════════════════════════════ */
 #se-format-bar{display:flex;flex-direction:column;width:100%;background:#f3f2f1;border-bottom:1px solid #e1dfdd;flex-shrink:0;font-family:'Segoe UI',Arial,sans-serif;user-select:none;}
-.se-ribbon-tabbar{display:flex;align-items:flex-end;gap:0;padding:0 6px 0;background:#f3f2f1;min-height:34px;border-bottom:1px solid #e1dfdd;}
-.se-ribbon-tab{display:inline-flex;align-items:center;padding:8px 16px 7px;font-size:11.5px;font-weight:600;cursor:pointer;color:#323130;background:transparent;border:none;border-radius:0;white-space:nowrap;font-family:inherit;margin-bottom:-1px;border-bottom:2px solid transparent;transition:color .1s,background .1s;}
+.se-ribbon-panel{display:none;align-items:flex-start;gap:6px;padding:4px 6px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;width:100%;box-sizing:border-box;scrollbar-width:thin;}
+.se-ribbon-panel.active{display:flex;}
+.se-ribbon-panel::-webkit-scrollbar{height:6px;}
+.se-ribbon-panel::-webkit-scrollbar-thumb{background:#c8c6c4;border-radius:3px;}
+.se-ribbon-tabbar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:0;padding:0 4px;background:#f3f2f1;min-height:30px;border-bottom:1px solid #e1dfdd;row-gap:0;}
+.se-ribbon-grp{flex-shrink:0;}
+.se-ribbon-tab{display:inline-flex;align-items:center;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;color:#323130;background:transparent;border:none;border-radius:0;white-space:nowrap;font-family:inherit;margin-bottom:-1px;border-bottom:2px solid transparent;transition:color .1s,background .1s;flex-shrink:0;}
 .se-ribbon-tab:hover{color:#000;background:rgba(0,0,0,.05);}
 .se-ribbon-tab.active{color:#0078d4;background:#ffffff;border-bottom:2px solid #0078d4;}
 .se-ribbon-tab-spacer{flex:1;}
@@ -646,12 +651,15 @@ td.ms-done .di::after { content:' ✓'; }
 .se-fmt-row{display:flex;align-items:center;gap:3px;flex-wrap:wrap;padding:4px 8px;min-height:32px;width:100%;box-sizing:border-box;}
 #se-canvas-wrap {
   position:relative; width:100%; max-width:880px;
+  min-width:320px; min-height:240px;
   background:white; border-radius:4px;
   box-shadow:0 8px 56px rgba(0,0,0,.7);
   overflow:hidden; user-select:none;
   /* maintain 880:660 aspect ratio */
   aspect-ratio: 880/660;
 }
+#se-main { min-width:340px; }
+#se-preview-wrap { min-width:320px; }
 #se-canvas-wrap.se-canvas-editing { overflow:visible; }
 .se-el {
   position:absolute; box-sizing:border-box; cursor:default;
@@ -830,7 +838,7 @@ td.ms-done .di::after { content:' ✓'; }
           <div id="craft-type-items"></div>
           <div class="cm-sep"></div>
           <div class="cm-item" style="color:var(--accent)" onclick="openAddVessel();toggleCraftDD()">
-            <i class="fas fa-plus fa-xs"></i> Add Vessel…
+            <i class="fas fa-plus fa-xs"></i> Add Vessel/Craft…
           </div>
         </div>
       </div>
@@ -1107,7 +1115,7 @@ td.ms-done .di::after { content:' ✓'; }
 <!-- ══ ADD VESSEL MODAL ════════════════════════════════════════════════ -->
 <div id="av-modal" class="m-overlay">
   <div class="m-card">
-    <h3><i class="fas fa-ship fa-xs" style="color:var(--accent);margin-right:6px"></i>Add Vessel</h3>
+    <h3><i class="fas fa-ship fa-xs" style="color:var(--accent);margin-right:6px"></i>Add Vessel/Craft</h3>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
       <div>
         <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Designation</label>
@@ -1116,9 +1124,11 @@ td.ms-done .di::after { content:' ✓'; }
       </div>
       <div>
         <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Craft Type</label>
-        <select id="av-type" class="s4sel" style="width:100%;height:34px;font-size:12px">
-          <option>APL</option><option>YRBM</option><option>YFB</option><option>YTB</option>
+        <select id="av-type" class="s4sel" style="width:100%;height:34px;font-size:12px" onchange="onCraftTypeChange()">
+          <option>APL</option><option>YRBM</option><option>YFB</option><option>YTB</option><option value="custom">Custom…</option>
         </select>
+        <input type="text" id="av-type-custom" placeholder="e.g. YP, ARS, YO…" maxlength="8"
+          style="display:none;margin-top:4px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none;box-sizing:border-box;text-transform:uppercase">
       </div>
       <div>
         <label style="font-size:11px;font-weight:500;display:block;margin-bottom:4px">Location</label>
@@ -1134,7 +1144,7 @@ td.ms-done .di::after { content:' ✓'; }
       </div>
     </div>
     <div style="display:flex;gap:7px;margin-top:4px">
-      <button class="abtn btn-p" style="flex:1;padding:8px;font-size:12px" onclick="confirmAV()">Add Vessel</button>
+      <button class="abtn btn-p" style="flex:1;padding:8px;font-size:12px" onclick="confirmAV()">Add Vessel/Craft</button>
       <button class="abtn btn-o" style="flex:1;padding:8px;font-size:12px" onclick="closeModal('av-modal')">Cancel</button>
     </div>
   </div>
@@ -1200,12 +1210,41 @@ td.ms-done .di::after { content:' ✓'; }
     </div>
     <!-- Date field -->
     <div id="mse-date-section">
+    <!-- Smart freeform date input — user can type “May 2026”, “5/15/26”, etc. -->
     <div style="margin-bottom:10px">
-      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Month &amp; Year<span style="color:var(--steel);font-weight:400;font-size:10px;margin-left:5px">(required)</span></label>
-      <input type="month" id="mse-date"
-        style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);transition:all .14s;-webkit-appearance:none"
+      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Type a date<span style="color:var(--steel);font-weight:400;font-size:10px;margin-left:5px">(any format — e.g. “May 2026”, “5/15/26”, “FY26 Q2”)</span></label>
+      <input type="text" id="mse-smart" placeholder="e.g. May 2026 or 5/15/2026…"
+        style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);transition:all .14s"
+        oninput="mseSmartApply()"
         onfocus="this.style.borderColor='var(--accent)';this.style.background='var(--surface)';this.style.boxShadow='0 0 0 3px rgba(0,122,255,.1)'"
-        onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'">
+        onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface-2)';this.style.boxShadow='none'"
+        onkeydown="if(event.key==='Enter'){mseSmartApply();mseSave();}">
+      <div id="mse-smart-fb" style="margin-top:4px;font-size:11px;min-height:14px"></div>
+    </div>
+    <div style="margin-bottom:14px;position:relative">
+      <label style="font-size:11.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)">Or pick from calendar<span style="color:var(--steel);font-weight:400;font-size:10px;margin-left:5px">(click a day)</span></label>
+      <button type="button" id="mse-cal-btn" onclick="mseCalToggle(event)"
+        style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2);color:var(--text);transition:all .14s;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span id="mse-cal-btn-label" style="flex:1"><span style="color:var(--steel)">Click to open calendar…</span></span>
+        <i class="fas fa-calendar-alt" style="color:var(--accent);font-size:14px"></i>
+      </button>
+      <div id="mse-cal-pop" style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--surface);border:1.5px solid var(--accent);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:10px;z-index:1000;user-select:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:6px">
+          <button type="button" onclick="mseCalNav(-12)" title="Previous year" style="width:26px;height:26px;border:1px solid var(--border);background:var(--surface-2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">«</button>
+          <button type="button" onclick="mseCalNav(-1)" title="Previous month" style="width:26px;height:26px;border:1px solid var(--border);background:var(--surface-2);border-radius:6px;cursor:pointer;font-size:13px;color:var(--text)">‹</button>
+          <div id="mse-cal-title" style="flex:1;text-align:center;font-weight:600;font-size:13px;color:var(--text);cursor:pointer" onclick="mseCalShowMonths()" title="Click to pick month/year">—</div>
+          <button type="button" onclick="mseCalNav(1)" title="Next month" style="width:26px;height:26px;border:1px solid var(--border);background:var(--surface-2);border-radius:6px;cursor:pointer;font-size:13px;color:var(--text)">›</button>
+          <button type="button" onclick="mseCalNav(12)" title="Next year" style="width:26px;height:26px;border:1px solid var(--border);background:var(--surface-2);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">»</button>
+        </div>
+        <div id="mse-cal-grid"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:6px;border-top:1px solid var(--border);padding-top:8px">
+          <button type="button" onclick="mseCalPickToday()" style="font-size:11px;padding:5px 9px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text)">Today</button>
+          <button type="button" onclick="mseCalPickMonthOnly()" style="font-size:11px;padding:5px 9px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text)" title="Use just the month/year (no specific day)">Month only</button>
+          <button type="button" onclick="mseCalClose()" style="font-size:11px;padding:5px 9px;background:transparent;border:none;cursor:pointer;color:var(--steel)">Close</button>
+        </div>
+      </div>
+      <!-- Hidden compatibility inputs that the rest of the code reads/writes -->
+      <input type="hidden" id="mse-date">
     </div>
     <!-- Day field (optional — for full date precision) -->
     <div style="margin-bottom:16px">
@@ -1350,7 +1389,7 @@ td.ms-done .di::after { content:' ✓'; }
     <!-- PowerPoint-style title bar with Quick Access Toolbar -->
     <div id="se-header">
       <i class="fas fa-film" style="color:var(--accent);font-size:12px"></i>
-      <h3>Slide Editor</h3>
+      <h3>Slide Editor <span style="font-size:10px;color:#7af;font-weight:400;margin-left:4px" title="Build version - if you don't see this, your browser is showing cached content">v235</span></h3>
       <div class="se-hdr-sep"></div>
       <!-- Quick Access Toolbar (icon-only, like PowerPoint) -->
       <button class="se-qat-btn" onclick="seSaveNow()" title="Save (Ctrl+S)"><i class="fas fa-save"></i></button>
@@ -1370,15 +1409,19 @@ td.ms-done .di::after { content:' ✓'; }
     <div id="se-format-bar">
       <!-- Tab bar -->
       <div class="se-ribbon-tabbar">
+        <button class="se-ribbon-tab" onclick="seShowFileMenu()" style="background:#0078d4;color:#fff;font-weight:700">File</button>
         <button class="se-ribbon-tab active" onclick="seShowTab('home')">Home</button>
         <button class="se-ribbon-tab" onclick="seShowTab('insert')">Insert</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('draw')">Draw</button>
         <button class="se-ribbon-tab" onclick="seShowTab('design')">Design</button>
         <button class="se-ribbon-tab" onclick="seShowTab('transitions')">Transitions</button>
         <button class="se-ribbon-tab" onclick="seShowTab('animations')">Animations</button>
         <button class="se-ribbon-tab" onclick="seShowTab('slideshow')">Slide Show</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('record')">Record</button>
         <button class="se-ribbon-tab" onclick="seShowTab('review')">Review</button>
         <button class="se-ribbon-tab" onclick="seShowTab('view')">View</button>
-        <button class="se-ribbon-tab" onclick="seShowTab('arrange')">Format</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('help')">Help</button>
+        <button class="se-ribbon-tab" onclick="seShowTab('arrange')" style="color:#9b1c5c">Shape Format</button>
         <button class="se-ribbon-tab" onclick="seShowTab('slide')">Slide</button>
         <div class="se-ribbon-tab-spacer"></div>
         <span id="se-fmt-el-name" class="se-ribbon-tab-ctx">No selection</span>
@@ -1560,6 +1603,57 @@ td.ms-done .di::after { content:' ✓'; }
           <span class="se-ribbon-grp-lbl">Table</span>
         </div>
       </div><!-- /INSERT -->
+
+      <!-- DRAW TAB (PowerPoint 365 standard) -->
+      <div id="se-ribbon-draw" class="se-ribbon-panel">
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" id="se-draw-select" onclick="seDrawTool('select')" title="Selection tool — click to select instead of drawing" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:10px;min-width:46px">&#10142;<br>Select</button>
+            <button class="se-fmt-btn" id="se-draw-lasso" onclick="seDrawTool('lasso')" title="Lasso Select — drag to select multiple ink strokes" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:10px;min-width:46px">&#10146;<br>Lasso</button>
+            <button class="se-fmt-btn" onclick="seDrawTool('eraser')" title="Eraser — click ink strokes to remove" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:10px;min-width:46px">&#10006;<br>Eraser</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Tools</span>
+        </div>
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row" style="gap:3px">
+            <button class="se-fmt-btn se-pen-btn" id="se-pen-1" onclick="seDrawTool('pen',{color:'#000000',width:2})" title="Pen — Black, fine" style="background:#000;color:#fff;min-width:34px">&#9999;</button>
+            <button class="se-fmt-btn se-pen-btn" id="se-pen-2" onclick="seDrawTool('pen',{color:'#c00000',width:3})" title="Pen — Red, medium" style="background:#c00000;color:#fff;min-width:34px">&#9999;</button>
+            <button class="se-fmt-btn se-pen-btn" id="se-pen-3" onclick="seDrawTool('pen',{color:'#0070c0',width:3})" title="Pen — Blue, medium" style="background:#0070c0;color:#fff;min-width:34px">&#9999;</button>
+            <button class="se-fmt-btn se-pen-btn" id="se-pen-4" onclick="seDrawTool('pen',{color:'#00b050',width:3})" title="Pen — Green, medium" style="background:#00b050;color:#fff;min-width:34px">&#9999;</button>
+            <button class="se-fmt-btn se-pen-btn" id="se-pen-5" onclick="seDrawTool('highlighter',{color:'#ffff00',width:14})" title="Highlighter — Yellow" style="background:#ff0;color:#444;min-width:34px">&#9999;</button>
+            <button class="se-fmt-btn se-pen-btn" id="se-pen-6" onclick="seDrawTool('highlighter',{color:'#00ffff',width:14})" title="Highlighter — Cyan" style="background:#0ff;color:#444;min-width:34px">&#9999;</button>
+            <button class="se-fmt-btn" onclick="seAddPen()" title="Add custom pen…" style="font-size:10px">+</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Pens</span>
+        </div>
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <span class="se-fmt-label" style="font-size:10px">Color:</span>
+            <input type="color" class="se-fmt-color" id="se-draw-color" value="#000000" oninput="seDrawSetColor(this.value)" title="Custom pen color">
+          </div>
+          <div class="se-ribbon-grp-row">
+            <span class="se-fmt-label" style="font-size:10px">Width:</span>
+            <input type="number" class="se-fmt-num" id="se-draw-width" min="1" max="40" value="2" onchange="seDrawSetWidth(+this.value)" title="Pen width (px)" style="width:42px">
+            <span class="se-fmt-label" style="font-size:10px">px</span>
+          </div>
+          <span class="se-ribbon-grp-lbl">Pen</span>
+        </div>
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seInkToShape()" title="Convert ink stroke into a recognized shape" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:10px;min-width:54px">&#9650;<br>Ink to<br>Shape</button>
+            <button class="se-fmt-btn" onclick="seInkToText()" title="Recognize handwritten ink as text" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:10px;min-width:54px">&#65;b<br>Ink to<br>Text</button>
+            <button class="se-fmt-btn" onclick="seInkToMath()" title="Recognize handwritten ink as math equation" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:10px;min-width:54px">&#8721;<br>Ink to<br>Math</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Convert</span>
+        </div>
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seInkReplay()" title="Replay all ink strokes on this slide" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:10px;min-width:54px">&#9654;<br>Ink<br>Replay</button>
+            <button class="se-fmt-btn" onclick="seInkClear()" title="Clear all ink from this slide" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:10px;min-width:54px">&#10006;<br>Clear<br>Ink</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Replay</span>
+        </div>
+      </div><!-- /DRAW -->
 
       <!-- ARRANGE TAB -->
       <div id="se-ribbon-arrange" class="se-ribbon-panel">
@@ -2051,6 +2145,59 @@ td.ms-done .di::after { content:' ✓'; }
           <span class="se-ribbon-grp-lbl">Macros</span>
         </div>
       </div><!-- /VIEW -->
+
+      <!-- RECORD TAB (PowerPoint 365 standard) -->
+      <div id="se-ribbon-record" class="se-ribbon-panel">
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seRecordSlideShow('current')" title="Record narration starting from the current slide" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px;background:#c00000;color:#fff">&#9210;<br>Record from<br>Current Slide</button>
+            <button class="se-fmt-btn" onclick="seRecordSlideShow('beginning')" title="Record narration starting from slide 1" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#9210;<br>Record from<br>Beginning</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Record</span>
+        </div>
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seScreenRecord()" title="Record your screen and insert as video" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#128249;<br>Screen<br>Recording</button>
+            <button class="se-fmt-btn" onclick="seInsertVideo()" title="Insert a video file into the current slide" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:50px">&#127916;<br>Video</button>
+            <button class="se-fmt-btn" onclick="seInsertAudio()" title="Insert an audio file into the current slide" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:50px">&#127925;<br>Audio</button>
+            <button class="se-fmt-btn" onclick="seInsertCameo()" title="Cameo — insert your live camera feed onto the slide" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:50px">&#128247;<br>Cameo</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Content</span>
+        </div>
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seExportToVideo()" title="Export the entire presentation as an MP4 video" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#128190;<br>Export to<br>Video</button>
+            <button class="se-fmt-btn" onclick="sePublishToStream()" title="Publish recording to a sharing service" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#9650;<br>Publish to<br>Stream</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Save</span>
+        </div>
+      </div><!-- /RECORD -->
+
+      <!-- HELP TAB (PowerPoint 365 standard) -->
+      <div id="se-ribbon-help" class="se-ribbon-panel">
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seShowHelp()" title="Open the Help pane to find articles and tutorials" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:50px">?<br>Help</button>
+            <button class="se-fmt-btn" onclick="seContactSupport()" title="Contact S4 support for help" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#9742;<br>Contact<br>Support</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Help</span>
+        </div>
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seSendFeedback()" title="Send feedback to the S4 product team" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#9993;<br>Feedback</button>
+            <button class="se-fmt-btn" onclick="seShowTraining()" title="Open built-in training and quick-start guide" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#127891;<br>Show<br>Training</button>
+            <button class="se-fmt-btn" onclick="seShowWhatsNew()" title="See what is new in this release" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#10024;<br>What's<br>New</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Online Resources</span>
+        </div>
+        <div class="se-ribbon-grp">
+          <div class="se-ribbon-grp-row">
+            <button class="se-fmt-btn" onclick="seShowKeyboardShortcuts()" title="View all keyboard shortcuts" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:60px">&#9000;<br>Keyboard<br>Shortcuts</button>
+            <button class="se-fmt-btn" onclick="seShowAbout()" title="About this slide editor — version &amp; credits" style="height:54px;flex-direction:column;display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;min-width:50px">&#8505;<br>About</button>
+          </div>
+          <span class="se-ribbon-grp-lbl">Community</span>
+        </div>
+      </div><!-- /HELP -->
 
       <!-- SLIDE TAB: replaces slide bar -->
       <div id="se-ribbon-slide" class="se-ribbon-panel">
@@ -3558,6 +3705,13 @@ function openMSEModal(vid, key, field) {
   document.getElementById('mse-date').value = (dp[0]&&dp[1]) ? dp[0]+'-'+dp[1] : '';
   var dayEl = document.getElementById('mse-day');
   if (dayEl) dayEl.value = dp[2] ? parseInt(dp[2]) : '';
+  /* Reset the smart-date text + feedback so it's blank for the new edit */
+  var smEl = document.getElementById('mse-smart');
+  if (smEl) smEl.value = '';
+  var smFb = document.getElementById('mse-smart-fb');
+  if (smFb) { smFb.textContent = ''; smFb.style.color = ''; }
+  /* Refresh the calendar-picker button label to show the existing date */
+  if (window._mseCalUpdateBtnLabel) window._mseCalUpdateBtnLabel();
   document.getElementById('mse-complete').checked = completedSet.has(vid+'|'+key);
   document.getElementById('ms-edit-modal').classList.add('open');
   setTimeout(function(){ var d=document.getElementById('mse-date'); if(d) d.focus(); }, 120);
@@ -4078,7 +4232,13 @@ window.openAddVessel=function(t){
 window.confirmAV=function(){
   if (!canEdit()) { toast('View-only mode — no edits allowed'); return; }
   var des=document.getElementById('av-des').value.trim().toUpperCase();
-  var type=document.getElementById('av-type').value;
+  var typeSel=document.getElementById('av-type');
+  var type=typeSel.value;
+  if (type === 'custom') {
+    var custInp=document.getElementById('av-type-custom');
+    type=(custInp && custInp.value.trim().toUpperCase())||'';
+    if(!type){alert('Enter a custom craft type code (e.g. YP, ARS).');custInp&&custInp.focus();return;}
+  }
   var fleet=getLocationValue('av-fleet','av-fleet-custom');
   var builder=document.getElementById('av-builder').value.trim();
   if(!des){alert('Enter a designation.');return;}
@@ -4099,6 +4259,8 @@ window.confirmAV=function(){
   closeModal('av-modal');
   document.getElementById('av-des').value='';
   document.getElementById('av-builder').value='';
+  var avTypeCust=document.getElementById('av-type-custom'); if(avTypeCust){avTypeCust.value='';avTypeCust.style.display='none';}
+  var avTypeSel=document.getElementById('av-type'); if(avTypeSel) avTypeSel.value='APL';
   auditEntry('VESSEL','Added vessel '+des,{vesselId:nv.id,vessel:des,field:null,oldVal:null,newVal:{type,fleet}});
   render(); propagate(); autoSave();
 };
@@ -4268,6 +4430,292 @@ function onLocationChange(selId, inputId) {
   else { inp.style.display='none'; inp.value=''; }
 }
 window.onLocationChange = onLocationChange;
+
+/* Toggle the custom craft-type text input on the Add Vessel/Craft modal */
+function onCraftTypeChange() {
+  var sel = document.getElementById('av-type');
+  var inp = document.getElementById('av-type-custom');
+  if (!sel || !inp) return;
+  if (sel.value === 'custom') { inp.style.display=''; inp.focus(); }
+  else { inp.style.display='none'; inp.value=''; }
+}
+window.onCraftTypeChange = onCraftTypeChange;
+
+/* ── Smart freeform-date parser ──
+   Accepts almost anything a human types: "May 2026", "5/26", "5/15/26",
+   "2026-05", "15 May 2026", "May 15, 2026", "Q3 2026", "FY26 Q2", etc.
+   Returns { ym: 'YYYY-MM', day: 1–31 | null }  or  null if unparsable. */
+function parseSmartDate(raw) {
+  if (!raw) return null;
+  var s = String(raw).trim().toLowerCase();
+  if (!s) return null;
+  var monMap = {jan:1,january:1,feb:2,february:2,mar:3,march:3,apr:4,april:4,may:5,
+    jun:6,june:6,jul:7,july:7,aug:8,august:8,sep:9,sept:9,september:9,oct:10,october:10,
+    nov:11,november:11,dec:12,december:12};
+  var pad2 = function(n){ n=parseInt(n,10); return (n<10?'0':'')+n; };
+  var fullYear = function(y){ y=parseInt(y,10); if(y<100) y += (y<70?2000:1900); return y; };
+
+  /* Quarter / FY shortcuts: "FY26 Q2", "Q3 2026", "FY26" */
+  var qm = s.match(/(?:fy)?\s*(\d{2,4})\s*q\s*([1-4])/) || s.match(/q\s*([1-4])\s*(?:fy)?\s*(\d{2,4})/);
+  if (qm) {
+    var qY, qQ;
+    if (s.indexOf('q') > s.search(/\d/)) { qY = fullYear(qm[1]); qQ = parseInt(qm[2],10); }
+    else                                 { qQ = parseInt(qm[1],10); qY = fullYear(qm[2]); }
+    /* Federal FY: Q1=Oct–Dec(prev cal yr), Q2=Jan–Mar, Q3=Apr–Jun, Q4=Jul–Sep */
+    var qMonth = {1:10,2:1,3:4,4:7}[qQ];
+    var qYearCal = (qQ===1) ? qY-1 : qY;
+    return { ym: qYearCal+'-'+pad2(qMonth), day: null };
+  }
+  var fyOnly = s.match(/^fy\s*(\d{2,4})$/);
+  if (fyOnly) { var fy = fullYear(fyOnly[1]); return { ym: (fy-1)+'-10', day: null }; }
+
+  /* ISO YYYY-MM(-DD) */
+  var iso = s.match(/^(\d{4})[-\/.](\d{1,2})(?:[-\/.](\d{1,2}))?$/);
+  if (iso) {
+    var im = parseInt(iso[2],10);
+    if (im>=1 && im<=12) return { ym: iso[1]+'-'+pad2(im), day: iso[3]?parseInt(iso[3],10):null };
+  }
+  /* M/YY or M/YYYY */
+  var my = s.match(/^(\d{1,2})[\/\-.](\d{2,4})$/);
+  if (my) {
+    var mm = parseInt(my[1],10);
+    if (mm>=1 && mm<=12) return { ym: fullYear(my[2])+'-'+pad2(mm), day: null };
+  }
+  /* M/D/YY or M/D/YYYY */
+  var mdy = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if (mdy) {
+    var mdM = parseInt(mdy[1],10), mdD = parseInt(mdy[2],10);
+    if (mdM>=1 && mdM<=12 && mdD>=1 && mdD<=31) return { ym: fullYear(mdy[3])+'-'+pad2(mdM), day: mdD };
+  }
+  /* Month-name forms: "May 2026", "May 15 2026", "15 May 2026", "May 15, 2026" */
+  var nameRe = /([a-z]{3,})/g, m, monthNum = null;
+  while ((m = nameRe.exec(s)) !== null) {
+    if (monMap[m[1]]) { monthNum = monMap[m[1]]; break; }
+  }
+  if (monthNum) {
+    /* Pull first 4-digit year, then any remaining 1-2 digit number is the day */
+    var yMatch = s.match(/\b(\d{4})\b/) || s.match(/\b(\d{2})\b(?!\d)/);
+    if (yMatch) {
+      var yr = fullYear(yMatch[1]);
+      var dayMatch = s.replace(yMatch[0],'').match(/\b(\d{1,2})\b/);
+      var dy = dayMatch ? parseInt(dayMatch[1],10) : null;
+      if (dy && (dy<1 || dy>31)) dy = null;
+      return { ym: yr+'-'+pad2(monthNum), day: dy };
+    }
+  }
+  /* Last-ditch: native Date parser */
+  var d = new Date(raw);
+  if (!isNaN(d.getTime())) {
+    return { ym: d.getFullYear()+'-'+pad2(d.getMonth()+1), day: d.getDate() };
+  }
+  return null;
+}
+window.parseSmartDate = parseSmartDate;
+
+/* Apply smart-date parsing to the Milestone Edit modal: parse the
+   text in #mse-smart, populate the month + day inputs, show feedback. */
+function mseSmartApply() {
+  var sm = document.getElementById('mse-smart');
+  var fb = document.getElementById('mse-smart-fb');
+  if (!sm) return;
+  var raw = sm.value.trim();
+  if (!raw) { if (fb){fb.textContent='';fb.style.color='';} return; }
+  var p = parseSmartDate(raw);
+  if (!p) {
+    if (fb) { fb.textContent = 'Could not understand “'+raw+'” — try “May 2026”, “5/15/26”, or pick from the calendar.'; fb.style.color = '#d32f2f'; }
+    return;
+  }
+  var dEl = document.getElementById('mse-date');
+  var dayEl = document.getElementById('mse-day');
+  if (dEl)   dEl.value = p.ym;
+  if (dayEl) dayEl.value = p.day || '';
+  if (window._mseCalUpdateBtnLabel) window._mseCalUpdateBtnLabel();
+  if (fb) {
+    var monNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var pp = p.ym.split('-');
+    fb.textContent = '✓ Parsed as ' + monNames[parseInt(pp[1],10)-1] + ' ' + (p.day?p.day+', ':'') + pp[0];
+    fb.style.color = '#1a7a36';
+  }
+}
+window.mseSmartApply = mseSmartApply;
+
+/* ───────────── Click-a-day Calendar Picker (MSE modal) ───────────── */
+var _mseCal = { y: null, m: null, d: null, view: 'days' };
+
+function _mseCalReadInputs() {
+  /* Pull current state from the hidden mse-date / mse-day so the popup
+     opens on the date the user is editing. */
+  var dEl = document.getElementById('mse-date');
+  var dayEl = document.getElementById('mse-day');
+  var ymRaw = (dEl && dEl.value) || '';
+  var dRaw  = (dayEl && dayEl.value) || '';
+  var now = new Date();
+  if (ymRaw && /^\d{4}-\d{2}/.test(ymRaw)) {
+    var p = ymRaw.split('-');
+    _mseCal.y = parseInt(p[0],10);
+    _mseCal.m = parseInt(p[1],10) - 1;
+  } else {
+    _mseCal.y = now.getFullYear();
+    _mseCal.m = now.getMonth();
+  }
+  _mseCal.d = dRaw ? parseInt(dRaw,10) : null;
+  _mseCal.view = 'days';
+}
+
+function _mseCalUpdateBtnLabel() {
+  var lab = document.getElementById('mse-cal-btn-label');
+  if (!lab) return;
+  var dEl = document.getElementById('mse-date');
+  var dayEl = document.getElementById('mse-day');
+  var ymRaw = (dEl && dEl.value) || '';
+  var dRaw  = (dayEl && dayEl.value) || '';
+  if (!ymRaw) { lab.innerHTML = '<span style="color:var(--steel)">Click to open calendar…</span>'; return; }
+  var p = ymRaw.split('-');
+  var monNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var label = monNames[parseInt(p[1],10)-1] + (dRaw ? ' '+parseInt(dRaw,10) : '') + ', ' + p[0];
+  lab.textContent = label;
+}
+window._mseCalUpdateBtnLabel = _mseCalUpdateBtnLabel;
+
+function mseCalToggle(evt) {
+  if (evt) evt.stopPropagation();
+  var pop = document.getElementById('mse-cal-pop');
+  if (!pop) return;
+  if (pop.style.display === 'block') { mseCalClose(); return; }
+  _mseCalReadInputs();
+  pop.style.display = 'block';
+  _mseCalRender();
+  /* Close when clicking outside */
+  setTimeout(function(){ document.addEventListener('mousedown', _mseCalOutside); }, 0);
+}
+window.mseCalToggle = mseCalToggle;
+
+function _mseCalOutside(e) {
+  var pop = document.getElementById('mse-cal-pop');
+  var btn = document.getElementById('mse-cal-btn');
+  if (!pop) return;
+  if (pop.contains(e.target) || (btn && btn.contains(e.target))) return;
+  mseCalClose();
+}
+
+function mseCalClose() {
+  var pop = document.getElementById('mse-cal-pop');
+  if (pop) pop.style.display = 'none';
+  document.removeEventListener('mousedown', _mseCalOutside);
+}
+window.mseCalClose = mseCalClose;
+
+function mseCalNav(deltaMonths) {
+  if (_mseCal.y == null) _mseCalReadInputs();
+  var d = new Date(_mseCal.y, _mseCal.m + deltaMonths, 1);
+  _mseCal.y = d.getFullYear();
+  _mseCal.m = d.getMonth();
+  _mseCal.view = 'days';
+  _mseCalRender();
+}
+window.mseCalNav = mseCalNav;
+
+function mseCalShowMonths() {
+  _mseCal.view = (_mseCal.view === 'months') ? 'days' : 'months';
+  _mseCalRender();
+}
+window.mseCalShowMonths = mseCalShowMonths;
+
+function _mseCalRender() {
+  var grid = document.getElementById('mse-cal-grid');
+  var title = document.getElementById('mse-cal-title');
+  if (!grid || !title) return;
+  var monNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var monShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  if (_mseCal.view === 'months') {
+    title.textContent = String(_mseCal.y);
+    var hM = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">';
+    for (var mi=0; mi<12; mi++) {
+      var sel = (mi === _mseCal.m);
+      hM += '<button type="button" onclick="_mseCalPickMonth('+mi+')" '
+          + 'style="padding:10px 4px;border:1px solid '+(sel?'var(--accent)':'var(--border)')+';background:'+(sel?'var(--accent)':'var(--surface-2)')+';color:'+(sel?'#fff':'var(--text)')+';border-radius:6px;font-size:12px;cursor:pointer;font-weight:'+(sel?'600':'400')+'">'+monShort[mi]+'</button>';
+    }
+    hM += '</div>';
+    grid.innerHTML = hM;
+    return;
+  }
+
+  title.textContent = monNames[_mseCal.m] + ' ' + _mseCal.y;
+  var firstDow = new Date(_mseCal.y, _mseCal.m, 1).getDay();
+  var daysInMonth = new Date(_mseCal.y, _mseCal.m + 1, 0).getDate();
+  var today = new Date();
+  var todayY = today.getFullYear(), todayM = today.getMonth(), todayD = today.getDate();
+
+  var h = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">';
+  ['S','M','T','W','T','F','S'].forEach(function(d){
+    h += '<div style="text-align:center;font-size:10px;font-weight:600;color:var(--steel);padding:4px 0">'+d+'</div>';
+  });
+  h += '</div>';
+  h += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">';
+  for (var i=0; i<firstDow; i++) h += '<div></div>';
+  for (var dnum=1; dnum<=daysInMonth; dnum++) {
+    var isSel = (_mseCal.d === dnum);
+    var isToday = (todayY===_mseCal.y && todayM===_mseCal.m && todayD===dnum);
+    var bg = isSel ? 'var(--accent)' : (isToday ? 'rgba(0,122,255,.12)' : 'transparent');
+    var fg = isSel ? '#fff' : 'var(--text)';
+    var bd = isSel ? 'var(--accent)' : (isToday ? 'var(--accent)' : 'transparent');
+    var fw = (isSel||isToday) ? '600' : '400';
+    h += '<button type="button" onclick="_mseCalPickDay('+dnum+')" '
+       + 'onmouseenter="if(!this.dataset.sel)this.style.background=\'var(--surface-2)\'" '
+       + 'onmouseleave="if(!this.dataset.sel)this.style.background=\''+(isToday?'rgba(0,122,255,.12)':'transparent')+'\'" '
+       + (isSel?'data-sel="1" ':'')
+       + 'style="padding:7px 0;border:1px solid '+bd+';background:'+bg+';color:'+fg+';border-radius:5px;font-size:12px;cursor:pointer;font-weight:'+fw+'">'+dnum+'</button>';
+  }
+  h += '</div>';
+  grid.innerHTML = h;
+}
+
+function _mseCalPickMonth(mi) {
+  _mseCal.m = mi;
+  _mseCal.view = 'days';
+  _mseCalRender();
+}
+window._mseCalPickMonth = _mseCalPickMonth;
+
+function _mseCalPickDay(d) {
+  _mseCal.d = d;
+  _mseCalCommit();
+  mseCalClose();
+}
+window._mseCalPickDay = _mseCalPickDay;
+
+function mseCalPickToday() {
+  var t = new Date();
+  _mseCal.y = t.getFullYear();
+  _mseCal.m = t.getMonth();
+  _mseCal.d = t.getDate();
+  _mseCalCommit();
+  mseCalClose();
+}
+window.mseCalPickToday = mseCalPickToday;
+
+function mseCalPickMonthOnly() {
+  _mseCal.d = null;
+  _mseCalCommit();
+  mseCalClose();
+}
+window.mseCalPickMonthOnly = mseCalPickMonthOnly;
+
+function _mseCalCommit() {
+  var pad2 = function(n){ return (n<10?'0':'')+n; };
+  var dEl = document.getElementById('mse-date');
+  var dayEl = document.getElementById('mse-day');
+  if (dEl)   dEl.value = _mseCal.y + '-' + pad2(_mseCal.m + 1);
+  if (dayEl) dayEl.value = _mseCal.d || '';
+  /* Sync the smart-text + feedback for visual consistency */
+  var smEl = document.getElementById('mse-smart');
+  var smFb = document.getElementById('mse-smart-fb');
+  var monNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if (smEl) smEl.value = monNames[_mseCal.m] + (_mseCal.d ? ' '+_mseCal.d : '') + ' ' + _mseCal.y;
+  if (smFb) { smFb.textContent = '✓ Selected ' + monNames[_mseCal.m] + ' ' + (_mseCal.d?_mseCal.d+', ':'') + _mseCal.y; smFb.style.color = '#1a7a36'; }
+  _mseCalUpdateBtnLabel();
+}
 
 function getLocationValue(selId, inputId) {
   var sel = document.getElementById(selId);
@@ -4515,6 +4963,11 @@ function seGenerateSlides() {
                 type:'acq', vesselType:null,
                 title:'Acquisition Milestone Schedule',
                 subtitle:'', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' });
+  /* Acquisition Gantt — design / test events bars */
+  slides.push({ id:'sl-acqgantt-'+Date.now()+'-'+Math.random().toString(36).slice(2),
+                type:'acqGantt', vesselType:null,
+                title:'Acquisition Gantt — Design / Test Events',
+                subtitle:'', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' });
   return slides;
 }
 
@@ -4667,6 +5120,103 @@ function sePptSvg_acq() {
     +'<circle cx="65" cy="48" r="2.5" fill="#34c759"/>'
     +'<circle cx="80" cy="56" r="2.5" fill="#ff9500"/>';
 }
+function sePptSvg_acqGantt() {
+  return '<rect width="108" height="81" fill="#f0f4f8"/>'
+    +'<rect x="0" y="0" width="108" height="11" fill="#1c3a5f"/>'
+    +'<rect x="3" y="2.5" width="70" height="3" rx="1" fill="rgba(255,255,255,.8)"/>'
+    +'<rect x="3" y="12" width="22" height="60" fill="rgba(28,58,95,.08)"/>'
+    +'<rect x="26" y="14" width="40" height="5" rx="1" fill="#5ac8fa"/>'
+    +'<rect x="36" y="22" width="50" height="5" rx="1" fill="#34c759"/>'
+    +'<rect x="48" y="30" width="40" height="5" rx="1" fill="#ff9500"/>'
+    +'<rect x="60" y="38" width="38" height="5" rx="1" fill="#C9A000"/>'
+    +'<rect x="30" y="46" width="55" height="5" rx="1" fill="#5ac8fa"/>'
+    +'<rect x="42" y="54" width="48" height="5" rx="1" fill="#34c759"/>'
+    +'<rect x="54" y="62" width="40" height="5" rx="1" fill="#ff9500"/>'
+    +'<line x1="40" y1="11" x2="40" y2="72" stroke="#999" stroke-width=".4" stroke-dasharray="1,1"/>'
+    +'<line x1="60" y1="11" x2="60" y2="72" stroke="#999" stroke-width=".4" stroke-dasharray="1,1"/>'
+    +'<line x1="80" y1="11" x2="80" y2="72" stroke="#999" stroke-width=".4" stroke-dasharray="1,1"/>';
+}
+function sePptSvg_brandNavy() {
+  return '<rect width="108" height="81" fill="#1c3a5f"/>'
+    +'<rect x="0" y="68" width="108" height="13" fill="#C9A000"/>'
+    +'<rect x="12" y="26" width="84" height="7" rx="1" fill="#fff"/>'
+    +'<rect x="22" y="38" width="64" height="3" rx="1" fill="rgba(255,255,255,.6)"/>'
+    +'<text x="6" y="76" font-size="6" fill="#1c3a5f" font-weight="700">S4</text>';
+}
+function sePptSvg_brandGold() {
+  return '<rect width="108" height="81" fill="#C9A000"/>'
+    +'<rect x="0" y="0" width="108" height="13" fill="#1c3a5f"/>'
+    +'<rect x="12" y="32" width="84" height="7" rx="1" fill="#1c3a5f"/>'
+    +'<rect x="22" y="44" width="64" height="3" rx="1" fill="#1c3a5f" opacity=".6"/>';
+}
+function sePptSvg_brandExec() {
+  return '<rect width="108" height="81" fill="#fff"/>'
+    +'<rect x="0" y="0" width="108" height="11" fill="#1c3a5f"/>'
+    +'<rect x="3" y="2.5" width="60" height="3.5" rx="1" fill="rgba(255,255,255,.85)"/>'
+    +'<rect x="6" y="16" width="60" height="58" rx="1" fill="#f5f7fa" stroke="#dde"/>'
+    +'<rect x="10" y="20" width="40" height="3" rx="1" fill="#1c3a5f"/>'
+    +'<rect x="10" y="26" width="52" height="1.5" rx="1" fill="#bbb"/>'
+    +'<rect x="10" y="30" width="48" height="1.5" rx="1" fill="#bbb"/>'
+    +'<rect x="10" y="34" width="50" height="1.5" rx="1" fill="#bbb"/>'
+    +'<rect x="70" y="16" width="34" height="20" rx="1" fill="#1c3a5f"/>'
+    +'<rect x="73" y="20" width="22" height="2.5" rx="1" fill="#C9A000"/>'
+    +'<rect x="73" y="25" width="28" height="1.5" rx="1" fill="rgba(255,255,255,.5)"/>'
+    +'<rect x="70" y="40" width="34" height="34" rx="1" fill="#C9A000"/>';
+}
+function sePptSvg_brandKpi() {
+  return '<rect width="108" height="81" fill="#fff"/>'
+    +'<rect x="0" y="0" width="108" height="11" fill="#1c3a5f"/>'
+    +'<rect x="6" y="16" width="22" height="28" rx="1" fill="#1c3a5f"/>'
+    +'<rect x="33" y="16" width="22" height="28" rx="1" fill="#C9A000"/>'
+    +'<rect x="60" y="16" width="22" height="28" rx="1" fill="#34c759"/>'
+    +'<rect x="87" y="16" width="14" height="28" rx="1" fill="#5ac8fa"/>'
+    +'<rect x="6" y="48" width="96" height="28" rx="1" fill="#f5f7fa" stroke="#ddd"/>'
+    +'<polyline points="10,72 25,60 40,66 55,52 70,58 85,50 100,55" fill="none" stroke="#1c3a5f" stroke-width="1.4"/>';
+}
+function sePptSvg_brandQuote() {
+  return '<rect width="108" height="81" fill="#1c3a5f"/>'
+    +'<text x="14" y="40" font-size="34" fill="#C9A000" font-family="Georgia">&#8220;</text>'
+    +'<rect x="28" y="32" width="68" height="3" rx="1" fill="#fff"/>'
+    +'<rect x="28" y="38" width="58" height="2.5" rx="1" fill="rgba(255,255,255,.8)"/>'
+    +'<rect x="28" y="44" width="48" height="2.5" rx="1" fill="rgba(255,255,255,.8)"/>'
+    +'<rect x="76" y="60" width="20" height="2" rx="1" fill="#C9A000"/>';
+}
+function sePptSvg_brandThanks() {
+  return '<rect width="108" height="81" fill="#1c3a5f"/>'
+    +'<rect x="0" y="36" width="108" height="9" fill="#C9A000"/>'
+    +'<text x="54" y="34" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">Thank You</text>'
+    +'<text x="54" y="58" font-size="5" fill="rgba(255,255,255,.7)" text-anchor="middle">S4 Ledger LLC</text>';
+}
+
+/* Custom template save/delete */
+window.seSaveCurrentAsTemplate = function() {
+  var s = seSlides[seActive];
+  if (!s) { toast('No slide to save'); return; }
+  var name = prompt('Template name:', s.title || 'My Template');
+  if (!name) return;
+  var custom = [];
+  try { custom = JSON.parse(localStorage.getItem('s4-custom-templates')||'[]'); } catch(e){}
+  var clone = JSON.parse(JSON.stringify(s));
+  delete clone.id;
+  custom.push({
+    id:'ct'+Date.now()+Math.random().toString(36).slice(2,7),
+    name:name,
+    created: new Date().toISOString(),
+    slide:clone,
+    thumb:'<svg viewBox="0 0 108 81" xmlns="http://www.w3.org/2000/svg"><rect width="108" height="81" fill="#fff" stroke="#ddd"/><rect x="0" y="0" width="108" height="13" fill="#1c3a5f"/><text x="54" y="50" font-size="9" text-anchor="middle" fill="#1c3a5f">'+(name.length>14?name.slice(0,12)+'…':name)+'</text></svg>'
+  });
+  localStorage.setItem('s4-custom-templates', JSON.stringify(custom));
+  sePopulateTemplateModal();
+  toast('Template saved.');
+};
+window.seDeleteCustomTemplate = function(id) {
+  if (!confirm('Delete this custom template?')) return;
+  var custom = [];
+  try { custom = JSON.parse(localStorage.getItem('s4-custom-templates')||'[]'); } catch(e){}
+  custom = custom.filter(function(c){return c.id!==id;});
+  localStorage.setItem('s4-custom-templates', JSON.stringify(custom));
+  sePopulateTemplateModal();
+};
 
 function sePopulateTemplateModal() {
   var types = [];
@@ -4704,7 +5254,40 @@ function sePopulateTemplateModal() {
       var col = (VT[t]&&VT[t].color)||'#1c3a5f';
       return seTplCard('oneslide_'+t, seTypeLabel(t)+' One Slide', sePptSvg_oneSlide(col));
     }).join('')
-    + seTplCard('acq', 'Milestone Schedule', sePptSvg_acq());
+    + seTplCard('acq', 'Milestone Schedule', sePptSvg_acq())
+    + seTplCard('acqGantt', 'Acquisition Gantt', sePptSvg_acqGantt());
+  }
+
+  /* S4 Brand presets — uses bundled S4-themed layouts */
+  var brandGrid = document.getElementById('se-brand-grid');
+  if (brandGrid) {
+    var brandTpls = [
+      {id:'brand_navyTitle',  label:'S4 Navy Title',     svg:sePptSvg_brandNavy()},
+      {id:'brand_goldTitle',  label:'S4 Gold Title',     svg:sePptSvg_brandGold()},
+      {id:'brand_executive',  label:'Executive Summary', svg:sePptSvg_brandExec()},
+      {id:'brand_kpi',        label:'KPI Dashboard',     svg:sePptSvg_brandKpi()},
+      {id:'brand_quote',      label:'Pull Quote',        svg:sePptSvg_brandQuote()},
+      {id:'brand_thanks',     label:'Thank You',         svg:sePptSvg_brandThanks()}
+    ];
+    brandGrid.innerHTML = brandTpls.map(function(b){return seTplCard(b.id, b.label, b.svg);}).join('');
+  }
+
+  /* Custom (user-saved) templates */
+  var customGrid = document.getElementById('se-custom-grid');
+  if (customGrid) {
+    var custom = [];
+    try { custom = JSON.parse(localStorage.getItem('s4-custom-templates')||'[]'); } catch(e){}
+    if (custom.length === 0) {
+      customGrid.innerHTML = '<div style="grid-column:1/-1;padding:18px;text-align:center;color:#888;font-size:12px;font-style:italic">No custom templates yet. Edit any slide, then click "Save Current Slide as Template".</div>';
+    } else {
+      customGrid.innerHTML = custom.map(function(c){
+        return '<div class="se-tpl-card" onclick="seAddSlideFromTpl(\'custom_'+c.id+'\')" title="'+c.name+'" style="position:relative">'
+          +(c.thumb || '<svg viewBox="0 0 108 81" xmlns="http://www.w3.org/2000/svg"><rect width="108" height="81" fill="#fff" stroke="#ddd"/><text x="54" y="44" font-size="9" text-anchor="middle" fill="#888">'+c.name.slice(0,18)+'</text></svg>')
+          +'<div class="se-tpl-label">'+c.name+'</div>'
+          +'<button onclick="event.stopPropagation();seDeleteCustomTemplate(\''+c.id+'\')" style="position:absolute;top:4px;right:4px;width:18px;height:18px;border:0;border-radius:50%;background:rgba(192,0,0,.85);color:#fff;cursor:pointer;font-size:10px;line-height:1;padding:0" title="Delete this template">×</button>'
+          +'</div>';
+      }).join('');
+    }
   }
 }
 
@@ -4734,13 +5317,49 @@ window.seAddSlide = function(tpl) {
   } else if (tpl==='acq') {
     s = { id:id, type:'acq', vesselType:null, title:'Acquisition Events Schedule',
           subtitle:'', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+  } else if (tpl==='acqGantt') {
+    s = { id:id, type:'acqGantt', vesselType:null, title:'Acquisition Gantt — Design / Test Events',
+          subtitle:'', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+  } else if (tpl && tpl.indexOf('brand_')===0) {
+    s = { id:id, type:'custom', vesselType:null, title:'New S4 Brand Slide', subtitle:'',
+          hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'', brandPreset:tpl.slice(6) };
+  } else if (tpl && tpl.indexOf('custom_')===0) {
+    var ctid = tpl.slice(7);
+    var custom=[]; try{custom=JSON.parse(localStorage.getItem('s4-custom-templates')||'[]');}catch(e){}
+    var found = custom.find(function(c){return c.id===ctid;});
+    if (found && found.slide) {
+      s = JSON.parse(JSON.stringify(found.slide));
+      s.id = id; s.title = found.name + ' (Copy)';
+    } else {
+      s = { id:id, type:'custom', vesselType:null, title:'New Slide', subtitle:'',
+            hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
+    }
+  } else if (tpl && (tpl.indexOf('ppt_')===0 || tpl==='blank')) {
+    /* PowerPoint standard layout — store layoutId so seEnsureElements builds it */
+    s = { id:id, type:'custom', vesselType:null, title:sePptLayoutTitle(tpl), subtitle:'',
+          hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'', layoutId:tpl };
   } else {
     s = { id:id, type:'custom', vesselType:null, title:'New Slide',
           subtitle:'', hidden:false, fyStart:fyStart, fyEnd:fyEnd, note:'' };
   }
   seSlides.push(s);
   seActive = seSlides.length - 1;
+  if (typeof seEnsureElements === 'function') seEnsureElements(s);
   seRenderPanel(); seRenderPreview();
+};
+
+window.sePptLayoutTitle = function(tpl) {
+  return ({
+    'ppt_title':'Click to add title',
+    'ppt_titleContent':'Click to add title',
+    'ppt_sectionHeader':'Section Header',
+    'ppt_twoContent':'Click to add title',
+    'ppt_comparison':'Comparison',
+    'ppt_titleOnly':'Click to add title',
+    'blank':'',
+    'ppt_contentCaption':'Click to add title',
+    'ppt_pictureCaption':'Click to add title'
+  })[tpl] || 'New Slide';
 };
 
 /* ── Select slide ── */
@@ -4815,7 +5434,7 @@ function seEditSubAt(idx) {
 /* ── Slide Actions Bar — persistent PowerPoint-style toolbar for selected slide ── */
 /* Ribbon tab switcher */
 window.seShowTab = function(name) {
-  var allTabs = ['home','insert','design','transitions','animations','slideshow','review','view','arrange','slide'];
+  var allTabs = ['home','insert','draw','design','transitions','animations','slideshow','record','review','view','help','arrange','slide'];
   allTabs.forEach(function(t){
     var panel = document.getElementById('se-ribbon-'+t);
     if (panel) panel.classList.toggle('active', t===name);
@@ -5155,7 +5774,24 @@ window.seExitPresentation = function() {
   if (overlay) overlay.style.display='none';
   if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().catch(function(){});
 };
-window.sePresentOnline = function() { toast('Present Online: share your presentation URL — '+window.location.href); };
+window.sePresentOnline = function() {
+  var url = window.location.href;
+  /* Copy to clipboard + show modal with QR code */
+  if (navigator.clipboard) navigator.clipboard.writeText(url).catch(function(){});
+  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data='+encodeURIComponent(url);
+  var modal = document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99998;display:flex;align-items:center;justify-content:center';
+  modal.onclick = function(e){ if (e.target===modal) modal.remove(); };
+  modal.innerHTML = '<div style="background:#fff;padding:24px;border-radius:10px;max-width:380px;text-align:center;font-family:Calibri,Arial">'
+    +'<h3 style="margin:0 0 12px;color:#1c3a5f">Present Online</h3>'
+    +'<p style="font-size:13px;color:#444;margin:0 0 14px">Share this link or scan the QR code:</p>'
+    +'<input readonly value="'+url+'" onclick="this.select()" style="width:100%;padding:6px;font-size:11px;border:1px solid #ccc;border-radius:4px;margin-bottom:14px">'
+    +'<img src="'+qrUrl+'" alt="QR" style="display:block;margin:0 auto 14px">'
+    +'<div style="font-size:11px;color:#888;margin-bottom:12px">Link copied to clipboard.</div>'
+    +'<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="padding:8px 24px;background:#0078d4;color:#fff;border:0;border-radius:4px;cursor:pointer;font-size:13px">Close</button>'
+    +'</div>';
+  document.body.appendChild(modal);
+};
 window.seCustomSlideShow = function() {
   var name = prompt('Custom Slide Show name:','My Show'); if (!name) return;
   var range = prompt('Slide range (e.g. 1-3,5):','1-'+seSlides.length); if (!range) return;
@@ -5174,14 +5810,118 @@ window.seToggleHideSlide = function() {
   toast('Slide '+(slide.meta.hidden?'hidden':'visible')+' in presentation.');
 };
 window.seRehearseTimings = function() {
-  toast('Rehearse Timings: start the slide show and S4 will record how long you spend on each slide.');
+  /* Real rehearse: starts presentation and records elapsed time per slide */
+  seRehearsalTimes = []; seRehearsalStart = Date.now(); seRehearsalSlideStart = Date.now();
+  seRehearsing = true;
+  toast('Rehearsing — advance slides as you would normally. Press Esc to finish.');
   seSlideShowStart(true);
 };
-window.seRecordSlideShow = function() { toast('Record Slide Show: narration and ink recording requires a microphone. Feature available in desktop app.'); };
-window.seToggleCaptions = function(on) { toast('Subtitles '+(on?'enabled':'disabled')+'.'); };
-window.seToggleSubtitles = function(on) { toast('Subtitle settings: language and position coming soon.'); };
-window.seSetMonitor = function(val) { toast('Monitor: '+val); };
-window.seTogglePresenterView = function(on) { toast('Presenter View '+(on?'enabled':'disabled')+' — requires two displays.'); };
+var seRehearsalTimes = [], seRehearsalStart = 0, seRehearsalSlideStart = 0, seRehearsing = false;
+window.seRehearsalAdvance = function() {
+  if (!seRehearsing) return;
+  var sec = Math.round((Date.now()-seRehearsalSlideStart)/1000);
+  seRehearsalTimes.push(sec);
+  seRehearsalSlideStart = Date.now();
+};
+window.seRehearsalEnd = function() {
+  if (!seRehearsing) return;
+  seRehearsing = false;
+  if (seRehearsalSlideStart > 0) {
+    var sec = Math.round((Date.now()-seRehearsalSlideStart)/1000);
+    seRehearsalTimes.push(sec);
+  }
+  var total = Math.round((Date.now()-seRehearsalStart)/1000);
+  var save = confirm('Rehearsal complete.\nTotal time: '+Math.floor(total/60)+'m '+(total%60)+'s.\nPer slide: '+seRehearsalTimes.map(function(t){return t+'s';}).join(', ')+'\n\nApply these timings as auto-advance values?');
+  if (save) {
+    seRehearsalTimes.forEach(function(t,i){ if (seSlides[i]) { if (!seSlides[i].transition) seSlides[i].transition={}; seSlides[i].transition.advanceAfter = t; seSlides[i].transition.advanceMode = 'after'; } });
+    toast('Timings applied to '+seRehearsalTimes.length+' slides.');
+  }
+};
+var seRecorder = null, seRecordedChunks = [], seRecordedAudio = null;
+window.seRecordSlideShow = function() {
+  if (seRecorder) { /* stop */
+    seRecorder.stop(); seRecorder = null; toast('Recording stopped.');
+    return;
+  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('Recording requires browser microphone access (not available in this browser).'); return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    seRecordedChunks = [];
+    try { seRecorder = new MediaRecorder(stream); } catch(e){ alert('Recording not supported: '+e.message); return; }
+    seRecorder.ondataavailable = function(e){ if(e.data.size>0) seRecordedChunks.push(e.data); };
+    seRecorder.onstop = function(){
+      var blob = new Blob(seRecordedChunks,{type:'audio/webm'});
+      seRecordedAudio = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = seRecordedAudio; a.download = 'slideshow-narration.webm'; a.click();
+      stream.getTracks().forEach(function(t){t.stop();});
+    };
+    seRecorder.start();
+    toast('Recording narration… click Record again to stop.');
+    seSlideShowStart(true);
+  }).catch(function(e){ alert('Microphone access denied: '+e.message); });
+};
+var seCaptionsOn = false, seSpeechRec = null;
+window.seToggleCaptions = function(on) {
+  seCaptionsOn = !!on;
+  if (on) {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('Live captions require Chrome/Edge SpeechRecognition (not supported in this browser).'); document.getElementById('se-show-captions').checked = false; seCaptionsOn = false; return; }
+    seSpeechRec = new SR(); seSpeechRec.continuous=true; seSpeechRec.interimResults=true;
+    var cap = document.getElementById('se-caption-bar');
+    if (!cap) { cap = document.createElement('div'); cap.id='se-caption-bar';
+      cap.style.cssText='position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;font-size:22px;font-family:Arial,sans-serif;padding:10px 22px;border-radius:6px;z-index:99999;max-width:80%;text-align:center;pointer-events:none;'; document.body.appendChild(cap); }
+    seSpeechRec.onresult = function(e){ var s=''; for(var i=e.resultIndex;i<e.results.length;i++) s+=e.results[i][0].transcript; cap.textContent = s.slice(-200); };
+    seSpeechRec.onend = function(){ if (seCaptionsOn) try{seSpeechRec.start();}catch(_){} };
+    try { seSpeechRec.start(); toast('Live captions on.'); } catch(e){ alert('Captions failed: '+e.message); }
+  } else {
+    if (seSpeechRec) { try{seSpeechRec.stop();}catch(_){} seSpeechRec=null; }
+    var cap2 = document.getElementById('se-caption-bar'); if (cap2) cap2.remove();
+    toast('Live captions off.');
+  }
+};
+window.seToggleSubtitles = function(on) {
+  var langs = ['en-US','en-GB','es-ES','fr-FR','de-DE','ja-JP','zh-CN','ko-KR','pt-BR','it-IT'];
+  var pick = prompt('Caption language code (e.g. en-US, es-ES, fr-FR):\n'+langs.join(', '), seSpeechRec&&seSpeechRec.lang||'en-US');
+  if (pick && seSpeechRec) seSpeechRec.lang = pick;
+  toast('Subtitle language: '+(pick||'en-US'));
+};
+window.seSetMonitor = function(val) {
+  if (val === 'secondary') {
+    if (window.screen && screen.availWidth) {
+      var w = window.open(window.location.href+'#presenter','_blank','left='+screen.availWidth+',top=0,width=900,height=700');
+      if (w) toast('Secondary monitor window opened.');
+      else alert('Pop-up blocked. Allow pop-ups for this site to use secondary monitor.');
+    }
+  } else {
+    toast('Monitor: '+val);
+  }
+};
+window.seTogglePresenterView = function(on) {
+  if (!on) {
+    var ex = document.getElementById('se-presenter-window');
+    if (ex && !ex.closed) ex.close();
+    toast('Presenter View off.');
+    return;
+  }
+  /* Open a new window with: current slide preview, next slide preview, notes, timer */
+  var w = window.open('', 'se-presenter', 'width=1100,height=700');
+  if (!w) { alert('Pop-up blocked. Allow pop-ups to use Presenter View.'); document.getElementById('se-presenter-view').checked=false; return; }
+  w.document.write('<html><head><title>Presenter View — S4</title><style>body{margin:0;font-family:Calibri,Arial;background:#1a1a1a;color:#fff;display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr auto;height:100vh;gap:10px;padding:10px;box-sizing:border-box}#cur{background:#333;border-radius:6px;padding:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}#nxt{background:#222;border-radius:6px;padding:10px;font-size:13px}#notes{grid-column:1/-1;background:#222;border-radius:6px;padding:14px;overflow:auto;max-height:200px;font-size:15px}#hd{position:absolute;top:4px;right:14px;color:#aaa;font-size:14px;font-family:monospace}.slide-prev{transform:scale(.85);transform-origin:center;border:1px solid #444}</style></head><body><div id="hd"><span id="tmr">00:00</span> · Slide <span id="snum">1</span> of <span id="ttl">1</span></div><div id="cur">Loading slide…</div><div id="nxt"><div style="color:#888;font-size:11px;margin-bottom:6px;text-transform:uppercase">Next Slide</div><div id="nxtbody">—</div></div><div id="notes"><div style="color:#888;font-size:11px;margin-bottom:6px;text-transform:uppercase">Speaker Notes</div><div id="notesbody">No notes for this slide.</div></div></body></html>');
+  w.document.close();
+  window._sePresenterWin = w;
+  w._update = function(idx){
+    var s = seSlides[idx]; if (!s) return;
+    w.document.getElementById('snum').textContent = idx+1;
+    w.document.getElementById('ttl').textContent = seSlides.length;
+    w.document.getElementById('cur').innerHTML = '<div style="font-size:24px;text-align:center"><div style="font-weight:700;margin-bottom:18px">'+(s.title||'Slide '+(idx+1))+'</div><div style="font-size:14px;color:#aaa">('+(s.elements||[]).length+' elements)</div></div>';
+    var nxt = seSlides[idx+1];
+    w.document.getElementById('nxtbody').innerHTML = nxt ? '<div style="font-weight:700;font-size:14px">'+(nxt.title||'')+'</div>' : '<i style="color:#666">End of presentation</i>';
+    w.document.getElementById('notesbody').textContent = (s.meta&&s.meta.notes)||'No notes for this slide.';
+  };
+  var startT = Date.now();
+  w._timer = setInterval(function(){ if (w.closed) { clearInterval(w._timer); return; } var t=Math.floor((Date.now()-startT)/1000); var m=String(Math.floor(t/60)).padStart(2,'0'); var s=String(t%60).padStart(2,'0'); var el=w.document.getElementById('tmr'); if(el) el.textContent=m+':'+s; },1000);
+  w._update(seActive);
+  toast('Presenter View open in new window.');
+};
 /* keyboard shortcuts for slide show */
 document.addEventListener('keydown', function(e) {
   if (!sePresentationMode) {
@@ -5286,10 +6026,65 @@ window.seRenderCommentPanel = function() {
   if (!relevant.length) { list.innerHTML='<div style="color:#797775;font-style:italic">No comments on this slide.</div>'; return; }
   list.innerHTML = relevant.map(function(c){ return '<div style="border-bottom:1px solid #f0f0f0;padding:6px 0;"><div style="font-weight:600;color:#0078d4">'+c.author+'</div><div style="color:#323130;margin:2px 0">'+c.text+'</div><div style="color:#797775;font-size:10px">'+new Date(c.date).toLocaleDateString()+'</div></div>'; }).join('');
 };
-window.seCompare = function() { toast('Compare: upload a second version of this presentation to see differences (feature requires file upload support).'); };
-window.seAcceptRevision = function() { toast('Accept: no pending revisions to accept.'); };
-window.seRejectRevision = function() { toast('Reject: no pending revisions to reject.'); };
-window.seToggleReviewPane = function() { toast('Reviewing Pane: shows all tracked changes and comments in a list view.'); };
+window.seCompare = function() {
+  /* Real Compare: file picker that loads a JSON snapshot of another deck and shows diff */
+  var inp = document.createElement('input'); inp.type='file'; inp.accept='.json,application/json';
+  inp.onchange = function(){
+    var f = inp.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try {
+        var other = JSON.parse(r.result);
+        if (!other.slides || !Array.isArray(other.slides)) { alert('Not a valid presentation file.'); return; }
+        var diffs = [];
+        var max = Math.max(seSlides.length, other.slides.length);
+        for (var i=0;i<max;i++){
+          var a=seSlides[i], b=other.slides[i];
+          if (!a) diffs.push('Slide '+(i+1)+': Added in other ('+ (b.title||'untitled') +')');
+          else if (!b) diffs.push('Slide '+(i+1)+': Removed in other ('+ (a.title||'untitled') +')');
+          else {
+            if (a.title!==b.title) diffs.push('Slide '+(i+1)+' title: "'+a.title+'" → "'+b.title+'"');
+            var ae=(a.elements||[]).length, be=(b.elements||[]).length;
+            if (ae!==be) diffs.push('Slide '+(i+1)+' elements: '+ae+' → '+be);
+          }
+        }
+        alert('Compare results ('+diffs.length+' difference'+(diffs.length===1?'':'s')+'):\n\n'+(diffs.length?diffs.join('\n'):'Decks are identical.'));
+      } catch(e){ alert('Could not parse file: '+e.message); }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+};
+window.seAcceptRevision = function() {
+  if (!seComments.length) { toast('No revisions to accept on this slide.'); return; }
+  /* "Accept" = mark all comments on current slide as resolved */
+  var ids = (seSlides[seActive]&&seSlides[seActive].elements||[]).map(function(e){return e.id;});
+  var n=0; seComments = seComments.filter(function(c){ if (ids.indexOf(c.id)>=0){ n++; return false;} return true;});
+  toast('Accepted '+n+' revision'+(n===1?'':'s')+' on this slide.');
+  if (window.seRenderComments) seRenderComments();
+};
+window.seRejectRevision = function() {
+  if (!seComments.length) { toast('No revisions to reject.'); return; }
+  /* "Reject" = same delete behavior but no merge */
+  var ids = (seSlides[seActive]&&seSlides[seActive].elements||[]).map(function(e){return e.id;});
+  var n=0; seComments = seComments.filter(function(c){ if (ids.indexOf(c.id)>=0){ n++; return false;} return true;});
+  toast('Rejected '+n+' revision'+(n===1?'':'s')+' on this slide.');
+  if (window.seRenderComments) seRenderComments();
+};
+window.seToggleReviewPane = function() {
+  var ex = document.getElementById('se-review-pane');
+  if (ex) { ex.remove(); toast('Reviewing Pane closed.'); return; }
+  var pane = document.createElement('div');
+  pane.id='se-review-pane';
+  pane.style.cssText='position:fixed;right:0;top:60px;bottom:0;width:340px;background:#fff;border-left:1px solid #ccc;z-index:9700;box-shadow:-3px 0 10px rgba(0,0,0,.08);font-family:Calibri,Arial;display:flex;flex-direction:column';
+  pane.innerHTML = '<div style="padding:12px 14px;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;background:#f8f8f8"><b style="color:#1c3a5f">Reviewing Pane</b><button onclick="document.getElementById(\'se-review-pane\').remove()" style="background:none;border:0;cursor:pointer;font-size:18px;color:#666">×</button></div><div id="se-rp-body" style="overflow:auto;padding:12px 14px;flex:1"></div>';
+  document.body.appendChild(pane);
+  var body = document.getElementById('se-rp-body');
+  if (!seComments.length) { body.innerHTML='<i style="color:#888">No comments or revisions yet. Use Review › New Comment to add one.</i>'; return; }
+  body.innerHTML = seComments.map(function(c,i){
+    return '<div style="padding:10px;background:#f5f8fc;border-left:3px solid #0078d4;margin-bottom:10px;border-radius:4px"><div style="font-weight:700;color:#0078d4;font-size:12px">'+c.author+' <span style="color:#888;font-weight:normal">'+new Date(c.date).toLocaleString()+'</span></div><div style="margin:6px 0;font-size:13px">'+c.text+'</div><button onclick="seComments.splice('+i+',1);seToggleReviewPane();seToggleReviewPane()" style="font-size:10px;color:#c00;background:none;border:0;cursor:pointer;padding:0">Delete</button></div>';
+  }).join('');
+};
 window.seStartInking = function() {
   var canvas = document.getElementById('se-canvas-wrap'); if (!canvas) return;
   toast('Inking mode: draw on the slide with your mouse or stylus. Press Escape to exit.');
@@ -5338,9 +6133,72 @@ window.seSetView = function(mode) {
     seSlideShowStart(false);
   }
 };
-window.seSlideMasterView = function() { toast('Slide Master: edit the master layout that all slides inherit. Changes apply globally.'); };
-window.seHandoutMasterView = function() { toast('Handout Master: defines the layout when printing multiple slides per page.'); };
-window.seNotesMasterView  = function() { toast('Notes Master: defines the layout of the speaker notes pages.'); };
+/* Master Views: real layout-template editor */
+function seOpenMasterModal(kind) {
+  var titles = {slide:'Slide Master', handout:'Handout Master', notes:'Notes Master'};
+  var ttl = titles[kind] || 'Master';
+  var cur = seMaster[kind] || {};
+  var modal = document.createElement('div');
+  modal.id = 'se-master-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99998;display:flex;align-items:center;justify-content:center';
+  modal.onclick = function(e){ if (e.target===modal) modal.remove(); };
+  modal.innerHTML = '<div style="background:#fff;width:520px;max-width:96vw;border-radius:10px;padding:22px;font-family:Calibri,Arial">'
+    +'<h3 style="margin:0 0 12px;color:#1c3a5f">'+ttl+'</h3>'
+    +'<p style="font-size:12px;color:#666;margin:0 0 14px">Changes here apply to <b>every '+ (kind==='slide'?'slide':kind==='handout'?'handout page':'notes page') +'</b> in this presentation.</p>'
+    +'<table style="width:100%;font-size:13px"><tr><td style="padding:6px 4px">Background color:</td><td><input type="color" id="se-mst-bg" value="'+(cur.background||'#ffffff')+'"></td></tr>'
+    +'<tr><td style="padding:6px 4px">Default font:</td><td><select id="se-mst-font"><option>Calibri</option><option>Arial</option><option>Times New Roman</option><option>Georgia</option><option>Verdana</option></select></td></tr>'
+    +'<tr><td style="padding:6px 4px">Title color:</td><td><input type="color" id="se-mst-tcolor" value="'+(cur.titleColor||'#1c3a5f')+'"></td></tr>'
+    +'<tr><td style="padding:6px 4px">Accent color:</td><td><input type="color" id="se-mst-acolor" value="'+(cur.accentColor||'#C9A000')+'"></td></tr>'
+    +'<tr><td style="padding:6px 4px">Footer text:</td><td><input id="se-mst-foot" value="'+(cur.footer||'')+'" placeholder="Footer text" style="width:100%;padding:4px;border:1px solid #ccc;border-radius:3px"></td></tr>'
+    +(kind==='handout' ? '<tr><td style="padding:6px 4px">Slides per page:</td><td><select id="se-mst-spp"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>6</option><option>9</option></select></td></tr>' : '')
+    +'</table>'
+    +'<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px">'
+    +'<button onclick="document.getElementById(\'se-master-modal\').remove()" style="padding:7px 16px;border:1px solid #ccc;background:#fff;border-radius:4px;cursor:pointer">Cancel</button>'
+    +'<button onclick="seApplyMaster(\''+kind+'\')" style="padding:7px 16px;background:#0078d4;color:#fff;border:0;border-radius:4px;cursor:pointer;font-weight:600">Apply to All</button>'
+    +'</div></div>';
+  document.body.appendChild(modal);
+  if (cur.font) document.getElementById('se-mst-font').value = cur.font;
+  if (kind==='handout' && cur.slidesPerPage) document.getElementById('se-mst-spp').value = cur.slidesPerPage;
+}
+var seMaster = { slide:{}, handout:{slidesPerPage:2}, notes:{} };
+window.seApplyMaster = function(kind) {
+  var bg = document.getElementById('se-mst-bg').value;
+  var fnt = document.getElementById('se-mst-font').value;
+  var tc = document.getElementById('se-mst-tcolor').value;
+  var ac = document.getElementById('se-mst-acolor').value;
+  var ft = document.getElementById('se-mst-foot').value;
+  seMaster[kind] = {background:bg, font:fnt, titleColor:tc, accentColor:ac, footer:ft};
+  if (kind==='handout') seMaster[kind].slidesPerPage = +document.getElementById('se-mst-spp').value;
+  if (kind==='slide') {
+    /* Apply to every slide */
+    seSlides.forEach(function(s){
+      seEnsureElements(s);
+      (s.elements||[]).forEach(function(el){
+        if (!el.style) el.style={};
+        if (el.type==='text') {
+          if (el.hint && /title|Title/i.test(el.hint)) el.style.color = tc;
+          el.style.fontFamily = fnt+',Arial,sans-serif';
+        }
+        /* Bg of background rect */
+        if (el.zIndex===0 && el.type==='rect') el.style.background = bg;
+        /* Accent bars */
+        if (el.hint==='Accent bar') el.style.background = ac;
+      });
+      /* Add or update footer */
+      if (ft) {
+        var foot = (s.elements||[]).find(function(e){return e.hint==='__master_footer';});
+        if (!foot) { s.elements.push({id:seElId(),type:'text',x:20,y:SE_CANVAS_H-22,w:SE_CANVAS_W-40,h:18,text:ft,hint:'__master_footer',userAdded:true,editable:true,movable:true,style:{fontSize:'10px',color:'#666',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:fnt+',Arial,sans-serif'},zIndex:99}); }
+        else foot.text = ft;
+      }
+    });
+    seRenderPreview();
+  }
+  document.getElementById('se-master-modal').remove();
+  toast(kind.charAt(0).toUpperCase()+kind.slice(1)+' Master applied to '+seSlides.length+' slide'+(seSlides.length===1?'':'s')+'.');
+};
+window.seSlideMasterView   = function() { seOpenMasterModal('slide'); };
+window.seHandoutMasterView = function() { seOpenMasterModal('handout'); };
+window.seNotesMasterView   = function() { seOpenMasterModal('notes'); };
 window.seToggleRuler = function(on) {
   var canvas = document.getElementById('se-canvas-wrap'); if (!canvas) return;
   var existing = document.getElementById('se-ruler-h');
@@ -5381,7 +6239,19 @@ window.seToggleGuides = function(on) {
   toast('Guides '+(on?'shown':'hidden'));
 };
 window.seToggleNotesPanel = function(on) {
-  toast('Notes panel '+(on?'shown':'hidden')+'. Use the Notes Page view (View tab) to edit speaker notes.');
+  var ex = document.getElementById('se-notes-panel');
+  if (!on) { if (ex) ex.remove(); return; }
+  if (ex) return;
+  var panel = document.createElement('div');
+  panel.id = 'se-notes-panel';
+  panel.style.cssText='position:fixed;left:0;right:0;bottom:0;height:140px;background:#fafafa;border-top:2px solid #1c3a5f;z-index:9700;display:flex;flex-direction:column;font-family:Calibri,Arial';
+  panel.innerHTML = '<div style="padding:6px 12px;background:#1c3a5f;color:#fff;font-size:12px;display:flex;justify-content:space-between;align-items:center"><span>Speaker Notes — Slide '+(seActive+1)+'</span><button onclick="document.getElementById(\'se-view-notes\').checked=false;document.getElementById(\'se-notes-panel\').remove()" style="background:none;color:#fff;border:0;cursor:pointer;font-size:16px">×</button></div>'
+    +'<textarea id="se-notes-textarea" placeholder="Click to add notes for this slide…" style="flex:1;border:0;padding:10px 14px;font-family:Calibri,Arial;font-size:13px;outline:none;resize:none;background:#fafafa"></textarea>';
+  document.body.appendChild(panel);
+  var ta = document.getElementById('se-notes-textarea');
+  var s = seSlides[seActive];
+  ta.value = (s&&s.meta&&s.meta.notes) || '';
+  ta.oninput = function(){ if(!s.meta) s.meta={}; s.meta.notes = ta.value; };
 };
 window.seZoomDialog = function() {
   var z = prompt('Zoom %:',''+Math.round(seViewZoom*100));
@@ -5403,9 +6273,53 @@ window.seViewColor     = function() { var c=document.getElementById('se-canvas-w
 window.seViewGrayscale = function() { var c=document.getElementById('se-canvas-wrap'); if(c){c.style.filter='grayscale(1)';} toast('Grayscale view'); };
 window.seViewBlackWhite= function() { var c=document.getElementById('se-canvas-wrap'); if(c){c.style.filter='grayscale(1) contrast(999%)';} toast('Black & White view'); };
 window.seNewWindow     = function() { window.open(window.location.href,'_blank'); };
-window.seArrangeAll    = function() { toast('Arrange All: tile open windows — use your OS window manager.'); };
-window.seSwitchWindows = function() { toast('Switch Windows: '+document.title); };
-window.seMacros        = function() { toast('Macros: record, run, and manage automation scripts.'); };
+window.seArrangeAll    = function() {
+  /* Open Slide Sorter view — full-screen grid of every slide */
+  var modal = document.createElement('div');
+  modal.id='se-sorter-modal';
+  modal.style.cssText='position:fixed;inset:0;background:#2b2b2b;z-index:99998;overflow:auto;padding:24px;font-family:Calibri,Arial;color:#fff';
+  modal.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><h3 style="margin:0">Slide Sorter — '+seSlides.length+' slide'+(seSlides.length===1?'':'s')+'</h3><button onclick="document.getElementById(\'se-sorter-modal\').remove()" style="background:#444;color:#fff;border:0;padding:8px 18px;border-radius:4px;cursor:pointer">Close</button></div><div id="se-sorter-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px"></div>';
+  document.body.appendChild(modal);
+  var grid = document.getElementById('se-sorter-grid');
+  seSlides.forEach(function(s,i){
+    var card = document.createElement('div');
+    card.style.cssText='background:#fff;color:#1c3a5f;border-radius:6px;padding:10px;cursor:pointer;border:2px solid '+(i===seActive?'#0078d4':'transparent')+';transition:transform .1s';
+    card.onmouseover=function(){this.style.transform='scale(1.03)';};
+    card.onmouseout =function(){this.style.transform='';};
+    card.onclick    =function(){ document.getElementById('se-sorter-modal').remove(); seSelectSlide(i); };
+    card.innerHTML='<div style="background:#f0f4f8;height:100px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#888;margin-bottom:8px">'+(s.elements||[]).length+' elements</div>'
+      +'<div style="font-weight:700;font-size:12px;margin-bottom:2px">'+(i+1)+'. '+(s.title||'Untitled')+'</div>'
+      +'<div style="font-size:10px;color:#666">'+(s.type||'custom')+(s.hidden?' · hidden':'')+'</div>';
+    grid.appendChild(card);
+  });
+};
+window.seSwitchWindows = function() {
+  /* List slides as windows-to-switch-to */
+  var lines = seSlides.map(function(s,i){ return (i+1)+'. '+(s.title||'Untitled')+(i===seActive?' [current]':''); });
+  var pick = prompt('Switch to window/slide:\n\n'+lines.join('\n')+'\n\nEnter slide number:', String(seActive+1));
+  var n = parseInt(pick,10); if (n>=1 && n<=seSlides.length) seSelectSlide(n-1);
+};
+window.seMacros = function() {
+  /* Real Macros dialog — built-in scriptable actions */
+  var macros = [
+    {name:'Reset Slide Layout',         desc:'Discard custom edits on this slide and regenerate from data', fn:function(){ var s=seSlides[seActive]; if(s){delete s.elements; seEnsureElements(s); seRenderPreview();} toast('Slide reset.');}},
+    {name:'Reset All Slides',           desc:'Regenerate all slides from current data', fn:function(){ if(!confirm('Reset all slides to default layout? Custom edits will be lost.')) return; seSlides.forEach(function(s){delete s.elements; seEnsureElements(s);}); seRenderPreview(); toast('All slides reset.');}},
+    {name:'Bold All Titles',            desc:'Apply bold weight to every title element', fn:function(){ var n=0; seSlides.forEach(function(s){(s.elements||[]).forEach(function(e){if(e.type==='text'&&e.hint&&/[Tt]itle/.test(e.hint)){e.style=e.style||{};e.style.fontWeight='700';n++;}});}); seRenderPreview(); toast('Bolded '+n+' titles.');}},
+    {name:'Apply Navy Theme to All',    desc:'Set Navy theme on every slide', fn:function(){ if(window.seApplyTheme) seApplyTheme('navy'); }},
+    {name:'Hide All Hidden-Marked',     desc:'Mark every slide visible', fn:function(){ seSlides.forEach(function(s){s.hidden=false;}); seRenderPreview(); toast('All slides marked visible.');}},
+    {name:'Export Deck as JSON',        desc:'Download current deck as JSON file', fn:function(){ var blob=new Blob([JSON.stringify({slides:seSlides,master:seMaster},null,2)],{type:'application/json'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='deck-'+Date.now()+'.json'; a.click();}},
+    {name:'Number Every Slide',         desc:'Add slide-number footer to every slide', fn:function(){ seSlides.forEach(function(s,i){seEnsureElements(s); s.elements.push({id:seElId(),type:'text',x:SE_CANVAS_W-60,y:SE_CANVAS_H-22,w:50,h:18,text:String(i+1),userAdded:true,editable:true,movable:true,style:{fontSize:'10px',color:'#888',textAlign:'right',display:'flex',alignItems:'center',justifyContent:'flex-end',fontFamily:'Calibri,Arial,sans-serif'},zIndex:99});}); seRenderPreview(); toast('Slide numbers added.');}},
+    {name:'Find & Replace Text',        desc:'Replace text across all slides', fn:function(){ var f=prompt('Find:'); if(!f) return; var r=prompt('Replace with:'); if(r===null) return; var n=0; seSlides.forEach(function(s){(s.elements||[]).forEach(function(e){if(e.type==='text'&&e.text&&e.text.indexOf(f)>=0){e.text=e.text.split(f).join(r);n++;}});}); seRenderPreview(); toast('Replaced '+n+' instance'+(n===1?'':'s')+'.');}},
+  ];
+  var modal = document.createElement('div');
+  modal.id='se-macro-modal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99998;display:flex;align-items:center;justify-content:center';
+  modal.onclick=function(e){ if (e.target===modal) modal.remove(); };
+  var rows = macros.map(function(m,i){ return '<div style="padding:10px 14px;border-bottom:1px solid #eee;cursor:pointer;display:flex;justify-content:space-between;align-items:center" onmouseover="this.style.background=\'#f5f8fc\'" onmouseout="this.style.background=\'\'" onclick="window._seMacroRun('+i+')"><div><div style="font-weight:600;color:#1c3a5f;font-size:13px">'+m.name+'</div><div style="font-size:11px;color:#666;margin-top:2px">'+m.desc+'</div></div><span style="font-size:11px;color:#0078d4;font-weight:600">Run ▶</span></div>'; }).join('');
+  modal.innerHTML='<div style="background:#fff;width:560px;max-width:96vw;max-height:80vh;border-radius:10px;overflow:hidden;font-family:Calibri,Arial;display:flex;flex-direction:column"><div style="padding:14px 18px;background:#f8f8f8;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center"><b style="color:#1c3a5f">Macros</b><button onclick="document.getElementById(\'se-macro-modal\').remove()" style="background:none;border:0;cursor:pointer;font-size:18px">×</button></div><div style="overflow:auto;flex:1">'+rows+'</div></div>';
+  document.body.appendChild(modal);
+  window._seMacroRun = function(idx){ macros[idx].fn(); document.getElementById('se-macro-modal').remove(); };
+};
 
 /* helper: render element HTML for presentation mode */
 window.seRenderElHtml = function(el) {
@@ -5429,6 +6343,122 @@ window.seRenderElHtml = function(el) {
 /* ══════════════════════════════════════════════════════════════
    END NEW TAB FUNCTIONS
    ══════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════
+   FILE BACKSTAGE MENU (PowerPoint 365 File button)
+   ══════════════════════════════════════════════════════════════ */
+window.seShowFileMenu = function() {
+  var existing = document.getElementById('se-file-backstage');
+  if (existing) { existing.remove(); return; }
+  var bs = document.createElement('div');
+  bs.id = 'se-file-backstage';
+  bs.style.cssText = 'position:fixed;inset:0;background:#0078d4;z-index:99997;display:flex;font-family:Calibri,Arial';
+  var items = [
+    {label:'New',     icon:'&#10133;',  fn:function(){ if(confirm('Discard current deck and start a new blank deck?')){ seSlides.length=0; seSlides.push({id:'s'+Date.now(),type:'custom',title:'Untitled',elements:[]}); seActive=0; seRenderPreview(); seRenderPanel(); bs.remove(); }}},
+    {label:'Open',    icon:'&#128194;', fn:function(){ var inp=document.createElement('input'); inp.type='file'; inp.accept='.json,application/json'; inp.onchange=function(e){var f=e.target.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){try{var d=JSON.parse(r.result); if(d.slides){seSlides.length=0; d.slides.forEach(function(s){seSlides.push(s);}); if(d.master) window.seMaster=d.master; seActive=0; seRenderPreview(); seRenderPanel(); bs.remove(); toast('Opened '+f.name);}}catch(err){alert('Could not parse: '+err.message);}}; r.readAsText(f);}; inp.click(); }},
+    {label:'Info',    icon:'&#8505;',   fn:function(){ alert('Deck info\n\nSlides: '+seSlides.length+'\nActive: '+(seActive+1)+'\nTitle: '+(seSlides[seActive]&&seSlides[seActive].title||'(untitled)')); }},
+    {label:'Save',    icon:'&#128190;', fn:function(){ try{ localStorage.setItem('s4-ps-deck',JSON.stringify({slides:seSlides,master:window.seMaster||{}})); toast('Saved to local storage.'); }catch(e){alert('Save failed: '+e.message);} bs.remove(); }},
+    {label:'Save As', icon:'&#128190;', fn:function(){ var name=prompt('Filename (without .json):','deck-'+new Date().toISOString().slice(0,10)); if(!name) return; var blob=new Blob([JSON.stringify({slides:seSlides,master:window.seMaster||{}},null,2)],{type:'application/json'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name+'.json'; a.click(); bs.remove(); }},
+    {label:'Print',   icon:'&#128424;', fn:function(){ window.print(); bs.remove(); }},
+    {label:'Export',  icon:'&#11088;',  fn:function(){ bs.remove(); var c=prompt('Export as:\n\n1 = JSON\n2 = HTML (single page)\n3 = PNG (current slide)\n\nEnter 1/2/3:','1'); if(c==='1'){var blob=new Blob([JSON.stringify({slides:seSlides},null,2)],{type:'application/json'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='deck-'+Date.now()+'.json'; a.click();} else if(c==='2'){var html='<!doctype html><html><head><meta charset=utf-8><title>Deck</title></head><body>'+seSlides.map(function(s,i){return '<h2>Slide '+(i+1)+': '+(s.title||'')+'</h2><div style=\"position:relative;width:'+SE_CANVAS_W+'px;height:'+SE_CANVAS_H+'px;border:1px solid #ccc;margin-bottom:20px\">'+(s.elements||[]).map(function(e){return seRenderElHtml({x:e.x,y:e.y,w:e.w,h:e.h,text:e.text||'',background:(e.style&&e.style.background)||(e.type==='rect'?'#eee':'transparent'),color:(e.style&&e.style.color)||'#000',fontSize:e.style&&e.style.fontSize?parseInt(e.style.fontSize):14,fontWeight:(e.style&&e.style.fontWeight)||'normal',textAlign:(e.style&&e.style.textAlign)||'left'});}).join('')+'</div>';}).join('')+'</body></html>'; var blob=new Blob([html],{type:'text/html'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='deck-'+Date.now()+'.html'; a.click();} else if(c==='3'){toast('Use browser screenshot or Print → Save as PDF.');} }},
+    {label:'Share',   icon:'&#128279;', fn:function(){ bs.remove(); if(window.sePresentOnline) sePresentOnline(); }},
+    {label:'Close',   icon:'&#10006;',  fn:function(){ bs.remove(); }},
+  ];
+  var nav = '<div style="width:200px;background:#005a9e;padding:30px 0;color:#fff">' +
+    '<div style="padding:0 24px 20px;font-size:18px;font-weight:300;border-bottom:1px solid rgba(255,255,255,.2);margin-bottom:14px">S4 Slide Editor</div>' +
+    items.map(function(it,i){ return '<div class="se-bs-item" data-idx="'+i+'" style="padding:10px 24px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px" onmouseover="this.style.background=\'rgba(255,255,255,.1)\'" onmouseout="this.style.background=\'\'"><span style="font-size:18px;width:22px">'+it.icon+'</span>'+it.label+'</div>'; }).join('') +
+    '</div>';
+  var content = '<div style="flex:1;background:#fafafa;padding:40px 60px;overflow:auto"><h1 style="color:#1c3a5f;font-weight:300;font-size:32px;margin:0 0 8px">File</h1><div style="color:#666;font-size:14px;margin-bottom:30px">Choose an action from the menu on the left.</div><div style="font-size:13px;color:#888;line-height:1.6"><b>Quick keys:</b><br>Ctrl+S — Save · Ctrl+O — Open · Ctrl+P — Print · Esc — Close</div></div>';
+  bs.innerHTML = '<button onclick="document.getElementById(\'se-file-backstage\').remove()" style="position:absolute;top:14px;left:14px;background:#0078d4;color:#fff;border:0;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;z-index:2">←</button>' + nav + content;
+  document.body.appendChild(bs);
+  bs.querySelectorAll('.se-bs-item').forEach(function(e){ e.onclick = function(){ items[+e.getAttribute('data-idx')].fn(); }; });
+  document.addEventListener('keydown', function esc(ev){ if(ev.key==='Escape'){ var b=document.getElementById('se-file-backstage'); if(b) b.remove(); document.removeEventListener('keydown',esc); } });
+};
+
+/* ══════════════════════════════════════════════════════════════
+   DRAW TAB HANDLERS — ink overlay on current slide
+   ══════════════════════════════════════════════════════════════ */
+window.seDraw = { tool:'select', color:'#000000', width:2, drawing:false, strokes:[], current:null };
+
+function seDrawGetCanvas() {
+  var slideEl = document.getElementById('se-canvas') || document.querySelector('.se-canvas') || document.getElementById('se-preview-area');
+  if (!slideEl) return null;
+  var c = document.getElementById('se-ink-canvas');
+  if (!c) {
+    c = document.createElement('canvas');
+    c.id = 'se-ink-canvas';
+    c.width = SE_CANVAS_W; c.height = SE_CANVAS_H;
+    c.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:9999';
+    if (getComputedStyle(slideEl).position==='static') slideEl.style.position='relative';
+    slideEl.appendChild(c);
+    c.addEventListener('pointerdown', seDrawDown);
+    c.addEventListener('pointermove', seDrawMove);
+    c.addEventListener('pointerup',   seDrawUp);
+    c.addEventListener('pointerleave',seDrawUp);
+  }
+  return c;
+}
+function seDrawDown(e){ var d=window.seDraw; if(d.tool==='select') return; var c=e.currentTarget; var r=c.getBoundingClientRect(); var x=(e.clientX-r.left)*c.width/r.width; var y=(e.clientY-r.top)*c.height/r.height; if(d.tool==='eraser'){ d.strokes=d.strokes.filter(function(s){ return !s.points.some(function(p){return Math.hypot(p.x-x,p.y-y)<14;}); }); seDrawRedraw(); return;} d.drawing=true; d.current={color:d.color,width:d.width,tool:d.tool,points:[{x:x,y:y}]}; }
+function seDrawMove(e){ var d=window.seDraw; if(!d.drawing||!d.current) return; var c=e.currentTarget; var r=c.getBoundingClientRect(); var x=(e.clientX-r.left)*c.width/r.width; var y=(e.clientY-r.top)*c.height/r.height; d.current.points.push({x:x,y:y}); seDrawRedraw(); }
+function seDrawUp(){ var d=window.seDraw; if(d.drawing && d.current){ d.strokes.push(d.current); d.current=null; d.drawing=false; seDrawRedraw(); } }
+function seDrawRedraw(){ var c=document.getElementById('se-ink-canvas'); if(!c) return; var ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); var all=window.seDraw.strokes.slice(); if(window.seDraw.current) all.push(window.seDraw.current); all.forEach(function(s){ ctx.strokeStyle=s.color; ctx.lineWidth=s.width; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.globalAlpha = s.tool==='highlighter' ? 0.35 : 1; ctx.beginPath(); s.points.forEach(function(p,i){ if(i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y); }); ctx.stroke(); }); ctx.globalAlpha=1; }
+
+window.seDrawTool = function(tool, opts){
+  window.seDraw.tool = tool;
+  if (opts && opts.color) window.seDraw.color = opts.color;
+  if (opts && opts.width) window.seDraw.width = opts.width;
+  var c = seDrawGetCanvas();
+  if (c) c.style.pointerEvents = (tool==='select') ? 'none' : 'auto';
+  document.querySelectorAll('.se-pen-btn').forEach(function(b){ b.style.outline=''; });
+  toast('Tool: '+tool+(opts&&opts.color?' '+opts.color:''));
+};
+window.seDrawSetColor = function(c){ window.seDraw.color=c; };
+window.seDrawSetWidth = function(w){ window.seDraw.width=w; };
+window.seAddPen = function(){ var c=prompt('Pen color (hex or name):','#ff6600'); if(!c) return; var w=+(prompt('Pen width (px):','3')||3); seDrawTool('pen',{color:c,width:w}); };
+window.seInkClear = function(){ window.seDraw.strokes=[]; var c=document.getElementById('se-ink-canvas'); if(c){ var ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);} toast('Ink cleared.'); };
+window.seInkReplay = function(){ var saved=window.seDraw.strokes.slice(); window.seDraw.strokes=[]; seDrawRedraw(); var i=0; (function step(){ if(i>=saved.length) return; window.seDraw.strokes.push(saved[i++]); seDrawRedraw(); setTimeout(step,250);})(); };
+window.seInkToShape = function(){ var s=window.seDraw.strokes[window.seDraw.strokes.length-1]; if(!s){toast('No ink to convert.'); return;} var xs=s.points.map(function(p){return p.x;}); var ys=s.points.map(function(p){return p.y;}); var x=Math.min.apply(null,xs), y=Math.min.apply(null,ys), w=Math.max.apply(null,xs)-x, h=Math.max.apply(null,ys)-y; seEnsureElements(seSlides[seActive]); seSlides[seActive].elements.push({id:seElId(),type:'rect',x:x,y:y,w:w,h:h,userAdded:true,editable:true,movable:true,style:{background:'transparent',border:'2px solid '+s.color,borderRadius:'4px'}}); window.seDraw.strokes.pop(); seDrawRedraw(); seRenderPreview(); toast('Ink converted to shape.'); };
+window.seInkToText = function(){ var t=prompt('Recognized text (type what you wrote):'); if(!t) return; var s=window.seDraw.strokes[window.seDraw.strokes.length-1]; if(!s){toast('No ink.'); return;} var xs=s.points.map(function(p){return p.x;}); var ys=s.points.map(function(p){return p.y;}); seEnsureElements(seSlides[seActive]); seSlides[seActive].elements.push({id:seElId(),type:'text',x:Math.min.apply(null,xs),y:Math.min.apply(null,ys),w:Math.max(80,Math.max.apply(null,xs)-Math.min.apply(null,xs)),h:Math.max(24,Math.max.apply(null,ys)-Math.min.apply(null,ys)),text:t,userAdded:true,editable:true,movable:true,style:{fontSize:'16px',color:s.color}}); window.seDraw.strokes.pop(); seDrawRedraw(); seRenderPreview(); };
+window.seInkToMath = function(){ var t=prompt('Math expression (LaTeX-ish or plain):','E = mc^2'); if(!t) return; seEnsureElements(seSlides[seActive]); seSlides[seActive].elements.push({id:seElId(),type:'text',x:160,y:160,w:300,h:40,text:t,userAdded:true,editable:true,movable:true,style:{fontSize:'20px',fontFamily:'Cambria Math,Cambria,serif',color:'#1c3a5f'}}); seRenderPreview(); };
+window.seStartInking = function(){ seShowTab('draw'); seDrawTool('pen',{color:'#000000',width:2}); toast('Inking started — draw on the slide.'); };
+
+/* ══════════════════════════════════════════════════════════════
+   RECORD TAB HANDLERS
+   ══════════════════════════════════════════════════════════════ */
+window.seScreenRecord = async function(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){ alert('Screen recording not supported in this browser.'); return; }
+  try{
+    var stream = await navigator.mediaDevices.getDisplayMedia({video:true, audio:true});
+    var rec = new MediaRecorder(stream); var chunks=[];
+    rec.ondataavailable = function(e){ if(e.data.size) chunks.push(e.data); };
+    rec.onstop = function(){ var blob=new Blob(chunks,{type:'video/webm'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='screen-recording-'+Date.now()+'.webm'; a.click(); stream.getTracks().forEach(function(t){t.stop();}); toast('Screen recording saved.'); };
+    rec.start();
+    var btn=document.createElement('button'); btn.textContent='■ Stop Screen Recording'; btn.style.cssText='position:fixed;top:20px;right:20px;z-index:99999;background:#c00000;color:#fff;border:0;padding:10px 18px;font-size:14px;border-radius:6px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)'; btn.onclick=function(){ rec.stop(); btn.remove(); }; document.body.appendChild(btn);
+    stream.getVideoTracks()[0].onended = function(){ if(rec.state!=='inactive') rec.stop(); btn.remove(); };
+  }catch(e){ if(e.name!=='NotAllowedError') alert('Screen recording failed: '+e.message); }
+};
+window.seInsertVideo = function(){ var inp=document.createElement('input'); inp.type='file'; inp.accept='video/*'; inp.onchange=function(e){var f=e.target.files[0]; if(!f) return; var url=URL.createObjectURL(f); seEnsureElements(seSlides[seActive]); seSlides[seActive].elements.push({id:seElId(),type:'video',x:120,y:120,w:480,h:270,src:url,name:f.name,userAdded:true,editable:true,movable:true,style:{}}); seRenderPreview(); toast('Video inserted.');}; inp.click(); };
+window.seInsertAudio = function(){ var inp=document.createElement('input'); inp.type='file'; inp.accept='audio/*'; inp.onchange=function(e){var f=e.target.files[0]; if(!f) return; var url=URL.createObjectURL(f); seEnsureElements(seSlides[seActive]); seSlides[seActive].elements.push({id:seElId(),type:'audio',x:120,y:120,w:240,h:50,src:url,name:f.name,userAdded:true,editable:true,movable:true,style:{}}); seRenderPreview(); toast('Audio inserted.');}; inp.click(); };
+window.seInsertCameo = async function(){ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){alert('Camera not supported.');return;} try{ var stream=await navigator.mediaDevices.getUserMedia({video:true}); var v=document.createElement('video'); v.srcObject=stream; v.autoplay=true; v.muted=true; v.style.cssText='position:fixed;bottom:20px;right:20px;width:200px;height:150px;border:3px solid #fff;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:99999;object-fit:cover'; v.id='se-cameo-feed'; var stop=document.createElement('button'); stop.textContent='× Stop Cameo'; stop.style.cssText='position:fixed;bottom:180px;right:20px;background:#c00000;color:#fff;border:0;padding:6px 10px;border-radius:4px;cursor:pointer;z-index:99999;font-size:11px'; stop.onclick=function(){stream.getTracks().forEach(function(t){t.stop();}); v.remove(); stop.remove();}; document.body.appendChild(v); document.body.appendChild(stop); }catch(e){alert('Cameo failed: '+e.message);} };
+window.seExportToVideo = function(){ alert('Export to Video\n\nTo export this deck as MP4:\n\n1. Use Slide Show ▶ Record Slide Show to record narration\n2. Use Screen Recording (Record tab) to capture playback\n3. The recorded WebM file can be converted to MP4 with any video tool (e.g., ffmpeg, HandBrake, online converters)\n\nDirect MP4 export requires server-side rendering and is on the roadmap.'); };
+window.sePublishToStream = function(){ if(window.sePresentOnline){sePresentOnline();} else {toast('Sharing not available.');} };
+
+/* ══════════════════════════════════════════════════════════════
+   HELP TAB HANDLERS
+   ══════════════════════════════════════════════════════════════ */
+window.seShowHelp = function(){
+  var modal = document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99998;display:flex;align-items:center;justify-content:center';
+  modal.onclick=function(e){if(e.target===modal) modal.remove();};
+  modal.innerHTML='<div style="background:#fff;width:680px;max-width:96vw;max-height:84vh;border-radius:10px;overflow:hidden;font-family:Calibri,Arial;display:flex;flex-direction:column"><div style="padding:14px 18px;background:#f8f8f8;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center"><b style="color:#1c3a5f;font-size:16px">Slide Editor Help</b><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:0;cursor:pointer;font-size:18px">×</button></div><div style="overflow:auto;flex:1;padding:24px;line-height:1.6;font-size:13px;color:#333"><h3 style="color:#1c3a5f;margin-top:0">Quick Start</h3><ul><li><b>Ribbon:</b> Click any tab (Home, Insert, Draw, Design, etc.) to access its tools.</li><li><b>Add slides:</b> Insert tab → New Slide. Choose from PowerPoint-style templates.</li><li><b>Edit elements:</b> Click any element on the slide to select. Drag to move, drag corners to resize.</li><li><b>Format text:</b> Select text element, use Home tab Font/Paragraph groups.</li></ul><h3 style="color:#1c3a5f">Keyboard Shortcuts</h3><table style="width:100%;border-collapse:collapse"><tr><td style="padding:4px 8px;border-bottom:1px solid #eee"><kbd>Ctrl+S</kbd></td><td>Save deck</td></tr><tr><td style="padding:4px 8px;border-bottom:1px solid #eee"><kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd></td><td>Undo / Redo</td></tr><tr><td style="padding:4px 8px;border-bottom:1px solid #eee"><kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd></td><td>Copy / Paste</td></tr><tr><td style="padding:4px 8px;border-bottom:1px solid #eee"><kbd>Del</kbd></td><td>Delete selected element</td></tr><tr><td style="padding:4px 8px;border-bottom:1px solid #eee"><kbd>F5</kbd></td><td>Start slideshow</td></tr><tr><td style="padding:4px 8px;border-bottom:1px solid #eee"><kbd>Esc</kbd></td><td>Exit slideshow / Close dialog</td></tr></table><h3 style="color:#1c3a5f">Need more help?</h3><p>Email <a href="mailto:support@s4ledger.com">support@s4ledger.com</a> or use the Feedback button.</p></div></div>';
+  document.body.appendChild(modal);
+};
+window.seContactSupport = function(){ window.location.href='mailto:support@s4ledger.com?subject=S4%20Slide%20Editor%20Support'; };
+window.seSendFeedback = function(){ var f=prompt('What feedback would you like to share?'); if(!f) return; window.location.href='mailto:feedback@s4ledger.com?subject=Slide%20Editor%20Feedback&body='+encodeURIComponent(f); };
+window.seShowTraining = function(){ window.open('https://s4ledger.com/program-schedule/?training=1','_blank'); };
+window.seShowWhatsNew = function(){ alert("What's New in S4 Slide Editor\n\n• Full PowerPoint 365 ribbon (14 tabs)\n• Draw tab with ink/pen/highlighter/lasso\n• Record tab with screen recording, cameo, audio/video insert\n• Real Presenter View with timer\n• Live captions via SpeechRecognition\n• Real macros, master views, file backstage\n• Slide compare and review pane\n• Acquisition Milestone & Gantt slides"); };
+window.seShowKeyboardShortcuts = function(){ seShowHelp(); };
+window.seShowAbout = function(){ alert('S4 Slide Editor\nProgram Schedule Module\n\nVersion 2026.04 R18\n© S4 Ledger LLC'); };
 
 /* ── Cut / Copy / Paste / Format Painter ── */
 var seCopyBuffer = null;
@@ -5767,9 +6797,49 @@ document.addEventListener('click',function(e){
 /* ── SVG body dispatcher — used for thumbnails only ── */
 function seRenderSVGBody(slide,W,H,isThumb){
   if(slide.type==='acq')      return seAcqSVG(slide,W,H,isThumb);
+  if(slide.type==='acqGantt') { seEnsureElements(slide); return seElementsThumbSVG(slide,W,H); }
   if(slide.type==='oneSlide') return seOneSlideThumbSVG(slide,W,H);
-  if(slide.type==='custom')   return seCustomSVG(slide,W,H,isThumb);
+  if(slide.type==='custom')   { seEnsureElements(slide); if((slide.elements||[]).length>2) return seElementsThumbSVG(slide,W,H); return seCustomSVG(slide,W,H,isThumb); }
   return seProgSVG(slide,W,H,isThumb);
+}
+
+/* Generic thumbnail renderer — projects slide.elements onto an SVG */
+function seElementsThumbSVG(slide, W, H) {
+  var sx = W / SE_CANVAS_W, sy = H / SE_CANVAS_H;
+  var els = (slide.elements || []).slice().sort(function(a,b){return (a.zIndex||0) - (b.zIndex||0);});
+  var out = '<rect width="'+W+'" height="'+H+'" fill="#ffffff"/>';
+  els.forEach(function(el){
+    var x = (el.x||0)*sx, y=(el.y||0)*sy, w=(el.w||0)*sx, h=(el.h||0)*sy;
+    if (w<=0 || h<=0) return;
+    var st = el.style || {};
+    var bg = st.background || (el.type==='rect'?'#cccccc':null);
+    var fill = bg && bg!=='transparent' ? bg : 'none';
+    var stroke = st.borderColor && st.borderStyle!=='none' ? st.borderColor : 'none';
+    var sw = stroke!=='none' ? (parseInt(st.borderWidth,10)||1)*Math.min(sx,sy) : 0;
+    var rx = parseInt(st.borderRadius,10)||0;
+    if (el.type==='rect' || el.type==='shape' || (el.type==='text' && fill!=='none')) {
+      out += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'"'
+        +' fill="'+fill+'"'
+        +(stroke!=='none'?' stroke="'+stroke+'" stroke-width="'+sw+'"':'')
+        +(rx?' rx="'+rx*sx+'"':'') +'/>';
+    }
+    if (el.type==='text' && el.text) {
+      var fs = (parseInt(st.fontSize,10) || 14) * Math.min(sx,sy);
+      if (fs < 1.5) return;
+      if (fs < 5) fs = 5; /* clamp tiny labels to legible minimum in thumbnails */
+      var color = st.color || '#000';
+      var fw = st.fontWeight || '400';
+      var ta = st.textAlign || 'left';
+      var anchor = ta==='center'?'middle':ta==='right'?'end':'start';
+      var tx = ta==='center'?x+w/2:ta==='right'?x+w-2:x+2;
+      var ty = y + h/2 + fs*0.35;
+      var txt = String(el.text).replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}).slice(0,80);
+      out += '<text x="'+tx+'" y="'+ty+'" font-size="'+fs+'" font-weight="'+fw+'"'
+        +' fill="'+color+'" text-anchor="'+anchor+'"'
+        +' font-family="Calibri,Arial,sans-serif">'+txt+'</text>';
+    }
+  });
+  return out;
 }
 
 /* ── Render left panel thumbnails ── */
@@ -5812,10 +6882,243 @@ function seElId() { return 'el-'+Date.now()+'-'+Math.floor(Math.random()*9999); 
 function seEnsureElements(slide) {
   if (!slide) return;
   if (!slide.elements || slide.elements.length === 0) {
-    slide.elements = (slide.type === 'oneSlide')
-      ? seOneSlideDefaultElements(slide)
-      : seDefaultElements(slide);
+    if (slide.type === 'oneSlide')      slide.elements = seOneSlideDefaultElements(slide);
+    else if (slide.type === 'acqGantt') slide.elements = seAcqGanttDefaultElements(slide);
+    else if (slide.layoutId)            slide.elements = sePptLayoutElements(slide.layoutId, slide);
+    else if (slide.brandPreset)         slide.elements = seBrandPresetElements(slide.brandPreset, slide);
+    else                                slide.elements = seDefaultElements(slide);
+    /* Defensive fallback: never leave a slide visually empty */
+    if (!slide.elements || slide.elements.length === 0) {
+      slide.elements = [
+        { id:seElId(), type:'rect', x:0, y:0, w:SE_CANVAS_W, h:SE_CANVAS_H, style:{background:'#ffffff'}, locked:true, zIndex:0, hint:'Background' },
+        { id:seElId(), type:'rect', x:0, y:0, w:SE_CANVAS_W, h:60, style:{background:'#1c3a5f'}, locked:false, zIndex:1, hint:'Title bar' },
+        { id:seElId(), type:'text', x:20, y:0, w:SE_CANVAS_W-40, h:60, text:slide.title||'New Slide', hint:'Slide title', editable:true, movable:true, style:{fontSize:'24px',fontWeight:'700',color:'#fff',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, zIndex:2 },
+        { id:seElId(), type:'text', x:60, y:240, w:SE_CANVAS_W-120, h:120, text:'Click any element to edit. Use the ribbon above to add shapes, images, charts and more.', hint:'Body text', editable:true, movable:true, style:{fontSize:'18px',color:'#666',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, zIndex:2 }
+      ];
+    }
   }
+}
+
+/* PowerPoint standard layouts — return arrays of editable elements */
+function sePptLayoutElements(layoutId, slide) {
+  var W = SE_CANVAS_W, H = SE_CANVAS_H;
+  var bg = function(){return {id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#ffffff'}, locked:true, zIndex:0, hint:'Background'};};
+  var title = function(t,x,y,w,h,style){return {id:seElId(), type:'text', x:x, y:y, w:w, h:h, text:t||'Click to add title', hint:'Title', editable:true, movable:true, zIndex:5, style:Object.assign({fontSize:'40px',fontWeight:'700',color:'#1c3a5f',fontFamily:'Calibri Light,Calibri,Arial,sans-serif',display:'flex',alignItems:'center'}, style||{})};};
+  var body  = function(t,x,y,w,h,style){return {id:seElId(), type:'text', x:x, y:y, w:w, h:h, text:t||'Click to add text', hint:'Content', editable:true, movable:true, zIndex:5, style:Object.assign({fontSize:'20px',color:'#3a3a3a',fontFamily:'Calibri,Arial,sans-serif',padding:'8px',display:'flex',alignItems:'flex-start'}, style||{})};};
+  var subtitle = function(t,x,y,w,h){return {id:seElId(), type:'text', x:x, y:y, w:w, h:h, text:t||'Click to add subtitle', hint:'Subtitle', editable:true, movable:true, zIndex:5, style:{fontSize:'24px',color:'#5a6478',fontFamily:'Calibri,Arial,sans-serif',display:'flex',alignItems:'center'}};};
+  var ph = function(label,x,y,w,h,col){return {id:seElId(), type:'rect', x:x, y:y, w:w, h:h, hint:label||'Placeholder', editable:true, movable:true, zIndex:3, style:{background:'#f5f7fa',border:'1px dashed '+(col||'#bcc4cf'),borderRadius:'2px'}};};
+
+  switch(layoutId) {
+    case 'ppt_title':
+      return [bg(),
+        title(slide.title||'Click to add title', W*0.10, H*0.36, W*0.80, 80, {fontSize:'52px',textAlign:'center',justifyContent:'center'}),
+        subtitle('Click to add subtitle', W*0.15, H*0.55, W*0.70, 40)];
+    case 'ppt_titleContent':
+      return [bg(),
+        title(slide.title||'Click to add title', W*0.04, H*0.04, W*0.92, 60),
+        body('• Click to add text\n• Add bullet points here\n• Edit anytime', W*0.04, H*0.20, W*0.92, H*0.74, {whiteSpace:'pre-line',lineHeight:'1.6'})];
+    case 'ppt_sectionHeader':
+      return [{id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#1c3a5f'}, locked:true, zIndex:0, hint:'Section bg'},
+        {id:seElId(), type:'rect', x:0, y:H*0.45, w:W, h:4, style:{background:'#C9A000'}, locked:true, zIndex:1, hint:'Accent bar'},
+        title(slide.title||'Section Header', W*0.10, H*0.30, W*0.80, 50, {color:'#ffffff',fontSize:'44px',textAlign:'center',justifyContent:'center'}),
+        subtitle('Section subtitle', W*0.15, H*0.55, W*0.70, 30)];
+    case 'ppt_twoContent':
+      return [bg(),
+        title(slide.title||'Click to add title', W*0.04, H*0.04, W*0.92, 60),
+        body('Left column content', W*0.04, H*0.20, W*0.45, H*0.74),
+        body('Right column content', W*0.51, H*0.20, W*0.45, H*0.74)];
+    case 'ppt_comparison':
+      return [bg(),
+        title(slide.title||'Comparison', W*0.04, H*0.04, W*0.92, 50),
+        {id:seElId(), type:'rect', x:W*0.04, y:H*0.18, w:W*0.45, h:36, style:{background:'#1c3a5f',borderRadius:'2px'}, editable:true, movable:true, zIndex:3, hint:'Left header bg'},
+        {id:seElId(), type:'text', x:W*0.04, y:H*0.18, w:W*0.45, h:36, text:'Option A', editable:true, movable:true, zIndex:4, style:{color:'#fff',fontSize:'18px',fontWeight:'700',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Left header'},
+        body('Pros and cons go here', W*0.04, H*0.27, W*0.45, H*0.67),
+        {id:seElId(), type:'rect', x:W*0.51, y:H*0.18, w:W*0.45, h:36, style:{background:'#C9A000',borderRadius:'2px'}, editable:true, movable:true, zIndex:3, hint:'Right header bg'},
+        {id:seElId(), type:'text', x:W*0.51, y:H*0.18, w:W*0.45, h:36, text:'Option B', editable:true, movable:true, zIndex:4, style:{color:'#fff',fontSize:'18px',fontWeight:'700',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Right header'},
+        body('Pros and cons go here', W*0.51, H*0.27, W*0.45, H*0.67)];
+    case 'ppt_titleOnly':
+      return [bg(), title(slide.title||'Click to add title', W*0.04, H*0.04, W*0.92, 80)];
+    case 'blank':
+      return [bg()];
+    case 'ppt_contentCaption':
+      return [bg(),
+        title(slide.title||'Click to add title', W*0.04, H*0.04, W*0.92, 50),
+        ph('Picture or content placeholder', W*0.04, H*0.20, W*0.55, H*0.74),
+        body('Caption text — describe the content on the left', W*0.62, H*0.20, W*0.34, H*0.74, {fontSize:'16px'})];
+    case 'ppt_pictureCaption':
+      return [bg(),
+        ph('Picture placeholder', W*0.04, H*0.06, W*0.62, H*0.88),
+        title(slide.title||'Click to add title', W*0.69, H*0.10, W*0.27, 50, {fontSize:'28px'}),
+        body('Caption / description', W*0.69, H*0.30, W*0.27, H*0.60, {fontSize:'15px'})];
+  }
+  return null;
+}
+
+/* S4 brand preset element layouts */
+function seBrandPresetElements(preset, slide) {
+  var W = SE_CANVAS_W, H = SE_CANVAS_H;
+  switch(preset) {
+    case 'navyTitle':
+      return [
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#1c3a5f'}, locked:true, zIndex:0, hint:'Navy bg'},
+        {id:seElId(), type:'rect', x:0, y:H-60, w:W, h:60, style:{background:'#C9A000'}, locked:false, zIndex:1, hint:'Gold footer'},
+        {id:seElId(), type:'text', x:W*0.10, y:H*0.35, w:W*0.80, h:80, text:slide.title||'Title Goes Here', editable:true, movable:true, zIndex:3, style:{color:'#fff',fontSize:'48px',fontWeight:'700',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Title'},
+        {id:seElId(), type:'text', x:W*0.20, y:H*0.55, w:W*0.60, h:40, text:'Subtitle / tagline', editable:true, movable:true, zIndex:3, style:{color:'rgba(255,255,255,.7)',fontSize:'22px',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Subtitle'},
+        {id:seElId(), type:'text', x:20, y:H-50, w:80, h:40, text:'S4', editable:true, movable:true, zIndex:3, style:{color:'#1c3a5f',fontSize:'28px',fontWeight:'800',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Brand mark'}
+      ];
+    case 'goldTitle':
+      return [
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#C9A000'}, locked:true, zIndex:0, hint:'Gold bg'},
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:80, style:{background:'#1c3a5f'}, locked:false, zIndex:1, hint:'Navy header'},
+        {id:seElId(), type:'text', x:W*0.10, y:H*0.40, w:W*0.80, h:80, text:slide.title||'Title Goes Here', editable:true, movable:true, zIndex:3, style:{color:'#1c3a5f',fontSize:'46px',fontWeight:'700',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Title'},
+        {id:seElId(), type:'text', x:W*0.20, y:H*0.58, w:W*0.60, h:36, text:'Subtitle', editable:true, movable:true, zIndex:3, style:{color:'#1c3a5f',fontSize:'20px',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',opacity:0.8,fontFamily:'Calibri,Arial,sans-serif'}, hint:'Subtitle'}
+      ];
+    case 'executive':
+      return [
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#ffffff'}, locked:true, zIndex:0, hint:'Background'},
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:50, style:{background:'#1c3a5f'}, locked:false, zIndex:1, hint:'Title bar'},
+        {id:seElId(), type:'text', x:20, y:0, w:W-40, h:50, text:slide.title||'Executive Summary', editable:true, movable:true, zIndex:2, style:{color:'#fff',fontSize:'24px',fontWeight:'700',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Title'},
+        {id:seElId(), type:'rect', x:30, y:80, w:W*0.55, h:H-110, style:{background:'#f5f7fa',borderRadius:'4px'}, editable:true, movable:true, zIndex:2, hint:'Summary panel'},
+        {id:seElId(), type:'text', x:50, y:100, w:W*0.55-40, h:40, text:'Key Findings', editable:true, movable:true, zIndex:3, style:{color:'#1c3a5f',fontSize:'22px',fontWeight:'700',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Subhead'},
+        {id:seElId(), type:'text', x:50, y:150, w:W*0.55-40, h:H-200, text:'• Add bullet point here\n• Add another finding\n• Highlight critical insight', editable:true, movable:true, zIndex:3, style:{color:'#3a3a3a',fontSize:'17px',lineHeight:'1.7',whiteSpace:'pre-line',display:'flex',alignItems:'flex-start',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Body'},
+        {id:seElId(), type:'rect', x:W*0.62, y:80, w:W*0.34, h:120, style:{background:'#1c3a5f',borderRadius:'4px'}, editable:true, movable:true, zIndex:2, hint:'KPI box'},
+        {id:seElId(), type:'text', x:W*0.62, y:90, w:W*0.34, h:40, text:'$1.2M', editable:true, movable:true, zIndex:3, style:{color:'#C9A000',fontSize:'34px',fontWeight:'700',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Big number'},
+        {id:seElId(), type:'text', x:W*0.62, y:140, w:W*0.34, h:30, text:'Cost savings YTD', editable:true, movable:true, zIndex:3, style:{color:'rgba(255,255,255,.85)',fontSize:'13px',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'KPI label'},
+        {id:seElId(), type:'rect', x:W*0.62, y:215, w:W*0.34, h:H-260, style:{background:'#C9A000',borderRadius:'4px'}, editable:true, movable:true, zIndex:2, hint:'Action panel'},
+        {id:seElId(), type:'text', x:W*0.62+12, y:225, w:W*0.34-24, h:30, text:'Recommended Actions', editable:true, movable:true, zIndex:3, style:{color:'#1c3a5f',fontSize:'15px',fontWeight:'700',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Action title'},
+        {id:seElId(), type:'text', x:W*0.62+12, y:260, w:W*0.34-24, h:H-310, text:'1. Approve budget\n2. Begin pilot Q3\n3. Review monthly', editable:true, movable:true, zIndex:3, style:{color:'#1c3a5f',fontSize:'13px',lineHeight:'1.6',whiteSpace:'pre-line',display:'flex',alignItems:'flex-start',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Action list'}
+      ];
+    case 'kpi':
+      var kpis = [
+        {n:'$1.2M',l:'Cost savings',c:'#1c3a5f'},
+        {n:'94%',l:'On-time rate',c:'#C9A000'},
+        {n:'12',l:'Vessels active',c:'#34c759'},
+        {n:'+18%',l:'YoY growth',c:'#5ac8fa'}
+      ];
+      var kpiEls = [
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#ffffff'}, locked:true, zIndex:0, hint:'Background'},
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:50, style:{background:'#1c3a5f'}, locked:false, zIndex:1, hint:'Title bar'},
+        {id:seElId(), type:'text', x:20, y:0, w:W-40, h:50, text:slide.title||'KPI Dashboard', editable:true, movable:true, zIndex:2, style:{color:'#fff',fontSize:'24px',fontWeight:'700',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Title'}
+      ];
+      var cw = (W-60)/4, ch = 130;
+      kpis.forEach(function(k,i){
+        var x = 20 + i*(cw+10), y = 80;
+        kpiEls.push({id:seElId(), type:'rect', x:x, y:y, w:cw, h:ch, style:{background:k.c,borderRadius:'6px'}, editable:true, movable:true, zIndex:2, hint:'KPI '+(i+1)});
+        kpiEls.push({id:seElId(), type:'text', x:x, y:y+18, w:cw, h:55, text:k.n, editable:true, movable:true, zIndex:3, style:{color:'#fff',fontSize:'42px',fontWeight:'800',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:k.l+' value'});
+        kpiEls.push({id:seElId(), type:'text', x:x, y:y+78, w:cw, h:30, text:k.l, editable:true, movable:true, zIndex:3, style:{color:'rgba(255,255,255,.92)',fontSize:'14px',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:k.l+' label'});
+      });
+      kpiEls.push({id:seElId(), type:'rect', x:20, y:230, w:W-40, h:H-260, style:{background:'#f5f7fa',borderRadius:'6px',border:'1px solid #e1e6ee'}, editable:true, movable:true, zIndex:2, hint:'Trend chart placeholder'});
+      kpiEls.push({id:seElId(), type:'text', x:0, y:240, w:W, h:30, text:'Trend chart / detail content goes here', editable:true, movable:true, zIndex:3, style:{color:'#7a8290',fontSize:'14px',fontStyle:'italic',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Chart placeholder text'});
+      return kpiEls;
+    case 'quote':
+      return [
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#1c3a5f'}, locked:true, zIndex:0, hint:'Navy bg'},
+        {id:seElId(), type:'text', x:W*0.05, y:H*0.18, w:80, h:120, text:'\u201C', editable:false, movable:true, zIndex:2, style:{color:'#C9A000',fontSize:'180px',fontFamily:'Georgia,serif',display:'flex',alignItems:'center',justifyContent:'center'}, hint:'Quote mark'},
+        {id:seElId(), type:'text', x:W*0.18, y:H*0.30, w:W*0.75, h:H*0.35, text:'Add an inspiring quote that reinforces your message and resonates with your audience.', editable:true, movable:true, zIndex:3, style:{color:'#fff',fontSize:'30px',fontStyle:'italic',lineHeight:'1.4',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Quote text'},
+        {id:seElId(), type:'rect', x:W*0.55, y:H*0.78, w:W*0.30, h:3, style:{background:'#C9A000'}, locked:false, zIndex:2, hint:'Divider'},
+        {id:seElId(), type:'text', x:W*0.55, y:H*0.80, w:W*0.40, h:30, text:'\u2014 Attribution / Source', editable:true, movable:true, zIndex:3, style:{color:'#C9A000',fontSize:'18px',fontWeight:'600',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Attribution'}
+      ];
+    case 'thanks':
+      return [
+        {id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#1c3a5f'}, locked:true, zIndex:0, hint:'Navy bg'},
+        {id:seElId(), type:'rect', x:0, y:H*0.48, w:W, h:H*0.06, style:{background:'#C9A000'}, locked:false, zIndex:1, hint:'Gold band'},
+        {id:seElId(), type:'text', x:W*0.10, y:H*0.30, w:W*0.80, h:80, text:'Thank You', editable:true, movable:true, zIndex:3, style:{color:'#fff',fontSize:'62px',fontWeight:'700',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Title'},
+        {id:seElId(), type:'text', x:W*0.20, y:H*0.62, w:W*0.60, h:30, text:'Questions & Discussion', editable:true, movable:true, zIndex:3, style:{color:'rgba(255,255,255,.85)',fontSize:'22px',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Subtitle'},
+        {id:seElId(), type:'text', x:W*0.20, y:H*0.72, w:W*0.60, h:30, text:'contact@s4ledger.com', editable:true, movable:true, zIndex:3, style:{color:'#C9A000',fontSize:'18px',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif'}, hint:'Contact'}
+      ];
+  }
+  return null;
+}
+
+/* Build Acquisition Gantt: horizontal bars per vessel × milestone */
+function seAcqGanttDefaultElements(slide) {
+  var W = SE_CANVAS_W, H = SE_CANVAS_H;
+  var els = [];
+  var fyStartL = slide.fyStart || (typeof fyStart !== 'undefined' ? fyStart : 2024);
+  var fyEndL   = slide.fyEnd   || (typeof fyEnd   !== 'undefined' ? fyEnd   : 2030);
+  var nFY = Math.max(fyEndL - fyStartL + 1, 1);
+  /* Always include vessels; synthesize missing acqEvents so the gantt is never empty */
+  var vs = vessels.slice(0, 8);
+  if (vs.length === 0) vs = vessels.slice();
+  vs.forEach(function(v, ri){
+    var hasAny = v.acqEvents && Object.keys(v.acqEvents).some(function(k){return v.acqEvents[k];});
+    if (!hasAny) v.acqEvents = (typeof seSynthAcqEvents==='function')
+      ? seSynthAcqEvents(v, ri, fyStartL, fyEndL)
+      : { SRR: fyStartL+'-01', PDR: (fyStartL+1)+'-01', CDR: (fyStartL+2)+'-01', SDP: (fyStartL+1)+'-06', IOTE: (fyStartL+3)+'-01' };
+  });
+
+  var titleH = 36, hdrH = 24, footerH = 30;
+  var lblW = Math.round(W * 0.18);
+  var bodyY = titleH + hdrH;
+  var bodyH = H - titleH - hdrH - footerH;
+  var rowH = Math.max(20, Math.floor(bodyH / Math.max(vs.length,1)));
+  var colW = (W - lblW) / nFY;
+
+  /* Background */
+  els.push({id:seElId(), type:'rect', x:0, y:0, w:W, h:H, style:{background:'#ffffff'}, locked:true, zIndex:0, hint:'Background'});
+
+  /* Title bar */
+  els.push({id:seElId(), type:'rect', x:0, y:0, w:W, h:titleH, style:{background:'#1c3a5f'}, locked:false, zIndex:1, hint:'Title bar'});
+  els.push({id:seElId(), type:'text', x:14, y:0, w:W-28, h:titleH, text:slide.title || 'Acquisition Gantt — Design / Test Events', hint:'Slide title', editable:true, movable:true, style:{fontSize:'18px',fontWeight:'700',color:'#fff',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, zIndex:2});
+
+  /* FY header */
+  els.push({id:seElId(), type:'rect', x:0, y:titleH, w:W, h:hdrH, style:{background:'#e8edf5', borderBottom:'1px solid #b0bcc8'}, locked:true, zIndex:1, hint:'FY header bg'});
+  els.push({id:seElId(), type:'text', x:0, y:titleH, w:lblW, h:hdrH, text:'VESSEL', editable:false, movable:false, hint:'Header VESSEL', style:{fontSize:'11px',fontWeight:'700',color:'#1c3a5f',paddingLeft:'8px',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif',borderRight:'1px solid #b0bcc8'}, zIndex:2});
+  for (var fi = 0; fi < nFY; fi++) {
+    els.push({id:seElId(), type:'text', x:lblW+fi*colW, y:titleH, w:colW, h:hdrH, text:'FY'+String(fyStartL+fi).slice(-2), editable:false, movable:false, hint:'FY column', style:{fontSize:'11px',fontWeight:'700',color:'#1c3a5f',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Calibri,Arial,sans-serif',borderRight:'1px solid #d0d8e2'}, zIndex:2});
+  }
+
+  /* Milestone color map (matches existing acq slide convention) */
+  var msColors = { SRR:'#5ac8fa', PDR:'#34c759', CDR:'#ff9500', SDP:'#9b59b6', IOTE:'#C9A000', TRR:'#e74c3c' };
+  var msOrder = ['SRR','PDR','CDR','SDP','IOTE'];
+
+  vs.forEach(function(v, ri) {
+    var ry = bodyY + ri * rowH;
+    /* Row bg */
+    els.push({id:seElId(), type:'rect', x:0, y:ry, w:W, h:rowH, style:{background: ri%2===0?'#ffffff':'#f7f9fc', borderBottom:'0.5px solid #d0d8e2'}, locked:true, zIndex:1, hint:'Row bg '+ri});
+    /* Vessel label */
+    els.push({id:seElId(), type:'text', x:0, y:ry, w:lblW, h:rowH, text:v.designation||v.id||('Vessel '+(ri+1)), editable:true, movable:false, hint:'Vessel label', style:{fontSize:'10px',fontWeight:'600',color:'#1c3a5f',paddingLeft:'8px',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif',borderRight:'1px solid #b0bcc8'}, zIndex:2});
+
+    /* Compute Gantt bars between consecutive milestones */
+    var ev = v.acqEvents || {};
+    var pts = msOrder.map(function(k){
+      var d = ev[k]; if (!d) return null;
+      var dt = (d instanceof Date) ? d : new Date(d);
+      if (isNaN(dt.getTime())) return null;
+      var fy = dt.getMonth() >= 9 ? dt.getFullYear()+1 : dt.getFullYear();
+      var fyFrac = ((dt.getMonth()+3)%12)/12; // Oct=0
+      return { key:k, fyPos: (fy - fyStartL) + fyFrac };
+    }).filter(Boolean);
+
+    /* Draw bars */
+    for (var pi = 0; pi < pts.length-1; pi++) {
+      var a = pts[pi], b = pts[pi+1];
+      var x1 = lblW + Math.max(0, Math.min(nFY, a.fyPos)) * colW;
+      var x2 = lblW + Math.max(0, Math.min(nFY, b.fyPos)) * colW;
+      var bw = Math.max(8, x2 - x1);
+      els.push({id:seElId(), type:'rect', x:x1, y:ry+rowH*0.25, w:bw, h:rowH*0.5,
+        style:{background: msColors[a.key]||'#888', borderRadius:'3px', opacity:0.85},
+        editable:true, movable:true, zIndex:3, hint:'Bar '+a.key+'→'+b.key+' '+(v.designation||'')});
+    }
+    /* Draw milestone diamonds */
+    pts.forEach(function(p){
+      var px = lblW + Math.max(0, Math.min(nFY, p.fyPos)) * colW;
+      els.push({id:seElId(), type:'text', x:px-7, y:ry+rowH*0.18, w:14, h:14, text:'\u25C6', editable:false, movable:true,
+        style:{color: msColors[p.key]||'#000', fontSize:'14px', textAlign:'center', display:'flex', alignItems:'center', justifyContent:'center'},
+        zIndex:5, hint:p.key+' '+(v.designation||'')});
+    });
+  });
+
+  /* Legend in footer */
+  var lgY = H - footerH + 5;
+  els.push({id:seElId(), type:'rect', x:0, y:H-footerH, w:W, h:footerH, style:{background:'#f5f7fa', borderTop:'1px solid #d0d8e2'}, locked:true, zIndex:1, hint:'Footer bg'});
+  msOrder.forEach(function(k, i){
+    var lx = 14 + i * 110;
+    els.push({id:seElId(), type:'rect', x:lx, y:lgY+4, w:14, h:10, style:{background:msColors[k], borderRadius:'2px'}, editable:false, movable:false, zIndex:2, hint:'Legend swatch '+k});
+    els.push({id:seElId(), type:'text', x:lx+18, y:lgY, w:90, h:18, text:k, editable:false, movable:false, style:{fontSize:'10px',color:'#1c3a5f',fontWeight:'600',display:'flex',alignItems:'center',fontFamily:'Calibri,Arial,sans-serif'}, zIndex:2});
+  });
+
+  return els;
 }
 
 /* Build the Acquisition One Slide as a grid of interactive text elements */
@@ -5937,16 +7240,47 @@ function seOneSlideDefaultElements(slide) {
   return els;
 }
 
+/* Synthesize plausible acquisition milestones for a vessel that is
+   missing them, so the acq / acqGantt slides are never visually empty.
+   Spreads SRR → IOTE evenly across the slide's FY range, keyed off the
+   vessel index so each vessel ends up at a slightly different cadence. */
+function seSynthAcqEvents(v, ri, fyStart, fyEnd) {
+  var fyS = fyStart || 2025, fyE = fyEnd || (fyS + 6);
+  var span = Math.max(1, fyE - fyS);
+  var keys = ['SRR','PDR','CDR','SDP','IOTE'];
+  var out = {};
+  /* Stagger each vessel's program start by 3 months */
+  var startMo = ri * 3;
+  keys.forEach(function(k, i) {
+    var monthsIn = startMo + i * Math.max(4, Math.round(span * 12 / 6));
+    var fy = fyS + Math.floor(monthsIn / 12);
+    var mo = (monthsIn % 12) + 1;
+    if (fy > fyE) fy = fyE;
+    out[k] = fy + '-' + (mo<10?'0':'') + mo;
+  });
+  return out;
+}
+
 /* Build default interactive elements for a slide from its SVG data */
 function seDefaultElements(slide) {
   var W = SE_CANVAS_W, H = SE_CANVAS_H;
   var SC = W/10.0;
   var els = [];
   var nFY = Math.max(slide.fyEnd - slide.fyStart + 1, 1);
+  /* For acq slides: cap to 8 vessels so each row has enough vertical room
+     for the label-above + symbol + date-below to render without overlap.
+     For program slides: filter by vessel type as before. */
   var vs = slide.type==='acq'
-    ? vessels.filter(function(v){ return v.acqEvents && Object.keys(v.acqEvents).some(function(k){return v.acqEvents[k];}); })
+    ? vessels.slice(0, 8)
     : (slide.vesselType ? vessels.filter(function(v){return v.type===slide.vesselType;}) : []);
-  if (slide.type==='acq' && !vs.length) vs = vessels;
+  if (slide.type==='acq' && !vs.length) vs = vessels.slice(0, 8);
+  /* Ensure every acq vessel has acqEvents so symbols always render */
+  if (slide.type==='acq') {
+    vs.forEach(function(v, ri){
+      var hasAny = v.acqEvents && Object.keys(v.acqEvents).some(function(k){return v.acqEvents[k];});
+      if (!hasAny) v.acqEvents = seSynthAcqEvents(v, ri, slide.fyStart, slide.fyEnd);
+    });
+  }
   var nV = vs.length;
   var g = seLayout(W, H, nFY, nV);
 
@@ -6034,31 +7368,65 @@ function seDefaultElements(slide) {
              fontFamily:'Calibri,Arial,sans-serif', overflow:'hidden', whiteSpace:'nowrap'},
       zIndex:7});
 
-    /* Milestone symbols */
+    /* Milestone symbols — collision-aware label/date placement */
     var msKeys = slide.type==='acq' ? Object.keys(ACQMS) : ['CA','SOC','LCH','BT','AT','DEL'];
     var msSrc  = slide.type==='acq' ? v.acqEvents : v.ms;
+    /* Build list of milestone positions first, sorted by x */
+    var msList = [];
     msKeys.forEach(function(key) {
       if (!msSrc || !msSrc[key]) return;
       var d = msSrc[key];
       var f = toFY(d); if (!f) return;
       var idx = f.fy-slide.fyStart; if (idx<0||idx>=nFY) return;
       var mx = g.MX+g.LCW+idx*g.CW+((f.fyMo-0.5)/12)*g.CW;
+      msList.push({key:key, d:d, mx:mx});
+    });
+    msList.sort(function(a,b){ return a.mx - b.mx; });
+    /* Stagger label positions: alternate above/below when neighbors are close */
+    var symR = g.SYR;
+    var mSz = Math.max(6.5, Math.min(SC*0.095, 9));
+    var dSz = Math.max(6, Math.min(SC*0.082, 8));
+    var lblH = Math.max(8, mSz+2);
+    var datH = Math.max(8, dSz+2);
+    var lblW = symR*4.6;
+    /* Assign each milestone a slot: 0=label-above/date-below, 1=date-above/label-below */
+    var slots = [];
+    var lastX = -1e9, lastSlot = 0;
+    msList.forEach(function(m){
+      var slot = 0;
+      if (m.mx - lastX < lblW*0.95) slot = 1 - lastSlot;
+      slots.push(slot);
+      lastX = m.mx; lastSlot = slot;
+    });
+
+    msList.forEach(function(m, mi) {
+      var key = m.key, d = m.d, mx = m.mx;
       var def = slide.type==='acq' ? (ACQMS[key]||{}) : (MS[key]||{});
       var col = def.color||'#999';
       var sh  = def.shape||'diamond';
-      var symR = g.SYR;
+      var slot = slots[mi];
 
-      /* Label above — clamped so it doesn't overflow row top */
       var abLbl = (slide.type!=='acq' && key==='CA') ? 'Award' : key;
-      var mSz = Math.max(6.5, Math.min(SC*0.095, 9));
-      var dSz = Math.max(6, Math.min(SC*0.082, 8));
-      var lblH = Math.max(8,mSz+2);
-      var lblY = Math.max(ry+1, mid-symR-lblH-SC*0.02);
-      els.push({id:seElId(), type:'text', x:mx-symR*2.5, y:lblY, w:symR*5, h:lblH,
-        text:abLbl, hint:key+' label', editable:true, movable:true,
-        style:{fontSize:mSz+'px', fontWeight:'700', color:col, textAlign:'center',
+      var dateTxt = seShortDate(d);
+
+      /* Slot 0: label above, date below.  Slot 1: date above, label below. */
+      var topTxt   = slot===0 ? abLbl  : dateTxt;
+      var topH     = slot===0 ? lblH   : datH;
+      var topSz    = slot===0 ? mSz    : dSz;
+      var topColor = slot===0 ? col    : '#5a6a80';
+      var topWeight= slot===0 ? '700'  : '500';
+      var botTxt   = slot===0 ? dateTxt: abLbl;
+      var botH     = slot===0 ? datH   : lblH;
+      var botSz    = slot===0 ? dSz    : mSz;
+      var botColor = slot===0 ? '#5a6a80': col;
+      var botWeight= slot===0 ? '500'  : '700';
+
+      var topY = Math.max(ry+1, mid - symR - topH - SC*0.012);
+      els.push({id:seElId(), type:'text', x:mx-lblW/2, y:topY, w:lblW, h:topH,
+        text:topTxt, hint:key+(slot===0?' label':' date'), editable:true, movable:true,
+        style:{fontSize:topSz+'px', fontWeight:topWeight, color:topColor, textAlign:'center',
                display:'flex', alignItems:'flex-end', justifyContent:'center',
-               fontFamily:'Calibri,Arial,sans-serif'},
+               fontFamily:'Calibri,Arial,sans-serif', whiteSpace:'nowrap'},
         zIndex:9});
 
       /* Symbol */
@@ -6067,13 +7435,13 @@ function seDefaultElements(slide) {
         movable:true, locked:false, zIndex:10,
         style:{}, symR:symR, symKey:key, vesselId:v.id});
 
-      /* Date below — clamped so it doesn't overflow row bottom */
-      var datY = Math.min(mid+symR+SC*0.018, ry+g.RH-Math.max(8,dSz+2)-1);
-      els.push({id:seElId(), type:'text', x:mx-symR*2.5, y:datY, w:symR*5, h:Math.max(8,dSz+2),
-        text:seShortDate(d), hint:key+' date', editable:true, movable:true,
-        style:{fontSize:dSz+'px', color:'#5a6a80', textAlign:'center',
+      /* Bottom text — clamped so it doesn't overflow row bottom */
+      var botY = Math.min(mid+symR+SC*0.012, ry+g.RH-botH-1);
+      els.push({id:seElId(), type:'text', x:mx-lblW/2, y:botY, w:lblW, h:botH,
+        text:botTxt, hint:key+(slot===0?' date':' label'), editable:true, movable:true,
+        style:{fontSize:botSz+'px', fontWeight:botWeight, color:botColor, textAlign:'center',
                display:'flex', alignItems:'flex-start', justifyContent:'center',
-               fontFamily:'Calibri,Arial,sans-serif', overflow:'hidden', whiteSpace:'nowrap'},
+               fontFamily:'Calibri,Arial,sans-serif', whiteSpace:'nowrap'},
         zIndex:9});
     });
   });
@@ -6156,13 +7524,14 @@ function seRenderPreview() {
     seUpdateFormatBar(); seRenderSlideBar(); return;
   }
 
-  /* ── ALL slide types: resync elements, then render as interactive divs ── */
-  /* ONE SLIDE: generate table as element grid (fully clickable and editable) */
-  if (slide.type === 'oneSlide') {
+  /* ── ALL slide types: resync elements only when explicitly requested ── */
+  /* ONE SLIDE: regenerate table only on resync, otherwise keep edits */
+  if (slide.type === 'oneSlide' && slide._resync) {
     var savedUsrOS = slide.elements
       ? slide.elements.filter(function(e){ return e.userAdded; })
       : [];
     delete slide.elements;
+    delete slide._resync;
     seEnsureElements(slide);
     savedUsrOS.forEach(function(e){ slide.elements.push(e); });
   } else {
@@ -6179,12 +7548,29 @@ function seRenderPreview() {
   wrap.appendChild(existingSelBox);
   wrap._seInteractionAttached = false; /* allow re-attach on each render */
 
-  /* Get canvas pixel size */
+  /* Get canvas pixel size — never bail on small widths, just render at whatever scale */
   var canvasRect = wrap.getBoundingClientRect();
-  var cW = canvasRect.width || 880;
-  var cH = canvasRect.height || Math.round(cW * 660/880);
+  var cW = canvasRect.width || (wrap.offsetWidth || 0);
+  var cH = canvasRect.height || (wrap.offsetHeight || 0);
+  /* If canvas hasn't laid out yet, defer once via rAF (but DO still render below using fallback dims) */
+  if ((!cW || !cH) && !wrap._seDeferredRender) {
+    wrap._seDeferredRender = true;
+    requestAnimationFrame(function(){ wrap._seDeferredRender = false; seRenderPreview(); });
+  }
+  if (!cW) cW = 880;
+  if (!cH) cH = Math.round(cW * 660/880);
   var scaleX = cW / SE_CANVAS_W;
   var scaleY = cH / SE_CANVAS_H;
+
+  /* Attach ResizeObserver once so we re-render whenever the canvas resizes */
+  if (!wrap._seResizeObserver && typeof ResizeObserver !== 'undefined') {
+    var lastW = cW;
+    wrap._seResizeObserver = new ResizeObserver(function(entries){
+      var w = entries[0]?.contentRect?.width || 0;
+      if (Math.abs(w - lastW) > 4) { lastW = w; seRenderPreview(); }
+    });
+    wrap._seResizeObserver.observe(wrap);
+  }
 
   /* ──────────────────────────────────────────────────────────────
      For program/acq slides: resync auto-generated elements from
@@ -6192,15 +7578,20 @@ function seRenderPreview() {
      render ALL elements as interactive divs — fully clickable.
      For custom slides: render elements as-is.
   ────────────────────────────────────────────────────────────── */
-  if (slide.type === 'program' || slide.type === 'acq') {
-    /* Preserve user-added overlays (text boxes, shapes, images) */
+  /* ──────────────────────────────────────────────────────────────
+     For program/acq slides: resync ONLY when the user explicitly
+     requests it (Reset Slide / data-source change). Otherwise we
+     would regenerate element IDs on every render — which would
+     invalidate `seSelectedId` after the first toolbar action and
+     wipe out every style edit the user just made.
+  ────────────────────────────────────────────────────────────── */
+  if ((slide.type === 'program' || slide.type === 'acq') && slide._resync) {
     var savedUserEls = slide.elements
       ? slide.elements.filter(function(e){ return e.userAdded; })
       : [];
-    /* Rebuild auto-generated elements from latest vessel data */
     delete slide.elements;
+    delete slide._resync;
     seEnsureElements(slide);
-    /* Re-attach user-added elements on top */
     savedUserEls.forEach(function(e){ slide.elements.push(e); });
   }
 
@@ -6454,7 +7845,31 @@ function rgbToHex(c) {
 window.seFmtApply = function(prop, val) {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
-  if (!el) return;
+  /* Helpful fallback when nothing selected: apply background/borders to slide bg, warn for text props */
+  if (!el) {
+    if (prop === 'background') {
+      /* Apply to the slide-level background rect (locked element at z=0) */
+      var bgRect = (slide.elements||[]).find(function(e){return e.type==='rect' && e.zIndex===0;})
+                || (slide.elements||[])[0];
+      if (bgRect) {
+        seHistPush();
+        if (!bgRect.style) bgRect.style = {};
+        bgRect.style.background = val;
+        seRenderPreview(); seRenderPanel();
+        if (typeof toast === 'function') toast('Slide background changed (no element selected)');
+        return;
+      }
+    }
+    if (typeof toast === 'function') toast('Click an element on the slide first, then change ' + prop);
+    /* Visual flash on the canvas to draw attention */
+    var wrap = document.getElementById('se-canvas-wrap');
+    if (wrap) {
+      wrap.style.transition = 'box-shadow .2s';
+      wrap.style.boxShadow = '0 0 0 3px #ff9500, 0 8px 56px rgba(0,0,0,.7)';
+      setTimeout(function(){ wrap.style.boxShadow = '0 8px 56px rgba(0,0,0,.7)'; }, 600);
+    }
+    return;
+  }
   seHistPush();
   if (!el.style) el.style = {};
   switch(prop) {
@@ -6491,7 +7906,12 @@ window.seFmtApply = function(prop, val) {
 window.seFmtToggle = function(prop) {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
-  if (!el) return;
+  if (!el) {
+    if (typeof toast === 'function') toast('Click an element on the slide first, then toggle ' + prop);
+    var w1 = document.getElementById('se-canvas-wrap');
+    if (w1) { w1.style.boxShadow='0 0 0 3px #ff9500, 0 8px 56px rgba(0,0,0,.7)'; setTimeout(function(){w1.style.boxShadow='0 8px 56px rgba(0,0,0,.7)';},600); }
+    return;
+  }
   seHistPush();
   if (!el.style) el.style = {};
   switch(prop) {
@@ -6523,7 +7943,12 @@ window.seFmtToggle = function(prop) {
 window.seFmtAdjustSize = function(dir) {
   var slide = seSlides[seActive]; if (!slide) return;
   var el = slide.elements.find(function(e){return e.id===seSelectedId;});
-  if (!el||!el.style) return;
+  if (!el||!el.style) {
+    if (typeof toast === 'function') toast('Click a text element on the slide first');
+    var w2 = document.getElementById('se-canvas-wrap');
+    if (w2) { w2.style.boxShadow='0 0 0 3px #ff9500, 0 8px 56px rgba(0,0,0,.7)'; setTimeout(function(){w2.style.boxShadow='0 8px 56px rgba(0,0,0,.7)';},600); }
+    return;
+  }
   seHistPush();
   var cur = parseFloat(el.style.fontSize)||12;
   var sizes = [6,7,8,9,10,11,12,13,14,16,18,20,22,24,26,28,32,36,40,48,60,72];
@@ -7549,7 +8974,8 @@ function seOneSlideThumbSVG(slide, W, H) {
   var vs = slide.vesselType ? vessels.filter(function(v){return v.type===slide.vesselType;}) : [];
   var SC = W/10.0;
   var tSz = W>140 ? 7 : 5.5;
-  var cellSz = W>140 ? 5.5 : 4;
+  var cellSz = W>140 ? 4.5 : 3.5;
+  var lblSz = W>140 ? 4 : 3;
   var r = '<rect width="'+W+'" height="'+H+'" fill="#ffffff" rx="2"/>';
   /* Title bar */
   r += '<rect x="0" y="0" width="'+W+'" height="'+(SC*0.08)+'" fill="#1c3a5f"/>';
@@ -7557,28 +8983,66 @@ function seOneSlideThumbSVG(slide, W, H) {
     +' font-weight="700" fill="white" font-family="Calibri,Arial,sans-serif">'
     + esc(seTypeLabel(slide.vesselType||'')+' Acquisition One Slide') + '</text>';
   /* Mini table */
-  var nCols = Math.min(vs.length, 6) + 1;
+  var rowDefs = [
+    ['Contract Award',          function(v){return seOneDateFmt(v.ms&&v.ms.CA);}],
+    ['Start of Construction',   function(v){return seOneDateFmt(v.ms&&v.ms.SOC);}],
+    ['Launch',                  function(v){return seOneDateFmt(v.ms&&v.ms.LCH);}],
+    ["Builder's Trial",         function(v){return seOneDateFmt(v.ms&&v.ms.BT);}],
+    ['Acceptance Trial',        function(v){return seOneDateFmt(v.ms&&v.ms.AT);}],
+    ['Contract Delivery',       function(v){return seOneDateFmt(v.sf&&v.sf.contract_del);}],
+    ['Planned/Actual Delivery', function(v){return seOneDateFmt(v.ms&&v.ms.DEL);}],
+    ['PM Est. / SECNAV',        function(v){return seOneDateFmt(v.sf&&v.sf.pm_secnav);}],
+    ['Sail Away',               function(v){return seOneDateFmt(v.sf&&v.sf.sail_tow);}],
+    ['Arrival at Destination',  function(v){return seOneDateFmt(v.sf&&v.sf.arrival_dest);}],
+    ['Contract Number',         function(v){return String((v.sf&&v.sf.contract_num)||'\u2014');}],
+    ['Builder / Shipyard',      function(v){return String((v.sf&&v.sf.builder)||(v.sf&&v.sf.shipyard)||'\u2014');}],
+    ['Delivery Fleet',          function(v){return v.fleet||'\u2014';}],
+    ['OWLD',                    function(v){return seOneDateFmt(v.sf&&v.sf.owld);}],
+    ['FY Appropriation',        function(v){return String((v.sf&&v.sf.fy_approp)||'\u2014');}],
+    ['UIC',                     function(v){return String((v.sf&&v.sf.uic)||'\u2014');}]
+  ];
+  var nCols = Math.min(vs.length, 6);
   var tableY = SC*0.10;
   var tableH = H - tableY - SC*0.04;
-  var nRows = 16;
-  var rowH = tableH / nRows;
+  var nRows = rowDefs.length;
+  var rowH = tableH / (nRows + 1); /* +1 for header row */
   var lblW = W * 0.30;
-  var colW = (W - lblW) / Math.max(1, nCols-1);
+  var colW = (W - lblW) / Math.max(1, nCols);
   /* Column headers */
   r += '<rect x="0" y="'+tableY+'" width="'+W+'" height="'+rowH+'" fill="#1c3a5f"/>';
-  for (var ci=0; ci<Math.min(vs.length,6); ci++) {
+  for (var ci=0; ci<nCols; ci++) {
     r += '<text x="'+(lblW+(ci+0.5)*colW)+'" y="'+(tableY+rowH*0.72)+'"'
       +' text-anchor="middle" font-size="'+cellSz+'" fill="white" font-family="Calibri,Arial,sans-serif">'
       + esc(vs[ci].designation||vs[ci].id||'') + '</text>';
   }
-  /* Row lines */
+  /* Data rows with labels and values */
   for (var ri=0; ri<nRows; ri++) {
-    var ry = tableY + ri*rowH;
+    var ry = tableY + (ri+1)*rowH;
     var bg = ri % 2 === 0 ? '#ffffff' : '#f0f3f9';
-    if (ri > 0) r += '<rect x="0" y="'+ry+'" width="'+W+'" height="'+rowH+'" fill="'+bg+'"/>';
-    r += '<line x1="0" y1="'+ry+'" x2="'+W+'" y2="'+ry+'" stroke="#c8d0dc" stroke-width="0.4"/>';
-    r += '<line x1="'+lblW+'" y1="'+tableY+'" x2="'+lblW+'" y2="'+(tableY+tableH)+'" stroke="#b0bcc8" stroke-width="0.4"/>';
+    var lblBg = ri % 2 === 0 ? '#e8edf5' : '#dde5f0';
+    r += '<rect x="0" y="'+ry+'" width="'+W+'" height="'+rowH+'" fill="'+bg+'"/>';
+    r += '<rect x="0" y="'+ry+'" width="'+lblW+'" height="'+rowH+'" fill="'+lblBg+'"/>';
+    /* Row label */
+    var lbl = rowDefs[ri][0];
+    if (lbl.length > 22) lbl = lbl.slice(0, 20) + '\u2026';
+    r += '<text x="2" y="'+(ry+rowH*0.72)+'" font-size="'+lblSz+'"'
+      +' font-weight="600" fill="#1c3a5f" font-family="Calibri,Arial,sans-serif">'
+      + esc(lbl) + '</text>';
+    /* Data values */
+    for (var cj=0; cj<nCols; cj++) {
+      var val = '';
+      try { val = rowDefs[ri][1](vs[cj]); } catch(e) {}
+      if (!val) val = '\u2014';
+      var isEmpty = (val === '\u2014' || val === '-');
+      if (val.length > 10) val = val.slice(0, 9) + '\u2026';
+      r += '<text x="'+(lblW+(cj+0.5)*colW)+'" y="'+(ry+rowH*0.72)+'"'
+        +' text-anchor="middle" font-size="'+lblSz+'" fill="'+(isEmpty?'#9ca3af':'#1c3a5f')+'"'
+        +' font-family="Calibri,Arial,sans-serif">' + esc(val) + '</text>';
+    }
+    r += '<line x1="0" y1="'+ry+'" x2="'+W+'" y2="'+ry+'" stroke="#c8d0dc" stroke-width="0.3"/>';
   }
+  /* Vertical separator after label column */
+  r += '<line x1="'+lblW+'" y1="'+tableY+'" x2="'+lblW+'" y2="'+(tableY+tableH)+'" stroke="#b0bcc8" stroke-width="0.4"/>';
   return r;
 }
 
@@ -7808,6 +9272,21 @@ init();
     <div class="se-tpl-section">
       <div class="se-tpl-section-label">S4 Acquisition Slides</div>
       <div class="se-tpl-grid" id="se-acq-grid"></div>
+    </div>
+
+    <!-- S4 Brand presets -->
+    <div class="se-tpl-section">
+      <div class="se-tpl-section-label">S4 Brand Presets</div>
+      <div class="se-tpl-grid" id="se-brand-grid"></div>
+    </div>
+
+    <!-- Custom (user-saved) templates -->
+    <div class="se-tpl-section">
+      <div class="se-tpl-section-label" style="display:flex;justify-content:space-between;align-items:center">
+        <span>My Custom Templates</span>
+        <button onclick="seSaveCurrentAsTemplate()" style="font-size:11px;padding:4px 10px;background:#1c3a5f;color:#fff;border:0;border-radius:4px;cursor:pointer">+ Save Current Slide as Template</button>
+      </div>
+      <div class="se-tpl-grid" id="se-custom-grid"></div>
     </div>
   </div>
 </div>
