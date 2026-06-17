@@ -194,6 +194,22 @@
       border-left-color: var(--accent);
       font-weight: 500;
     }
+    .nav-select {
+      width: calc(100% - 32px);
+      margin: 0 16px 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      color: var(--banner-text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px;
+      padding: 8px 10px;
+      outline: none;
+    }
+    .nav-select option {
+      background: var(--nav-bg);
+      color: var(--banner-text);
+    }
     .nav-footer {
       padding: 14px 20px 18px;
       margin-top: auto;
@@ -391,17 +407,21 @@
     .gantt-wrap {
       display: flex; min-height: 0;
       background: var(--surface-0);
+      height: 460px;
+      max-height: 65vh;
     }
     .gantt-left {
       flex: 0 0 200px;
+      height: 100%;
       background: var(--surface-1);
       border-right: 1px solid var(--border);
-      overflow: hidden;
+      overflow: auto;
     }
     .gantt-right {
       flex: 1;
+      height: 100%;
       overflow-x: auto;
-      overflow-y: hidden;
+      overflow-y: auto;
       background: var(--surface-0);
     }
     .gantt-left-hdr, .gantt-right-hdr {
@@ -413,6 +433,9 @@
       font-size: 10px; font-weight: 700;
       letter-spacing: 0.8px; text-transform: uppercase;
       color: var(--text-2);
+      position: sticky;
+      top: 0;
+      z-index: 2;
     }
     .gantt-left-hdr { padding: 0 12px; justify-content: space-between; }
     .gantt-left-svg, .gantt-right-svg { display: block; }
@@ -448,10 +471,10 @@
     .gantt-row-stripe { fill: var(--surface-0); }
     .gantt-row-stripe.alt { fill: #fbfaf8; }
     .gantt-span { stroke: none; opacity: 0.55; }
-    .gantt-now-line { stroke: var(--destructive); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .gantt-now-line { stroke: var(--destructive); stroke-width: 2.5; stroke-dasharray: 6 4; }
     .gantt-now-label {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px; font-weight: 700;
+      font-size: 10px; font-weight: 800;
       fill: var(--destructive);
       letter-spacing: 0.8px;
     }
@@ -1044,19 +1067,23 @@
         <button class="nav-cta" id="btn-add-ms" style="background:var(--surface-1);color:var(--text-1)">＋ Add Milestone</button>
 
         <nav class="nav-section" data-label="Views">
-          <button class="nav-item active" data-view="all">All Hulls</button>
-          <button class="nav-item" data-view="apl">APL</button>
-          <button class="nav-item" data-view="yrbm">YRBM</button>
-          <button class="nav-item" data-view="yfb">YFB</button>
-          <button class="nav-item" data-view="ytb">YTB</button>
+          <select class="nav-select" id="nav-view-select">
+            <option value="all">All Hulls</option>
+            <option value="APL">APL</option>
+            <option value="YRBM">YRBM</option>
+            <option value="YFB">YFB</option>
+            <option value="YTB">YTB</option>
+          </select>
         </nav>
 
         <nav class="nav-section" data-label="Status">
-          <button class="nav-item" data-status="all">All Status</button>
-          <button class="nav-item" data-status="on-track">On Track</button>
-          <button class="nav-item" data-status="at-risk">At Risk</button>
-          <button class="nav-item" data-status="delayed">Delayed</button>
-          <button class="nav-item" data-status="not-planned">Not Planned</button>
+          <select class="nav-select" id="nav-status-select">
+            <option value="all">All Status</option>
+            <option value="on-track">On Track</option>
+            <option value="at-risk">At Risk</option>
+            <option value="delayed">Delayed</option>
+            <option value="not-planned">Not Planned</option>
+          </select>
         </nav>
 
         <nav class="nav-section" data-label="Tools">
@@ -1087,7 +1114,7 @@
             <button class="btn outline" id="btn-zoom-100" title="Reset zoom"><span id="zoom-label">100%</span></button>
             <button class="btn outline" id="btn-zoom-in" title="Zoom in">＋</button>
             <button class="btn ghost" id="btn-sample">Sample Data</button>
-            <button class="btn outline" id="btn-slide-editor" title="Open Slide Editor" onclick="if(typeof openSlideEditor==='function')openSlideEditor();"><i class="fas fa-presentation"></i> Slide Editor</button>
+            <button class="btn outline" id="btn-slide-editor" title="Open Slide Editor"><i class="fas fa-presentation"></i> Slide Editor</button>
             <button class="btn primary" id="btn-save">Save</button>
           </div>
         </div>
@@ -1100,31 +1127,15 @@
             <div style="position:relative;display:inline-block">
               <button class="sel mono" id="craft-filter-btn" style="cursor:pointer;padding:6px 10px;background:var(--surface-0);border:1px solid var(--border);border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-1)">All Types ▼</button>
               <div id="craft-menu" style="display:none;position:absolute;top:100%;left:0;background:var(--surface-0);border:1px solid var(--border-strong);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:100;min-width:160px;margin-top:4px">
-                <div class="craft-menu-item" onclick="filterCraft('');this.parentElement.style.display='none'">All Types</div>
-                <div class="craft-menu-item" onclick="filterCraft('APL');this.parentElement.style.display='none'">APL</div>
-                <div class="craft-menu-item" onclick="filterCraft('YRBM');this.parentElement.style.display='none'">YRBM</div>
-                <div class="craft-menu-item" onclick="filterCraft('YFB');this.parentElement.style.display='none'">YFB</div>
-                <div class="craft-menu-item" onclick="filterCraft('YTB');this.parentElement.style.display='none'">YTB</div>
+                <div class="craft-menu-item" data-craft="">All Types</div>
+                <div class="craft-menu-item" data-craft="APL">APL</div>
+                <div class="craft-menu-item" data-craft="YRBM">YRBM</div>
+                <div class="craft-menu-item" data-craft="YFB">YFB</div>
+                <div class="craft-menu-item" data-craft="YTB">YTB</div>
                 <div style="border-top:1px solid var(--border-subtle);margin:4px 0"></div>
-                <div class="craft-menu-item" onclick="openAddCraftModal();this.parentElement.style.display='none'" style="color:var(--accent);font-weight:500">+ Add Craft Type…</div>
+                <div class="craft-menu-item" data-craft-add="1" style="color:var(--accent);font-weight:500">+ Add Craft Type…</div>
               </div>
             </div>
-            <script>
-              document.addEventListener("DOMContentLoaded", () => {
-                const btn = document.querySelector("#craft-filter-btn");
-                const menu = document.querySelector("#craft-menu");
-                if (btn && menu) {
-                  btn.addEventListener("click", (e) => {
-                    menu.style.display = menu.style.display === "none" ? "block" : "none";
-                  });
-                  document.addEventListener("click", (e) => {
-                    if (!e.target.closest("#craft-filter-btn") && !e.target.closest("#craft-menu")) {
-                      menu.style.display = "none";
-                    }
-                  });
-                }
-              });
-            </script>
           </div>
 
           <div class="tdiv"></div>
@@ -1150,9 +1161,6 @@
             <input class="inp" id="filter-search" placeholder="Hull, builder, contract…" style="width:200px">
           </div>
 
-          <div class="tdiv"></div>
-
-          <button class="chip-btn" id="toggle-acq">Acq Events</button>
         </div>
 
         <!-- KPI ribbon -->
@@ -1173,7 +1181,7 @@
               <div class="spacer"></div>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4);" id="gantt-range">FY26 → FY28</span>
             </div>
-            <div class="gantt-wrap" id="gantt">
+            <div class="gantt-wrap" id="gantt" style="height:460px;min-height:460px;">
               <div class="gantt-left">
                 <div class="gantt-left-hdr"><span>Hull</span><span>Fleet</span></div>
                 <svg id="gantt-left-svg" width="200" height="40"></svg>
@@ -1193,6 +1201,7 @@
               <span class="count" id="sheet-count">0 rows</span>
               <div class="spacer"></div>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4);" id="baseline-meta">No baseline set</span>
+              <button class="chip-btn" id="toggle-acq" style="margin-left:8px">Acq Events</button>
             </div>
             <div class="sheet-wrap">
               <table class="sheet" id="sheet"></table>
@@ -1443,6 +1452,13 @@
   };
 
   const FLEET_COLOR = { PACFLT: "#1d4ed8", USFF: "#166534" };
+
+  // Expose registries for merged slide-editor code paths that reference globals.
+  window.MS = MS;
+  window.ACQ = ACQ;
+  window.VT = VT;
+  window.ST = ST;
+  window.FLEET_COLOR = FLEET_COLOR;
 
   // ═══════════════════════════════════════════════════════════════
   //  Demo data — PMS 300T
@@ -1761,7 +1777,7 @@
   // Filter functions
   function filterCraft(craft) {
     state.filter.craft = craft;
-    $("#craft-filter-btn").textContent = craft ? craft : "All Types";
+    $("#craft-filter-btn").textContent = (craft || "All Types") + " ▼";
     renderAll();
   }
   
@@ -1850,6 +1866,10 @@
     $("#filter-search").value = state.filter.search;
     // Craft filter is now a button dropdown, updated by filterCraft() function
     $("#craft-filter-btn").textContent = (state.filter.craft || "All Types") + " ▼";
+    const viewSel = $("#nav-view-select");
+    if (viewSel) viewSel.value = state.filter.craft || "all";
+    const statusSel = $("#nav-status-select");
+    if (statusSel) statusSel.value = state.filter.status || "all";
     $("#toggle-acq").classList.toggle("active", state.acqOpen);
     $("#zoom-label").textContent = Math.round(state.zoom * 100) + "%";
   }
@@ -1873,9 +1893,9 @@
   //  Gantt — SVG, frozen left + scrollable right
   // ═══════════════════════════════════════════════════════════════
   const GP = {
-    ROW_H: 32,
+    ROW_H: 38,
     HDR_H: 36,
-    GRP_H: 22,
+    GRP_H: 24,
     LEFT_W: 200,
     FY_W_BASE: 220,
     PAD_X: 12,
@@ -1905,6 +1925,8 @@
     const fyW = Math.round(GP.FY_W_BASE * state.zoom);
     const rightW = fyW * fyCount;
     const monthW = fyW / 12;
+    const baseFyMonths = (state.filter.fyStart - FY_MIN) * 12;
+    const baseMonthOffset = -1;
 
     // Left SVG
     const leftSvg = $("#gantt-left-svg");
@@ -1962,13 +1984,14 @@
     }
     // Today line
     const now = new Date();
-    const nowMonths = dateToMonths(now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0"));
-    const baseFyMonths = (state.filter.fyStart - FY_MIN) * 12; // months from epoch to FY range start
-    const baseMonthOffset = -1; // FY epoch starts at Oct of FY_MIN - 1
-    const nowX = ((nowMonths - baseFyMonths) - baseMonthOffset) * monthW;
+    const month = now.getMonth() + 1;
+    const fyNow = cyToFy(now.getFullYear(), month);
+    const monthInFy = ((month + 2) % 12) + 1; // Oct=1 ... Sep=12
+    const dayFrac = Math.min(0.97, Math.max(0, (now.getDate() - 1) / 31));
+    const nowX = ((fyNow - state.filter.fyStart) * 12 + (monthInFy - 1) + dayFrac) * monthW;
+    let nowVisibleX = null;
     if (nowX >= 0 && nowX <= rightW) {
-      rightBuf += `<line class="gantt-now-line" x1="${nowX}" y1="0" x2="${nowX}" y2="${totalH}"></line>`;
-      rightBuf += `<text class="gantt-now-label" x="${nowX + 4}" y="12">NOW</text>`;
+      nowVisibleX = nowX;
     }
 
     // Rows
@@ -2033,7 +2056,22 @@
       });
     });
 
+    if (nowVisibleX != null) {
+      rightBuf += `<line class="gantt-now-line" x1="${nowVisibleX}" y1="0" x2="${nowVisibleX}" y2="${totalH}"></line>`;
+      rightBuf += `<rect x="${nowVisibleX + 2}" y="2" width="34" height="14" fill="rgba(255,255,255,0.85)" stroke="var(--destructive)" stroke-width="0.6" rx="2"></rect>`;
+      rightBuf += `<text class="gantt-now-label" x="${nowVisibleX + 4}" y="12">NOW</text>`;
+    }
+
     rightSvg.innerHTML = rightBuf;
+
+    // Keep the NOW marker in view when possible.
+    if (nowVisibleX != null) {
+      const rightWrap = $("#gantt-right-wrap");
+      const desired = Math.max(0, nowVisibleX - rightWrap.clientWidth * 0.45);
+      const current = rightWrap.scrollLeft;
+      const inView = nowVisibleX >= current + 24 && nowVisibleX <= current + rightWrap.clientWidth - 24;
+      if (!inView) rightWrap.scrollLeft = desired;
+    }
 
     // Attach click handlers to milestone symbols
     $$("g[data-ms-symbol]", rightSvg).forEach((g) => {
@@ -2101,15 +2139,19 @@
   //  Spreadsheet
   // ═══════════════════════════════════════════════════════════════
   const SFIELDS_VISIBLE = [
-    { key: "builder",  label: "Builder" },
-    { key: "contract", label: "Contract #" },
-    { key: "uic",      label: "UIC" },
+    { key: "contract_num", label: "Contract No." },
+    { key: "builder",      label: "Builder" },
+    { key: "uic",          label: "UIC" },
+    { key: "owld",         label: "OWLD" },
+    { key: "fy_approp",    label: "FY Approp." },
+    { key: "pm_secnav",    label: "PM Est./SECNAV" },
+    { key: "contract_del", label: "Contract Delivery" },
+    { key: "sail_tow",     label: "Sail/Tow Away" },
+    { key: "arrival_dest", label: "Arrival at Dest." },
   ];
 
   function renderSheet() {
-    console.log("renderSheet() called, state.hulls.length=", state.hulls.length);
     const hulls = filteredHulls();
-    console.log("renderSheet() filteredHulls() returned", hulls.length, "hulls");
     $("#sheet-count").textContent = `${hulls.length} row${hulls.length === 1 ? "" : "s"}`;
     if (state.baseline) {
       const bDate = new Date(state.baseline._setAt || Date.now());
@@ -2150,7 +2192,8 @@
         h += `<td class="${cls}" data-edit-ms="${k}">${escapeHTML(fmtDate(date))}${delta}</td>`;
       });
       SFIELDS_VISIBLE.forEach((f) => {
-        const v = (hull.sf && hull.sf[f.key]) || "";
+        let v = (hull.sf && hull.sf[f.key]) || "";
+        if (!v && f.key === "contract_num") v = (hull.sf && hull.sf.contract) || "";
         h += `<td class="editable" data-edit-sf="${f.key}">${escapeHTML(v) || '<span style="color:var(--text-5)">—</span>'}</td>`;
       });
       h += `<td class="no-pad" style="text-align:right"><button class="btn tiny outline row-del" data-del="${hull.id}">Delete</button></td>`;
@@ -2222,7 +2265,10 @@
       td.innerHTML = "";
       td.appendChild(sel);
       sel.focus();
-      sel.addEventListener("change", () => {
+      let done = false;
+      const commit = () => {
+        if (done) return;
+        done = true;
         const v = sel.value;
         if (v !== hull[field]) {
           audit("HULL", "Edit " + field, `${hull.designation}: ${hull[field]} → ${v}`);
@@ -2230,8 +2276,15 @@
           autoSave();
         }
         renderAll();
+      };
+      sel.addEventListener("change", commit);
+      sel.addEventListener("blur", () => {
+        if (!done) renderAll();
       });
-      sel.addEventListener("blur", () => renderAll());
+      sel.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") commit();
+        if (e.key === "Escape") renderAll();
+      });
     }
   }
 
@@ -2248,6 +2301,7 @@
       const v = input.value.trim();
       if (v !== cur) {
         hull.sf = hull.sf || {};
+        if (key === "contract_num") hull.sf.contract = v;
         hull.sf[key] = v;
         audit("SFIELD", `Edit ${key}`, `${hull.designation}: "${cur}" → "${v}"`);
         autoSave();
@@ -2342,7 +2396,7 @@
       ms: { CA:"", SOC:"", LCH:"", BT:"", AT:"", DEL:"" },
       acq: { SRR:"", PDR:"", CDR:"", SDP:"", IOTE:"" },
       complete: {},
-      sf: { builder, contract, uic:"", fy_approp:"" },
+      sf: { contract_num: contract, contract, builder, uic:"", fy_approp:"", owld:"", pm_secnav:"", contract_del:"", sail_tow:"", arrival_dest:"" },
     };
     state.hulls.push(newHull);
     audit("HULL", "Add hull", `${designation} (${type}, ${fleet})`);
@@ -2545,15 +2599,20 @@
   }
   function exportCSV() {
     const msKeys = Object.keys(allMS());
-    const cols = ["id","designation","type","fleet","status",...msKeys.map((k) => "ms_" + k),"builder","contract","uic","fy_approp","notes"];
+    const cols = ["id","designation","type","fleet","status",...msKeys.map((k) => "ms_" + k),"contract_num","builder","uic","owld","fy_approp","pm_secnav","contract_del","sail_tow","arrival_dest","notes"];
     const lines = [cols.join(",")];
     state.hulls.forEach((h) => {
       const row = [h.id, h.designation, h.type, h.fleet, h.status];
       msKeys.forEach((k) => row.push(h.ms[k] || ""));
+      row.push((h.sf && (h.sf.contract_num || h.sf.contract)) || "");
       row.push((h.sf && h.sf.builder) || "");
-      row.push((h.sf && h.sf.contract) || "");
       row.push((h.sf && h.sf.uic) || "");
+      row.push((h.sf && h.sf.owld) || "");
       row.push((h.sf && h.sf.fy_approp) || "");
+      row.push((h.sf && h.sf.pm_secnav) || "");
+      row.push((h.sf && h.sf.contract_del) || "");
+      row.push((h.sf && h.sf.sail_tow) || "");
+      row.push((h.sf && h.sf.arrival_dest) || "");
       row.push(h.notes || "");
       lines.push(row.map(csvEsc).join(","));
     });
@@ -2605,8 +2664,16 @@
         const newHulls = rows.map((r) => {
           const ms = {}, sf = {};
           msKeys.forEach((k) => { ms[k] = r["ms_" + k] || ""; });
-          sf.builder = r.builder || ""; sf.contract = r.contract || "";
-          sf.uic = r.uic || ""; sf.fy_approp = r.fy_approp || "";
+          sf.contract_num = r.contract_num || r.contract || "";
+          sf.contract = sf.contract_num;
+          sf.builder = r.builder || "";
+          sf.uic = r.uic || "";
+          sf.owld = r.owld || "";
+          sf.fy_approp = r.fy_approp || "";
+          sf.pm_secnav = r.pm_secnav || "";
+          sf.contract_del = r.contract_del || "";
+          sf.sail_tow = r.sail_tow || "";
+          sf.arrival_dest = r.arrival_dest || "";
           return {
             id: r.id || uid("h"),
             designation: r.designation || "(unnamed)",
@@ -2674,25 +2741,44 @@
   //  Wire-up
   // ═══════════════════════════════════════════════════════════════
   function wire() {
-    // Sidebar nav (views)
-    $$(".nav-item[data-view]").forEach((b) => {
-      b.addEventListener("click", () => {
-        $$(".nav-item[data-view]").forEach((x) => x.classList.remove("active"));
-        b.classList.add("active");
-        const v = b.dataset.view;
-        state.filter.craft = (v === "all") ? "" : v.toUpperCase();
-        // Update craft filter button
-        $("#craft-filter-btn").textContent = (state.filter.craft || "All Types") + " ▼";
+    const viewSel = $("#nav-view-select");
+    if (viewSel) {
+      viewSel.addEventListener("change", () => {
+        state.filter.craft = viewSel.value === "all" ? "" : viewSel.value;
         renderAll(); autoSave();
       });
+    }
+    const statusSel = $("#nav-status-select");
+    if (statusSel) {
+      statusSel.addEventListener("change", () => {
+        state.filter.status = statusSel.value;
+        renderAll(); autoSave();
+      });
+    }
+
+    const craftBtn = $("#craft-filter-btn");
+    const craftMenu = $("#craft-menu");
+    craftBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      craftMenu.style.display = craftMenu.style.display === "block" ? "none" : "block";
     });
-    $$(".nav-item[data-status]").forEach((b) => {
-      b.addEventListener("click", () => {
-        $$(".nav-item[data-status]").forEach((x) => x.classList.remove("active"));
-        b.classList.add("active");
-        state.filter.status = b.dataset.status;
-        renderAll(); autoSave();
-      });
+    craftMenu.addEventListener("click", (e) => {
+      const addItem = e.target.closest("[data-craft-add]");
+      if (addItem) {
+        craftMenu.style.display = "none";
+        openAddHull();
+        return;
+      }
+      const item = e.target.closest("[data-craft]");
+      if (!item) return;
+      filterCraft(item.dataset.craft || "");
+      craftMenu.style.display = "none";
+      autoSave();
+    });
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("#craft-filter-btn") && !e.target.closest("#craft-menu")) {
+        craftMenu.style.display = "none";
+      }
     });
 
     $("#btn-add-hull").addEventListener("click", openAddHull);
@@ -2736,6 +2822,9 @@
     // Page-head actions
     $("#btn-save").addEventListener("click", () => { saveNow(); audit("SAVE", "Manual save", ""); toast("Saved"); });
     $("#btn-sample").addEventListener("click", loadSample);
+    $("#btn-slide-editor").addEventListener("click", () => {
+      if (typeof openSlideEditor === "function") openSlideEditor();
+    });
     $("#btn-zoom-in").addEventListener("click", () => { state.zoom = Math.min(2, state.zoom + 0.1); renderToolbar(); renderGantt(); });
     $("#btn-zoom-out").addEventListener("click", () => { state.zoom = Math.max(0.5, state.zoom - 0.1); renderToolbar(); renderGantt(); });
     $("#btn-zoom-100").addEventListener("click", () => { state.zoom = 1.0; renderToolbar(); renderGantt(); });
@@ -2825,6 +2914,23 @@
         if (state.drawerOpen) closeDrawer();
       }
     });
+
+    // Keep left and right gantt panes vertically synchronized.
+    const leftWrap = $(".gantt-left");
+    const rightWrap = $("#gantt-right-wrap");
+    let syncing = false;
+    leftWrap.addEventListener("scroll", () => {
+      if (syncing) return;
+      syncing = true;
+      rightWrap.scrollTop = leftWrap.scrollTop;
+      syncing = false;
+    });
+    rightWrap.addEventListener("scroll", () => {
+      if (syncing) return;
+      syncing = true;
+      leftWrap.scrollTop = rightWrap.scrollTop;
+      syncing = false;
+    });
   }
 
   function showCtx(x, y, hullId, td) {
@@ -2880,6 +2986,8 @@
   //  Boot
   // ═══════════════════════════════════════════════════════════════
   function boot() {
+    if (state.__booted) return;
+    state.__booted = true;
     load();
     wire();
     renderAll();
@@ -2892,42 +3000,65 @@
     audit("SYSTEM", "HORIZON loaded", `${state.hulls.length} hulls`);
   }
 
-  // Try to call boot immediately if DOM is ready, otherwise wait
+  // Boot once, after DOM is ready.
   if (document.readyState !== "loading") {
     boot();
   } else {
-    // Schedule boot after DOM is fully loaded
     document.addEventListener("DOMContentLoaded", boot);
-    // Also try calling boot after a very short delay as fallback
-    setTimeout(boot, 500);
   }
 })();
 
 // ═══════════════════════════════════════════════════════════════
-// Global function exports (for onclick handlers)
+// Slide editor compatibility helpers
 // ═══════════════════════════════════════════════════════════════
 
-window.filterCraft = function(craft) {
-  if (window.__horizonState) {
-    window.__horizonState.filter.craft = craft;
-    document.querySelector("#craft-filter-btn").textContent = (craft ? craft : "All Types") + " ▼";
-    window.renderAll();
-  }
-};
+function seTypeLabel(t) {
+  var map = {
+    APL: "APL — Auxiliary Personnel Lighter",
+    YRBM: "YRBM — Yard Repair Berthing & Messing",
+    YFB: "YFB — Yard Floating Barrier",
+    YTB: "YTB — Large Harbor Tug",
+  };
+  return map[t] || t || "All Types";
+}
 
-window.filterStatus = function(status) {
-  if (window.__horizonState) {
-    window.__horizonState.filter.status = status || "all";
-    window.renderAll();
-  }
-};
+function seTypeTitle(t) {
+  return "Program Schedule — " + seTypeLabel(t);
+}
 
-window.openAddCraftModal = function() {
-  // Placeholder for add craft modal
-  alert("Add Craft Type feature coming soon");
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function toFY(ym) {
+  if (!ym) return null;
+  var parts = String(ym).split('-').map(function(v){ return parseInt(v, 10); });
+  if (!parts[0] || !parts[1]) return null;
+  var y = parts[0], m = parts[1], d = parts[2] || 15;
+  var fy = (m >= 10) ? (y + 1) : y;
+  var moInFy = ((m + 2) % 12); // Oct=0
+  var frac = (moInFy + Math.max(0, Math.min(30, d - 1)) / 30) / 12;
+  return fy + frac;
+}
+
+var SE_TYPE_LABEL = {
+  APL: "APL — Auxiliary Personnel Lighter",
+  YRBM: "YRBM — Yard Repair Berthing & Messing",
+  YFB: "YFB — Yard Floating Barrier",
+  YTB: "YTB — Large Harbor Tug",
 };
 
 window.openSlideEditor = function() {
+  if (window.__horizonState) {
+    window.vessels = window.__horizonState.hulls || [];
+    window.fyStart = window.__horizonState.filter && window.__horizonState.filter.fyStart;
+    window.fyEnd = window.__horizonState.filter && window.__horizonState.filter.fyEnd;
+  }
   seSlides = seGenerateSlides();
   seActive = 0;
   seSelectedId = null;
@@ -7254,7 +7385,7 @@ function sePptxCustomSlide(pptx,slide){
 /* ═════════════════════════════════════════════════════════════════
    BOOTSTRAP
 ═════════════════════════════════════════════════════════════════ */
-boot();
+if (typeof boot === 'function') boot();
 
 
   </script>
