@@ -550,6 +550,19 @@
       background: var(--surface-1);
       color: var(--text-2);
     }
+    
+    /* Craft menu styles */
+    .craft-menu-item {
+      padding: 8px 14px;
+      cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-1);
+      transition: background 0.15s;
+    }
+    .craft-menu-item:hover {
+      background: var(--surface-1);
+    }
 
     /* Acq events sub-panel */
     .acq-panel { display: none; }
@@ -802,6 +815,21 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
+    
+    /* ══ SLIDE EDITOR OVERLAY ═════════════════════════════════════ */
+    #slide-editor-overlay {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      display: none;
+      flex-direction: column;
+      z-index: 9999;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    #slide-editor-overlay.se-open {
+      display: flex;
+    }
+    
   /* ══ INTERACTIVE SLIDE CANVAS ══════════════════════════════════ */
 /* ══ PowerPoint Ribbon ═══════════════════════════════════════════ */
 #se-format-bar{display:flex;flex-direction:column;width:100%;background:#f3f2f1;border-bottom:1px solid #e1dfdd;flex-shrink:0;font-family:'Segoe UI',Arial,sans-serif;user-select:none;}
@@ -1068,13 +1096,30 @@
         <div class="toolbar">
           <div class="tg">
             <span class="tlbl">Craft</span>
-            <select class="sel mono" id="filter-craft">
-              <option value="">All Types</option>
-              <option value="APL">APL</option>
-              <option value="YRBM">YRBM</option>
-              <option value="YFB">YFB</option>
-              <option value="YTB">YTB</option>
-            </select>
+            <!-- Craft dropdown with popup -->
+            <div style="position:relative;display:inline-block">
+              <button class="sel mono" id="craft-filter-btn" style="cursor:pointer;padding:6px 10px;background:var(--surface-0);border:1px solid var(--border);border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-1)">All Types ▼</button>
+              <div id="craft-menu" style="display:none;position:absolute;top:100%;left:0;background:var(--surface-0);border:1px solid var(--border-strong);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:100;min-width:160px;margin-top:4px">
+                <div class="craft-menu-item" onclick="filterCraft('');this.parentElement.style.display='none'">All Types</div>
+                <div class="craft-menu-item" onclick="filterCraft('APL');this.parentElement.style.display='none'">APL</div>
+                <div class="craft-menu-item" onclick="filterCraft('YRBM');this.parentElement.style.display='none'">YRBM</div>
+                <div class="craft-menu-item" onclick="filterCraft('YFB');this.parentElement.style.display='none'">YFB</div>
+                <div class="craft-menu-item" onclick="filterCraft('YTB');this.parentElement.style.display='none'">YTB</div>
+                <div style="border-top:1px solid var(--border-subtle);margin:4px 0"></div>
+                <div class="craft-menu-item" onclick="openAddCraftModal();this.parentElement.style.display='none'" style="color:var(--accent);font-weight:500">+ Add Craft Type…</div>
+              </div>
+            </div>
+            <script>
+              $("#craft-filter-btn").addEventListener("click", (e) => {
+                const menu = $("#craft-menu");
+                menu.style.display = menu.style.display === "none" ? "block" : "none";
+              });
+              document.addEventListener("click", (e) => {
+                if (!e.target.closest("#craft-filter-btn") && !e.target.closest("#craft-menu")) {
+                  $("#craft-menu").style.display = "none";
+                }
+              });
+            </script>
           </div>
 
           <div class="tdiv"></div>
@@ -1702,6 +1747,38 @@
     });
   }
 
+  // Filter functions
+  function filterCraft(craft) {
+    state.filter.craft = craft;
+    $("#craft-filter-btn").textContent = craft ? craft : "All Types";
+    renderAll();
+  }
+  
+  function filterStatus(status) {
+    state.filter.status = status || "all";
+    renderAll();
+  }
+  
+  function filterFYStart(fy) {
+    state.filter.fyStart = parseInt(fy, 10);
+    renderAll();
+  }
+  
+  function filterFYEnd(fy) {
+    state.filter.fyEnd = parseInt(fy, 10);
+    renderAll();
+  }
+  
+  function filterSearch(q) {
+    state.filter.search = q || "";
+    renderAll();
+  }
+  
+  function openAddCraftModal() {
+    // For now, just add a new hull - in future this would open a craft type manager
+    openAddHullModal();
+  }
+
   // ═══════════════════════════════════════════════════════════════
   //  Renderers
   // ═══════════════════════════════════════════════════════════════
@@ -1760,7 +1837,8 @@
     }
 
     $("#filter-search").value = state.filter.search;
-    $("#filter-craft").value = state.filter.craft;
+    // Craft filter is now a button dropdown, updated by filterCraft() function
+    $("#craft-filter-btn").textContent = (state.filter.craft || "All Types") + " ▼";
     $("#toggle-acq").classList.toggle("active", state.acqOpen);
     $("#zoom-label").textContent = Math.round(state.zoom * 100) + "%";
   }
@@ -1855,14 +1933,20 @@
     rightSvg.setAttribute("height", totalH);
     let rightBuf = "";
 
-    // FY column shading + quarter ticks
+    // FY column shading + month ticks + quarter ticks
     for (let i = 0; i < fyCount; i++) {
       const x = i * fyW;
       if (i % 2) rightBuf += `<rect x="${x}" y="0" width="${fyW}" height="${totalH}" fill="#fdfcfa"></rect>`;
       rightBuf += `<line class="gantt-fy-tick" x1="${x}" y1="0" x2="${x}" y2="${totalH}"></line>`;
+      // Month separations (lighter)
+      for (let m = 1; m < 12; m++) {
+        const mx = x + (m * fyW) / 12;
+        rightBuf += `<line x1="${mx}" y1="0" x2="${mx}" y2="${totalH}" stroke="var(--border-subtle)" stroke-width="0.5" opacity="0.4"></line>`;
+      }
+      // Quarter ticks (dashed, darker)
       for (let q = 1; q < 4; q++) {
         const qx = x + (q * fyW) / 4;
-        rightBuf += `<line x1="${qx}" y1="0" x2="${qx}" y2="${totalH}" stroke="var(--border-subtle)" stroke-width="0.5" stroke-dasharray="2 4"></line>`;
+        rightBuf += `<line x1="${qx}" y1="0" x2="${qx}" y2="${totalH}" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="3 5" opacity="0.6"></line>`;
       }
     }
     // Today line
@@ -1877,9 +1961,16 @@
     }
 
     // Rows
-    groupOrder.forEach((g) => {
+    groupOrder.forEach((g, gIdx) => {
       const y = rowsBeforeAt[g];
       rightBuf += `<rect class="gantt-group-bar" x="0" y="${y}" width="${rightW}" height="${GP.GRP_H}"></rect>`;
+      
+      // Separator line between craft groups (except last)
+      if (gIdx < groupOrder.length - 1) {
+        const nextY = gIdx + 1 < groupOrder.length ? rowsBeforeAt[groupOrder[gIdx + 1]] : y + GP.GRP_H;
+        rightBuf += `<line x1="0" y1="${nextY}" x2="${rightW}" y2="${nextY}" stroke="var(--nav-bg)" stroke-width="2" opacity="0.15"></line>`;
+      }
+      
       grouped[g].forEach((h, i) => {
         const ry = y + GP.GRP_H + i * GP.ROW_H;
         rightBuf += `<rect class="gantt-row-stripe ${i % 2 ? "alt" : ""}" x="0" y="${ry}" width="${rightW}" height="${GP.ROW_H}"></rect>`;
@@ -1909,6 +2000,10 @@
           const cy = ry + GP.ROW_H / 2;
           const m = allMS()[code];
           rightBuf += symbolSVG(m.shape, cx, cy, m.color, code, h.id);
+          
+          // Add date label below symbol (e.g., "CA · Sep 2025")
+          const dateLabel = `${code} · ${fmtDate(date)}`;
+          rightBuf += `<text x="${cx}" y="${cy + 18}" style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-anchor:middle;fill:var(--text-3);font-weight:500" data-ms-label="1" data-hull-id="${hullId}" data-ms-code="${code}">${escapeHTML(dateLabel)}</text>`;
         });
 
         // Baseline variance ticks (small grey diamonds at original baseline date if differs)
@@ -2573,7 +2668,8 @@
         b.classList.add("active");
         const v = b.dataset.view;
         state.filter.craft = (v === "all") ? "" : v.toUpperCase();
-        $("#filter-craft").value = state.filter.craft;
+        // Update craft filter button
+        $("#craft-filter-btn").textContent = (state.filter.craft || "All Types") + " ▼";
         renderAll(); autoSave();
       });
     });
@@ -2601,13 +2697,7 @@
     });
 
     // Toolbar
-    $("#filter-craft").addEventListener("change", (e) => {
-      state.filter.craft = e.target.value;
-      // sync sidebar
-      const v = state.filter.craft ? state.filter.craft.toLowerCase() : "all";
-      $$(".nav-item[data-view]").forEach((x) => x.classList.toggle("active", x.dataset.view === v));
-      renderAll(); autoSave();
-    });
+    // (craft filtering is now handled by filterCraft() function in the dropdown menu)
     $("#filter-search").addEventListener("input", (e) => {
       state.filter.search = e.target.value;
       renderSheet(); renderGantt(); renderKPIs();
