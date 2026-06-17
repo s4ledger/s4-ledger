@@ -1110,13 +1110,18 @@
               </div>
             </div>
             <script>
-              $("#craft-filter-btn").addEventListener("click", (e) => {
-                const menu = $("#craft-menu");
-                menu.style.display = menu.style.display === "none" ? "block" : "none";
-              });
-              document.addEventListener("click", (e) => {
-                if (!e.target.closest("#craft-filter-btn") && !e.target.closest("#craft-menu")) {
-                  $("#craft-menu").style.display = "none";
+              document.addEventListener("DOMContentLoaded", () => {
+                const btn = document.querySelector("#craft-filter-btn");
+                const menu = document.querySelector("#craft-menu");
+                if (btn && menu) {
+                  btn.addEventListener("click", (e) => {
+                    menu.style.display = menu.style.display === "none" ? "block" : "none";
+                  });
+                  document.addEventListener("click", (e) => {
+                    if (!e.target.closest("#craft-filter-btn") && !e.target.closest("#craft-menu")) {
+                      menu.style.display = "none";
+                    }
+                  });
                 }
               });
             </script>
@@ -1539,6 +1544,12 @@
     msEditCtx: null,     // { hullId, msKey }
     confirmCb: null,
     lastSavedAt: null,
+  };
+  
+  // Expose state globally for filter functions
+  window.__horizonState = state;
+  window.renderAll = () => {
+    if (window.__horizonState) renderAll();
   };
 
   // ═══════════════════════════════════════════════════════════════
@@ -2003,7 +2014,7 @@
           
           // Add date label below symbol (e.g., "CA · Sep 2025")
           const dateLabel = `${code} · ${fmtDate(date)}`;
-          rightBuf += `<text x="${cx}" y="${cy + 18}" style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-anchor:middle;fill:var(--text-3);font-weight:500" data-ms-label="1" data-hull-id="${hullId}" data-ms-code="${code}">${escapeHTML(dateLabel)}</text>`;
+          rightBuf += `<text x="${cx}" y="${cy + 18}" style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-anchor:middle;fill:var(--text-3);font-weight:500" data-ms-label="1" data-hull-id="${h.id}" data-ms-code="${code}">${escapeHTML(dateLabel)}</text>`;
         });
 
         // Baseline variance ticks (small grey diamonds at original baseline date if differs)
@@ -2096,7 +2107,9 @@
   ];
 
   function renderSheet() {
+    console.log("renderSheet() called, state.hulls.length=", state.hulls.length);
     const hulls = filteredHulls();
+    console.log("renderSheet() filteredHulls() returned", hulls.length, "hulls");
     $("#sheet-count").textContent = `${hulls.length} row${hulls.length === 1 ? "" : "s"}`;
     if (state.baseline) {
       const bDate = new Date(state.baseline._setAt || Date.now());
@@ -2879,11 +2892,40 @@
     audit("SYSTEM", "HORIZON loaded", `${state.hulls.length} hulls`);
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
+  // Try to call boot immediately if DOM is ready, otherwise wait
+  if (document.readyState !== "loading") {
+    boot();
+  } else {
+    // Schedule boot after DOM is fully loaded
+    document.addEventListener("DOMContentLoaded", boot);
+    // Also try calling boot after a very short delay as fallback
+    setTimeout(boot, 500);
+  }
 })();
 
+// ═══════════════════════════════════════════════════════════════
+// Global function exports (for onclick handlers)
+// ═══════════════════════════════════════════════════════════════
 
+window.filterCraft = function(craft) {
+  if (window.__horizonState) {
+    window.__horizonState.filter.craft = craft;
+    document.querySelector("#craft-filter-btn").textContent = (craft ? craft : "All Types") + " ▼";
+    window.renderAll();
+  }
+};
+
+window.filterStatus = function(status) {
+  if (window.__horizonState) {
+    window.__horizonState.filter.status = status || "all";
+    window.renderAll();
+  }
+};
+
+window.openAddCraftModal = function() {
+  // Placeholder for add craft modal
+  alert("Add Craft Type feature coming soon");
+};
 
 window.openSlideEditor = function() {
   seSlides = seGenerateSlides();
@@ -2903,6 +2945,9 @@ window.closeSlideEditor = function() {
 
 /* ── Build initial slides (program + one-slide per type + acquisition milestone) ── */
 function seGenerateSlides() {
+  var vessels = window.__horizonState?.hulls || [];
+  var fyStart = window.__horizonState?.filter?.fyStart || 2026;
+  var fyEnd = window.__horizonState?.filter?.fyEnd || 2028;
   var types = [];
   vessels.forEach(function(v){ if (!types.includes(v.type)) types.push(v.type); });
   var slides = [];
@@ -7209,7 +7254,7 @@ function sePptxCustomSlide(pptx,slide){
 /* ═════════════════════════════════════════════════════════════════
    BOOTSTRAP
 ═════════════════════════════════════════════════════════════════ */
-init();
+boot();
 
 
   </script>
