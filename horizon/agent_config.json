@@ -1,0 +1,48 @@
+{
+  "agent_id": "mppt-001",
+  "persona_name": "procurement_pipeline_analyst",
+  "product_name": "HORIZON",
+  "product_tagline": "Foresight for the MANIFEST procurement pipeline.",
+  "platform": "MANIFEST",
+  "version": "1.0.0",
+  "schema_version": 1,
+  "model": {
+    "provider": "stub",
+    "name": "stub-echo-v0",
+    "temperature": 0.2,
+    "max_tokens": 1024,
+    "fallback_providers": ["openai", "anthropic"]
+  },
+  "dataset_name": "mppt_knowledge_base",
+  "dataset_path": "knowledge_base/",
+  "proxy_route_base": "/api/horizon",
+  "endpoints": {
+    "chat": "/api/horizon/chat",
+    "session": "/api/horizon/session",
+    "tools": "/api/horizon/tools",
+    "health": "/api/horizon/health",
+    "audit": "/api/horizon/audit"
+  },
+  "tools": [
+    "search_records",
+    "get_pipeline_snapshot",
+    "forecast_slip",
+    "get_hull_status",
+    "summarize_pipeline"
+  ],
+  "memory": {
+    "short_term_turn_limit": 24,
+    "retrieval_top_k": 5,
+    "store": "sqlite",
+    "store_path": "horizon.db"
+  },
+  "limits": {
+    "max_input_chars": 8000,
+    "max_response_chars": 8000,
+    "rate_limit_per_minute": 60
+  },
+  "telemetry": {
+    "audit_log_enabled": true,
+    "redact_pii": true
+  }
+}

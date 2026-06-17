@@ -1,0 +1,36 @@
+# HORIZON — local-only artifacts (never commit)
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Local DB
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Build / dist
+dist/
+build/
+*.egg-info/
+
+# Logs (the human-curated CHANGE_LOG.md is committed; runtime logs are not)
+runtime.log
+logs/
