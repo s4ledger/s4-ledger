@@ -4,6 +4,82 @@
 
 ---
 
+### 2026-06-20 — Website Routing Update: HORIZON Button to Preview Build
+**Commit:** (pending)
+**Files Changed:**
+- `index.html`
+  - Updated HORIZON links to point to `/horizon-preview/` for direct website
+    preview access.
+- `horizon-preview/index.html`
+  - Added preview copy of current managed-service v1 HORIZON build.
+- `horizon-preview/README.md`
+  - Added route and scope documentation for preview usage.
+
+**Why:** Provide immediate on-site preview access through the existing HORIZON
+button while evaluating the new build before broader production association.
+
+---
+
+### 2026-06-19 — HORIZON Build Strategy Update: Ground-Up v1 + Low-Cost Replit Handoff
+**Commit:** (pending)
+**Files Changed:**
+- `CONVERSATION_LOG.md`
+  - Added Session 39 with locked strategy: ground-up v1.0 rebuild using the
+    current app as reference, local build-to-95% preference, and low-token
+    Replit handoff after scope artifacts are finalized.
+
+**Why:** This approach reduces launch risk, prevents legacy coupling in the new
+runtime, and lowers Replit implementation cost by moving high-context design
+work into local preparation first.
+
+---
+
+### 2026-06-19 — HORIZON Product Scope Decision: No-Tier Layered Release + Public Role Simplification
+**Commit:** (pending)
+**Files Changed:**
+- `CONVERSATION_LOG.md`
+  - Added Session 38 with locked product decisions for HORIZON Version 1.0:
+    no subscription tiers at launch, layered future releases, internal-only
+    Owner/Admin, minimal public role model, and keep/hide feature matrix.
+
+**Why:** Product packaging was intentionally simplified to accelerate trust and
+adoption: ship a reliable core first, keep advanced capabilities hidden but
+preserved in code, then layer them into future versions based on customer
+demand and funded expansion.
+
+---
+
+### 2026-06-19 — HORIZON Access Model Update: S4-Managed Operational Data
+**Commit:** (pending)
+**Files Changed:**
+- `CONVERSATION_LOG.md`
+  - Updated Session 38 role and governance policy so S4 Systems retains
+    operational data edit control in v1.0. Public users are read-oriented
+    viewers (leadership/program and contractor), while S4 internal admin/data
+    steward remains non-public and fully privileged.
+
+**Why:** The delivery model is managed service first: customers consume trusted,
+curated operational views while S4 performs controlled data stewardship,
+improving consistency, supportability, and account rapport during early
+adoption.
+
+---
+
+### 2026-06-19 — HORIZON Operating Model Update: External S4 Data Intake Source
+**Commit:** (pending)
+**Files Changed:**
+- `CONVERSATION_LOG.md`
+  - Extended Session 38 with a locked data-source policy: S4 Systems maintains
+    an external data-entry source (spreadsheet or equivalent intake tool) and
+    uses a controlled publish process to update HORIZON operational data.
+
+**Why:** The managed-service model requires a controlled upstream source of
+truth for edits. Without an S4-controlled intake path, customer users would
+need direct edit rights in-app, which conflicts with the v1.0 governance and
+rapport-building strategy.
+
+---
+
 ### 2026-06-17 — HORIZON Slide Editor: Program/Acq Gantt Positioning + Data-Sync Fix
 **Commit:** (pending)
 **Files Changed:**

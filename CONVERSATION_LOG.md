@@ -1,5 +1,140 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 36 — Deliverables Tracker v2 Rebuild (2026-05-28)
+## Last Updated: Session 41 — HORIZON Website Preview Routing (2026-06-20)
+
+---
+
+## Session 41 — HORIZON Website Preview Routing (2026-06-20)
+
+**Goal:** Make the new HORIZON build previewable from the main s4ledger.com
+HORIZON button while keeping it as a dedicated preview surface.
+
+**Implemented:**
+- Created `horizon-preview/` and copied the current managed-service v1 build
+  into `horizon-preview/index.html`.
+- Updated the primary site HORIZON links in `index.html` from `/horizon/` to
+  `/horizon-preview/` so preview can be accessed directly from the website UI.
+- Added preview documentation in `horizon-preview/README.md` clarifying route,
+  scope, and deferred features.
+
+**Result:** You can preview the new v1-style build from the existing HORIZON
+button path on the website, without changing the overall visual identity.
+
+---
+
+## Session 40 — HORIZON Visual-Replica Public v1 Gating (2026-06-19)
+
+**Goal:** Keep HORIZON visually consistent with the current experience while
+removing deferred tools/features from customer-visible v1 behavior.
+
+**Implemented in `horizon/index.html`:**
+- Added managed-service public mode flags and runtime guards.
+- Preserved existing format/style/color system while hiding deferred controls
+  (Slide Editor, AI Assist, Set Baseline, Import CSV, Add Hull, Add Milestone,
+  Sample Data).
+- Enforced read-only behavior for customer-facing schedule/data interactions.
+- Kept export/print and core visibility workflows in place.
+- Added a managed-service footer marker to reflect S4 stewardship.
+
+**Result:** v1 stays a visual replica of current HORIZON design language, but
+operational editing and advanced modules are gated out for the managed-service
+launch model.
+
+---
+
+## Session 39 — HORIZON Ground-Up v1 Build Strategy (2026-06-19)
+
+**Goal:** Execute a methodical ground-up Version 1.0 build, using the current
+HORIZON app as a reference source, while minimizing Replit cost and preserving
+future layering options.
+
+**Decisions locked:**
+- Build a new v1.0 core from the ground up for reliability and clean scope.
+- Keep the current HORIZON implementation as a legacy/reference artifact, not
+  as a hidden-runtime dependency inside v1.0.
+- Preserve advanced features as roadmap modules to reintroduce in later
+  versions, not as active hidden pathways in initial runtime.
+- Use a low-token Replit handoff prompt only after scope/spec artifacts are
+  prepared locally.
+- Preferred delivery path: build to ~95% readiness locally first, then transfer
+  to Replit for final integration/deploy.
+
+**Operating model reconfirmed:**
+- S4 Systems remains operational data steward.
+- External S4-controlled intake source (spreadsheet/form workflow) feeds the
+  controlled publish process into HORIZON.
+- Public users consume read-oriented outputs in v1.0.
+
+---
+
+## Session 38 — HORIZON v1.0 Layered Release + Public Role Model (2026-06-19)
+
+**Goal:** Lock a customer-first Version 1.0 scope that is simple, trustworthy,
+and expandable later, without public subscription tiers and without exposing
+Owner/Admin as a public role.
+
+**Business decisions locked:**
+- No subscription/tier packaging at launch.
+- Release model is layered by version over time:
+  - Layer 1 (v1.0): core operational capabilities.
+  - Layer 2+ (future releases): advanced tools/features re-enabled as customer
+    demand and funded roadmap mature.
+- Owner/Admin is internal to S4 Systems and not shown as a public product role.
+- Operational data stewardship for v1.0 is S4-managed: S4 Systems owns edits to
+  production operational data. Customer-side users do not directly edit core
+  operational records in v1.0.
+- External data intake is required for v1.0 operations: S4 Systems maintains a
+  separate data-entry source (spreadsheet or equivalent intake tool) and uses
+  that source to update HORIZON production data.
+
+**Role-model guidance (public-facing):**
+- Keep public roles minimal and read-oriented in v1.0.
+- Recommended public roles:
+  - Program/Leadership Viewer (read-only dashboards and reporting outputs).
+  - Contractor Viewer (read-only scoped visibility).
+- Internal S4 role (non-public): Data Steward/Admin with full edit authority.
+- For UX simplicity, public-facing labels may be reduced to capability language
+  such as "Leadership View" and "Contractor View" while S4 retains internal
+  administrative control.
+
+**v1.0 keep/hide decisions (recalculated):**
+- Keep in v1.0 (public):
+  - Schedule & Gantt
+  - Data Entry (read-only for customer users; editable by S4 internal role)
+  - Acquisition Profile (focused)
+  - Trends & Metrics (executive summary level)
+  - Command View (summary + upcoming decisions)
+  - Export CSV
+  - Print/PDF
+- Hide for later layers (preserve code, hide UI/routes now):
+  - Brief Editor
+  - AI Assist
+  - System Health
+  - Set Baseline
+  - Import CSV
+  - Backup download
+  - Add Hull / Add Milestone
+  - Planning / Scheduling standalone workspace
+  - Advanced Command report modules
+
+**Data-source and operating model (locked):**
+- HORIZON is customer-facing for visibility and reporting in v1.0, not the
+  primary public authoring surface for operational data.
+- S4 internal team updates operational records through an external intake tool
+  (for example controlled spreadsheet templates or equivalent form workflow).
+- A controlled import/update process publishes vetted changes into HORIZON.
+- This preserves a single source of truth under S4 stewardship and avoids
+  exposing customer edit access before governance and change-control maturity.
+
+**Fix-now vs fix-later policy (locked):**
+- Fix now if the issue touches any visible v1.0 user path.
+- Fix now if hidden-feature errors leak into global runtime/performance or user
+  trust signals.
+- Defer if issue is fully isolated behind hidden features and cannot execute in
+  v1.0.
+
+**Current known blocker classification:**
+- Brief Editor runtime error (`PM is not defined`) can be deferred only if Brief
+  Editor is fully gated and cannot auto-execute in v1.0 flows.
 
 ---
 
