@@ -10,6 +10,8 @@
 - `index.html`
   - Updated HORIZON links to point to `/horizon-preview/` for direct website
     preview access.
+  - Added single-point route toggle (`HORIZON_TARGET`) so all HORIZON buttons
+    can be switched between preview and production path by changing one value.
 - `horizon-preview/index.html`
   - Added preview copy of current managed-service v1 HORIZON build.
 - `horizon-preview/README.md`

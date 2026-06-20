@@ -13,6 +13,9 @@ HORIZON button while keeping it as a dedicated preview surface.
   into `horizon-preview/index.html`.
 - Updated the primary site HORIZON links in `index.html` from `/horizon/` to
   `/horizon-preview/` so preview can be accessed directly from the website UI.
+- Added a single-point route toggle (`HORIZON_TARGET`) in `index.html` so all
+  HORIZON CTA links can be switched between preview and production with one
+  value change.
 - Added preview documentation in `horizon-preview/README.md` clarifying route,
   scope, and deferred features.
 

@@ -17,6 +17,8 @@ build without changing the established MANIFEST visual language.
 Files changed:
 - `index.html` (site root)
   - Repointed HORIZON button links to `/horizon-preview/`.
+  - Added single-point `HORIZON_TARGET` toggle and data-attribute wiring so
+    all HORIZON CTAs can switch routes from one config value.
 - `horizon-preview/index.html` (new preview surface copy)
 - `horizon-preview/README.md`
   - Added preview route/scope notes and deferred-feature summary.
