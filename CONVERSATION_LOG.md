@@ -1,5 +1,49 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 41 — HORIZON Website Preview Routing (2026-06-20)
+## Last Updated: Session 42 — HORIZON v1 Ground-Up Build + Intake Tool + Site Reroute (2026-06-20)
+
+---
+
+## Session 42 — HORIZON v1 Ground-Up Build + S4 Intake Tool + Site Reroute (2026-06-20)
+
+**Goal:** Ship a clean ground-up Version 1.0 build that visually matches the
+current HORIZON design, runs from an external S4-controlled data source, and
+can be previewed directly from the s4ledger.com HORIZON button. Add the S4
+internal data-entry intake required by the managed-service model.
+
+**Built:**
+- `horizon-v1/` — new managed-service v1 build (single-file, no backend):
+  - Visual replica of MANIFEST/HORIZON tokens (IBM Plex stack, navy chrome,
+    warm canvas, deep-teal accent, banner, sidebar, KPI ribbon, gantt card,
+    schedule card, acq card).
+  - Workspaces: Schedule & Gantt, Data Entry (read-only), Acquisition Profile,
+    Trends & Metrics, Command Summary.
+  - Tools: Export CSV, Print/PDF.
+  - Loads operational data from external `./data.json` (cache-busted, no-store).
+  - Public read-only; no customer edit paths; no slide editor, AI Assist,
+    Set Baseline, Import CSV, Add Hull/Milestone, advanced reports.
+  - Source-state indicator + last-published timestamp in sidebar footer.
+- `horizon-v1/data.json` — initial seeded dataset (16 hulls, PMS-300T).
+- `horizon-intake/` — S4-only internal data steward tool:
+  - Edit program metadata, hulls, milestones, acquisition fields, side info.
+  - Load JSON or CSV; export JSON (canonical `data.json`) and CSV.
+  - Drag-drop file load; inline cell validation for YYYY-MM dates.
+  - Marked `noindex,nofollow`; banner clearly labels internal-only use.
+- `index.html` — HORIZON button toggle (`HORIZON_TARGET`) now defaults to
+  `/horizon-v1/` with documented alternates (`/horizon-preview/`, `/horizon/`).
+
+**Validation:**
+- Local static smoke test on http://localhost:9999:
+  - `/horizon-v1/` 200, 16 hulls rendered, Schedule/Data/Command views verified.
+  - `/horizon-v1/data.json` 200, parsed (program PMS-300T, 16 hulls).
+  - `/horizon-intake/` 200, loads live data.json, full edit grid functional.
+  - `/horizon-preview/` and `/horizon/` still reachable as fallback targets.
+- `index.html` toggle wired: `HORIZON_TARGET = '/horizon-v1/'`.
+
+**Operating model reinforced:**
+- HORIZON v1 customer build = read-only consumer of S4-published data.
+- S4 internal tooling (`/horizon-intake/`) is the canonical editing path.
+- One-line toggle in `index.html` switches the button target between
+  v1, preview, and legacy without other edits.
 
 ---
 

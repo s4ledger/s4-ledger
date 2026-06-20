@@ -9,6 +9,22 @@ Versioning policy:
 
 ---
 
+## 2026-06-20 — HORIZON v1.0 Ground-Up Managed-Service Build (sibling deployment)
+
+Shipped a new ground-up Version 1.0 build alongside the legacy `/horizon/`
+folder. The new build lives at `/horizon-v1/` and is the active customer
+surface (the s4ledger.com HORIZON button now defaults to it).
+
+Sibling folders added:
+- `horizon-v1/` — single-file MANIFEST replica, read-only, external data source.
+- `horizon-intake/` — S4 internal data steward tool (JSON/CSV in/out).
+
+The legacy `/horizon/` folder is retained as a feature reference for layering
+advanced capabilities into future versions (slide editor, AI assist, baseline,
+etc.) without bringing them into v1 runtime.
+
+---
+
 ## 2026-06-20 — Website Preview Surface via `/horizon-preview/`
 
 Enabled a dedicated website preview path for the current managed-service v1

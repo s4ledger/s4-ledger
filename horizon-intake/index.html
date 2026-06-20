@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<!--
+  HORIZON Intake — S4 Systems internal data entry tool
+  - Single-file static app for editing the HORIZON operational dataset.
+  - Loads a JSON file (drag/drop OR file picker), edits in a spreadsheet view,
+    and exports a publish-ready data.json (and optional CSV).
+  - Intentionally NOT linked from the public site; for S4 internal use only.
+-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HORIZON Intake — S4 Systems</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#fafaf9; --surface-0:#ffffff; --surface-1:#f5f5f4; --surface-2:#e7e5e4;
+      --border:#d6d3d1; --border-subtle:#e7e5e4; --border-strong:#a8a29e;
+      --text-1:#1c1917; --text-2:#292524; --text-3:#57534e; --text-4:#78716c; --text-5:#a8a29e;
+      --accent:#0c4a6e; --accent-2:#075985; --accent-bg:#f0f9ff;
+      --nav-bg:#001f3f; --banner-text:#fafaf9;
+      --success:#166534; --warning:#854d0e; --error:#991b1b;
+      --blue-action:#1a73e8; --blue-action-lt:#e8f0fe; --blue-action-txt:#1557b0;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;color:var(--text-1);background:var(--bg);overflow:hidden}
+    button{font:inherit;cursor:pointer;color:inherit}
+    input,select{font:inherit;color:inherit}
+
+    .app{display:flex;flex-direction:column;height:100vh}
+    .banner{background:var(--nav-bg);color:var(--banner-text);font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1.5px;text-align:center;padding:5px 28px;border-bottom:1px solid #44403c}
+    .head{display:flex;align-items:center;gap:14px;padding:14px 22px;background:var(--surface-0);border-bottom:1px solid var(--border)}
+    .head h1{font-family:'IBM Plex Serif',serif;font-size:20px;font-weight:500}
+    .head .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4);letter-spacing:1px;text-transform:uppercase}
+    .head .right{margin-left:auto;display:flex;gap:8px}
+
+    .btn{font-size:12px;padding:7px 14px;border:1px solid transparent;background:var(--surface-0);color:var(--text-2);border-radius:99px;display:inline-flex;align-items:center;gap:6px}
+    .btn:hover{background:var(--surface-1);border-color:var(--border-strong)}
+    .btn.primary{background:var(--blue-action);color:#fff;border-color:var(--blue-action)}
+    .btn.primary:hover{background:#1463cf}
+    .btn.ghost{background:var(--blue-action-lt);color:var(--blue-action-txt)}
+    .btn.danger{background:#fce8e6;color:#d93025;border:1px solid #f5c6c3}
+    .btn.outline{border:1px solid var(--border-strong);color:var(--text-1)}
+
+    .toolbar{display:flex;align-items:center;gap:8px;padding:10px 22px;background:var(--surface-1);border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .tlbl{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-4)}
+    .inp,.sel{font-size:12px;padding:5px 9px;border:1px solid var(--border-strong);background:var(--surface-0);color:var(--text-1)}
+
+    .scroll{flex:1;overflow:auto;padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+    .card{background:var(--surface-0);border:1px solid var(--border)}
+    .card h3{font-family:'IBM Plex Serif',serif;font-size:16px;font-weight:500;padding:10px 14px;border-bottom:1px solid var(--border)}
+
+    .meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;padding:14px}
+    .meta-grid label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-4);margin-bottom:4px}
+    .meta-grid input{width:100%;padding:7px 9px;border:1px solid var(--border-strong);font-size:12px}
+
+    .sheet-wrap{overflow:auto;max-height:62vh;border-top:1px solid var(--border)}
+    table.sheet{width:100%;border-collapse:collapse;min-width:1400px}
+    .sheet th{position:sticky;top:0;background:var(--surface-1);border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-2);text-align:left;padding:8px 10px;white-space:nowrap}
+    .sheet td{padding:0;border-bottom:1px solid var(--border-subtle);vertical-align:middle}
+    .sheet td.del{padding:4px 8px;text-align:right}
+    .sheet td input,.sheet td select{width:100%;padding:6px 8px;border:none;background:transparent;font-size:12px;outline:none}
+    .sheet td input:focus,.sheet td select:focus{background:var(--accent-bg);outline:1px solid var(--accent)}
+    .sheet tr.dr:hover td{background:var(--surface-1)}
+    .sheet td input.ms{font-family:'IBM Plex Mono',monospace;font-size:11px}
+    .sheet td input.invalid{background:#fef2f2;color:#991b1b}
+
+    .empty{padding:40px;text-align:center;color:var(--text-4);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+    .drop{border:2px dashed var(--border-strong);padding:24px;text-align:center;color:var(--text-4);background:var(--surface-1);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.6px}
+    .drop.over{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
+
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--nav-bg);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:11px 18px;text-transform:uppercase;letter-spacing:.6px;box-shadow:0 8px 16px rgba(0,0,0,.2);opacity:0;transform:translateY(20px);transition:all .18s;z-index:500;pointer-events:none}
+    .toast.show{opacity:1;transform:translateY(0)}
+    .toast.err{background:#d93025}
+
+    .help{padding:14px 18px;font-size:12px;line-height:1.6;color:var(--text-3)}
+    .help code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface-1);padding:1px 5px;border-radius:3px}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="banner">S4 INTERNAL · HORIZON INTAKE · NOT FOR CUSTOMER DISTRIBUTION</div>
+
+    <div class="head">
+      <div>
+        <h1>HORIZON Intake</h1>
+        <div class="sub">S4 Systems · Data Steward Workspace</div>
+      </div>
+      <div class="right">
+        <button class="btn outline" id="btnLoadSample">Load Sample</button>
+        <button class="btn outline" id="btnLoadLive">Load from /horizon-v1/data.json</button>
+        <input type="file" id="fileInput" accept="application/json,.json" hidden />
+        <button class="btn outline" id="btnOpen">Open JSON…</button>
+        <button class="btn outline" id="btnOpenCsv" title="Import hulls CSV">Import CSV…</button>
+        <input type="file" id="csvInput" accept=".csv,text/csv" hidden />
+        <button class="btn ghost" id="btnExportCsv">Export CSV</button>
+        <button class="btn primary" id="btnSave">Save data.json</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <span class="tlbl">Add</span>
+      <button class="btn outline" id="btnAddHull">＋ Hull</button>
+      <span style="width:1px;height:22px;background:var(--border);margin:0 4px"></span>
+      <span class="tlbl">Search</span>
+      <input class="inp" id="searchInp" placeholder="Designation, builder, contract…" style="width:260px" />
+      <span style="margin-left:auto" class="tlbl" id="rowCount">0 rows</span>
+    </div>
+
+    <div class="scroll">
+      <section class="card">
+        <h3>Program metadata</h3>
+        <div class="meta-grid" id="metaGrid"></div>
+      </section>
+
+      <section class="card">
+        <h3>Hulls</h3>
+        <div class="sheet-wrap">
+          <table class="sheet" id="sheet">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="drop" id="drop">Drop a JSON file anywhere to load it.</div>
+      </section>
+
+      <section class="card">
+        <h3>How to publish to HORIZON v1</h3>
+        <div class="help">
+          1. Make edits here (all changes stay in your browser).<br/>
+          2. Click <b>Save data.json</b> to download the updated file.<br/>
+          3. Replace <code>/horizon-v1/data.json</code> in the deployment with the downloaded file.<br/>
+          4. The public HORIZON v1 app picks up the new content on next page load.<br/>
+          <br/>
+          <b>Date format:</b> use <code>YYYY-MM</code> (or <code>YYYY-MM-DD</code>) for milestone and acquisition columns. Empty means "not yet scheduled".<br/>
+          <b>Status values:</b> <code>on-track</code>, <code>at-risk</code>, <code>delayed</code>, <code>not-planned</code>.
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function(){
+    "use strict";
+
+    var DATA = null;
+    var FILTER = "";
+
+    function $(s,r){return (r||document).querySelector(s)}
+    function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+    function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c]})}
+    function toast(msg,err){var t=$("#toast");t.textContent=msg;t.className="toast show"+(err?" err":"");setTimeout(function(){t.className="toast"+(err?" err":"")},2600)}
+
+    function newId(prefix){
+      return (prefix||"hull")+"-"+Math.random().toString(36).slice(2,7);
+    }
+
+    function defaultData(){
+      return {
+        version:"1.0.0",
+        publishedAt:new Date().toISOString(),
+        publishedBy:"S4 Systems",
+        program:{ id:"PMS-300T", label:"PMS 300T", subtitle:"Auxiliary, Cargo & Sealift Ships" },
+        fyRange:{ start:2026, end:2028 },
+        milestones:{
+          CA:{label:"Contract Award",color:"#92400e",order:1},
+          SOC:{label:"Start of Construction",color:"#c2410c",order:2},
+          LCH:{label:"Launch",color:"#1d4ed8",order:3},
+          BT:{label:"Builder's Trial",color:"#075985",order:4},
+          AT:{label:"Acceptance Trial",color:"#6d28d9",order:5},
+          DEL:{label:"Delivery",color:"#166534",order:6}
+        },
+        acqEvents:{
+          SRR:{label:"System Requirements Review",color:"#1d4ed8"},
+          PDR:{label:"Preliminary Design Review",color:"#166534"},
+          CDR:{label:"Critical Design Review",color:"#c2410c"},
+          SDP:{label:"System Design Plan",color:"#6d28d9"},
+          IOTE:{label:"Initial OT&E",color:"#0c4a6e"}
+        },
+        hulls:[]
+      };
+    }
+
+    function ensureHullShape(h){
+      h.id = h.id || newId(h.type ? h.type.toLowerCase() : "hull");
+      h.designation = h.designation || "(unnamed)";
+      h.type = h.type || "APL";
+      h.fleet = h.fleet || "PACFLT";
+      h.status = h.status || "not-planned";
+      h.ms  = h.ms  || {};
+      h.acq = h.acq || {};
+      h.sf  = h.sf  || {};
+      Object.keys(DATA.milestones).forEach(function(k){ if(!(k in h.ms)) h.ms[k]="" });
+      Object.keys(DATA.acqEvents ).forEach(function(k){ if(!(k in h.acq)) h.acq[k]="" });
+      ["contract","builder","uic","fy_approp","pm_secnav"].forEach(function(k){ if(!(k in h.sf)) h.sf[k]="" });
+      return h;
+    }
+
+    function setData(d){
+      DATA = d || defaultData();
+      DATA.milestones = DATA.milestones || defaultData().milestones;
+      DATA.acqEvents  = DATA.acqEvents  || defaultData().acqEvents;
+      DATA.hulls = (DATA.hulls||[]).map(ensureHullShape);
+      renderAll();
+    }
+
+    function renderMeta(){
+      var d = DATA;
+      var fields = [
+        {k:"program.id",      lbl:"Program ID"},
+        {k:"program.label",   lbl:"Program Label"},
+        {k:"program.subtitle",lbl:"Program Subtitle"},
+        {k:"fyRange.start",   lbl:"FY Range Start", type:"number"},
+        {k:"fyRange.end",     lbl:"FY Range End",   type:"number"},
+        {k:"publishedBy",     lbl:"Published By"}
+      ];
+      var html = "";
+      fields.forEach(function(f){
+        var v = pickPath(d, f.k);
+        html += '<div><label>'+esc(f.lbl)+'</label><input type="'+(f.type||"text")+'" data-meta="'+f.k+'" value="'+esc(v==null?"":v)+'" /></div>';
+      });
+      $("#metaGrid").innerHTML = html;
+      $$("#metaGrid input").forEach(function(inp){
+        inp.addEventListener("input", function(){
+          var path=inp.dataset.meta, val=inp.value;
+          if(inp.type==="number") val = val===""? null : Number(val);
+          setPath(DATA, path, val);
+        });
+      });
+    }
+    function pickPath(obj, path){
+      var p = path.split("."); var cur=obj;
+      for(var i=0;i<p.length;i++){ if(cur==null) return null; cur=cur[p[i]] }
+      return cur;
+    }
+    function setPath(obj, path, val){
+      var p = path.split("."); var cur=obj;
+      for(var i=0;i<p.length-1;i++){ cur[p[i]] = cur[p[i]] || {}; cur=cur[p[i]] }
+      cur[p[p.length-1]] = val;
+    }
+
+    function renderSheet(){
+      var msKeys = Object.keys(DATA.milestones);
+      var sfFields = [
+        {k:"contract",lbl:"Contract"},
+        {k:"builder",lbl:"Builder"},
+        {k:"uic",lbl:"UIC"},
+        {k:"fy_approp",lbl:"FY Approp"},
+        {k:"pm_secnav",lbl:"PM/SECNAV"}
+      ];
+      var head = "<tr><th>Designation</th><th>Type</th><th>Fleet</th><th>Status</th>";
+      msKeys.forEach(function(k){ head += "<th>"+esc(k)+"</th>" });
+      sfFields.forEach(function(f){ head += "<th>"+esc(f.lbl)+"</th>" });
+      head += "<th></th></tr>";
+      $("#sheet thead").innerHTML = head;
+
+      var q = (FILTER||"").toLowerCase().trim();
+      var rows = DATA.hulls.filter(function(h){
+        if(!q) return true;
+        var hay = (h.designation+" "+h.type+" "+h.fleet+" "+(h.sf.builder||"")+" "+(h.sf.contract||"")).toLowerCase();
+        return hay.indexOf(q)>=0;
+      });
+      $("#rowCount").textContent = rows.length+" rows ("+DATA.hulls.length+" total)";
+
+      var tb = "";
+      rows.forEach(function(h){
+        tb += '<tr class="dr" data-id="'+esc(h.id)+'">';
+        tb += '<td><input data-f="designation" value="'+esc(h.designation)+'" /></td>';
+        tb += '<td><input data-f="type" value="'+esc(h.type)+'" style="width:80px"/></td>';
+        tb += '<td><input data-f="fleet" value="'+esc(h.fleet)+'" style="width:100px"/></td>';
+        tb += '<td><select data-f="status">'
+            + ["on-track","at-risk","delayed","not-planned"].map(function(s){
+                return '<option value="'+s+'"'+(h.status===s?" selected":"")+'>'+s+'</option>';
+              }).join("")
+            + '</select></td>';
+        msKeys.forEach(function(k){
+          var v = (h.ms&&h.ms[k])||"";
+          tb += '<td><input class="ms" data-ms="'+esc(k)+'" value="'+esc(v)+'" placeholder="YYYY-MM" style="width:96px" /></td>';
+        });
+        sfFields.forEach(function(f){
+          var v = (h.sf&&h.sf[f.k])||"";
+          tb += '<td><input data-sf="'+esc(f.k)+'" value="'+esc(v)+'" /></td>';
+        });
+        tb += '<td class="del"><button class="btn danger" data-del="'+esc(h.id)+'">Delete</button></td>';
+        tb += '</tr>';
+      });
+      $("#sheet tbody").innerHTML = tb;
+
+      $$("#sheet tbody tr").forEach(function(tr){
+        var id = tr.dataset.id;
+        $$("input,select", tr).forEach(function(inp){
+          inp.addEventListener("input", function(){
+            var hull = DATA.hulls.find(function(x){return x.id===id});
+            if(!hull) return;
+            if(inp.dataset.f){
+              hull[inp.dataset.f] = inp.value;
+            } else if(inp.dataset.ms){
+              hull.ms = hull.ms || {};
+              hull.ms[inp.dataset.ms] = (inp.value||"").trim();
+              inp.classList.toggle("invalid", inp.value && !/^\d{4}-\d{2}(-\d{2})?$/.test(inp.value));
+            } else if(inp.dataset.sf){
+              hull.sf = hull.sf || {};
+              hull.sf[inp.dataset.sf] = inp.value;
+            }
+          });
+        });
+        var delBtn = $('[data-del]', tr);
+        delBtn.addEventListener("click", function(){
+          if(!confirm("Delete "+id+"?")) return;
+          DATA.hulls = DATA.hulls.filter(function(x){return x.id!==id});
+          renderSheet();
+          toast("Hull deleted");
+        });
+      });
+    }
+
+    function renderAll(){
+      if(!DATA){ DATA = defaultData(); }
+      renderMeta();
+      renderSheet();
+    }
+
+    function importCsv(text){
+      // Expected columns: designation,type,fleet,status,ms_CA,ms_SOC,ms_LCH,ms_BT,ms_AT,ms_DEL,contract,builder,uic,fy_approp,pm_secnav
+      var lines = String(text).replace(/\r\n?/g,"\n").split("\n").filter(function(l){return l.length});
+      if(!lines.length){ toast("Empty CSV", true); return }
+      var head = splitCsv(lines[0]).map(function(h){return h.trim()});
+      var idx = function(name){return head.indexOf(name)};
+      var msKeys = ["CA","SOC","LCH","BT","AT","DEL"];
+      var hulls = [];
+      lines.slice(1).forEach(function(ln){
+        var c = splitCsv(ln);
+        if(!c.length) return;
+        var get = function(name){ var i=idx(name); return i>=0 ? (c[i]||"").trim() : "" };
+        var h = {
+          id: newId((get("type")||"hull").toLowerCase()),
+          designation:get("designation")||"(unnamed)",
+          type:get("type")||"APL",
+          fleet:get("fleet")||"PACFLT",
+          status:get("status")||"not-planned",
+          ms:{}, acq:{}, sf:{}
+        };
+        msKeys.forEach(function(k){ h.ms[k]=get("ms_"+k) });
+        ["contract","builder","uic","fy_approp","pm_secnav"].forEach(function(k){ h.sf[k]=get(k) });
+        hulls.push(h);
+      });
+      if(!confirm("Replace current "+DATA.hulls.length+" hulls with "+hulls.length+" from CSV?")) return;
+      DATA.hulls = hulls.map(ensureHullShape);
+      renderSheet();
+      toast("Imported "+hulls.length+" hulls");
+    }
+    function splitCsv(line){
+      var out=[], cur="", q=false;
+      for(var i=0;i<line.length;i++){
+        var c=line[i];
+        if(q){
+          if(c==='"' && line[i+1]==='"'){ cur+='"'; i++ }
+          else if(c==='"'){ q=false }
+          else cur+=c;
+        } else {
+          if(c===','){ out.push(cur); cur="" }
+          else if(c==='"'){ q=true }
+          else cur+=c;
+        }
+      }
+      out.push(cur);
+      return out;
+    }
+    function exportCsv(){
+      var msKeys = Object.keys(DATA.milestones);
+      var sf = ["contract","builder","uic","fy_approp","pm_secnav"];
+      var head = ["designation","type","fleet","status"].concat(msKeys.map(function(k){return "ms_"+k})).concat(sf);
+      var lines = [head.join(",")];
+      DATA.hulls.forEach(function(h){
+        var row = [h.designation, h.type, h.fleet, h.status];
+        msKeys.forEach(function(k){row.push((h.ms&&h.ms[k])||"")});
+        sf.forEach(function(k){row.push((h.sf&&h.sf[k])||"")});
+        lines.push(row.map(function(v){
+          v = String(v==null?"":v);
+          return /[,"\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+        }).join(","));
+      });
+      downloadBlob("horizon_v1_hulls.csv", lines.join("\n"), "text/csv;charset=utf-8");
+      toast("CSV exported");
+    }
+    function exportJson(){
+      DATA.publishedAt = new Date().toISOString();
+      var pretty = JSON.stringify(DATA, null, 2);
+      downloadBlob("data.json", pretty, "application/json;charset=utf-8");
+      toast("data.json downloaded");
+    }
+    function downloadBlob(name, body, type){
+      var blob = new Blob([body], {type:type||"application/octet-stream"});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href=url; a.download=name; document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); a.remove()}, 250);
+    }
+
+    function readFile(file, asText){
+      return new Promise(function(res, rej){
+        var r = new FileReader();
+        r.onload = function(){res(r.result)};
+        r.onerror = function(){rej(r.error)};
+        if(asText) r.readAsText(file); else r.readAsText(file);
+      });
+    }
+
+    function wire(){
+      $("#btnAddHull").addEventListener("click", function(){
+        var h = ensureHullShape({ id:newId("hull"), designation:"NEW-HULL", type:"APL", fleet:"PACFLT", status:"not-planned", ms:{}, acq:{}, sf:{} });
+        DATA.hulls.unshift(h);
+        renderSheet();
+        toast("Hull added");
+      });
+      $("#searchInp").addEventListener("input", function(){ FILTER = this.value; renderSheet() });
+      $("#btnSave").addEventListener("click", exportJson);
+      $("#btnExportCsv").addEventListener("click", exportCsv);
+
+      $("#btnOpen").addEventListener("click", function(){ $("#fileInput").click() });
+      $("#fileInput").addEventListener("change", function(e){
+        var f = e.target.files && e.target.files[0]; if(!f) return;
+        readFile(f, true).then(function(txt){
+          try { setData(JSON.parse(txt)); toast("Loaded "+f.name) }
+          catch(err){ toast("Parse error: "+err.message, true) }
+        });
+        e.target.value="";
+      });
+      $("#btnOpenCsv").addEventListener("click", function(){ $("#csvInput").click() });
+      $("#csvInput").addEventListener("change", function(e){
+        var f = e.target.files && e.target.files[0]; if(!f) return;
+        readFile(f, true).then(function(txt){ importCsv(txt) });
+        e.target.value="";
+      });
+
+      $("#btnLoadSample").addEventListener("click", function(){
+        fetch("../horizon-v1/data.json?v="+Date.now(),{cache:"no-store"}).then(function(r){
+          if(!r.ok) throw new Error("HTTP "+r.status); return r.json();
+        }).then(function(j){ setData(j); toast("Sample loaded") })
+        .catch(function(err){ toast("No sample available: "+err.message, true); setData(defaultData()) });
+      });
+      $("#btnLoadLive").addEventListener("click", function(){
+        fetch("../horizon-v1/data.json?v="+Date.now(),{cache:"no-store"}).then(function(r){
+          if(!r.ok) throw new Error("HTTP "+r.status); return r.json();
+        }).then(function(j){ setData(j); toast("Loaded /horizon-v1/data.json") })
+        .catch(function(err){ toast("Failed: "+err.message, true) });
+      });
+
+      // Drag/drop anywhere
+      var drop = $("#drop");
+      ["dragenter","dragover"].forEach(function(ev){
+        window.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add("over") });
+      });
+      ["dragleave","drop"].forEach(function(ev){
+        window.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove("over") });
+      });
+      window.addEventListener("drop", function(e){
+        var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if(!f) return;
+        readFile(f, true).then(function(txt){
+          try {
+            if(f.name.toLowerCase().endsWith(".csv")) importCsv(txt);
+            else { setData(JSON.parse(txt)); toast("Loaded "+f.name) }
+          } catch(err){ toast("Parse error: "+err.message, true) }
+        });
+      });
+    }
+
+    function boot(){
+      wire();
+      setData(defaultData());
+    }
+    document.addEventListener("DOMContentLoaded", boot);
+  })();
+  </script>
+</body>
+</html>

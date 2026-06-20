@@ -376,7 +376,7 @@
                 <a href="/S4-DemoApplication" class="btn-primary" style="background:linear-gradient(135deg,#1d4ed8,#7c3aed)">
                     <i class="fas fa-clipboard-list" style="font-size:0.85rem;margin-right:6px"></i>Deliverables Tracker
                 </a>
-                <a href="/horizon-preview/" data-horizon-link="1" class="btn-primary" style="background:linear-gradient(135deg,#0c4a6e,#075985)">
+                <a href="/horizon-v1/" data-horizon-link="1" class="btn-primary" style="background:linear-gradient(135deg,#0c4a6e,#075985)">
                     <i class="fas fa-binoculars" style="font-size:0.85rem;margin-right:6px"></i>HORIZON
                 </a>
                 <a href="/s4-contact/" class="btn-ghost">Request a Demo</a>
@@ -564,7 +564,7 @@
                 <a href="/s4-contact/" class="btn-primary">Schedule a Demo</a>
                 <a href="/program-schedule/" class="btn-ghost">Program Schedule Tool</a>
                 <a href="/S4-DemoApplication" class="btn-ghost">Deliverables Tracker</a>
-                <a href="/horizon-preview/" data-horizon-link="1" class="btn-ghost">HORIZON</a>
+                <a href="/horizon-v1/" data-horizon-link="1" class="btn-ghost">HORIZON</a>
             </div>
         </div>
     </section>
@@ -624,8 +624,12 @@
     </footer>
 
     <script>
-    /* Horizon route toggle: change this one value when switching preview/prod links. */
-    var HORIZON_TARGET = '/horizon-preview/';
+    /* Horizon route toggle: change this one value to switch the HORIZON button target.
+       Options:
+         '/horizon-v1/'      → new ground-up managed-service build (current default)
+         '/horizon-preview/' → snapshot of the prior gated single-file build
+         '/horizon/'         → original full-feature legacy app (do not expose to customers) */
+    var HORIZON_TARGET = '/horizon-v1/';
 
     /* Nav scroll effect */
     var nav = document.getElementById('mainNav');

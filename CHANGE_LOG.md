@@ -4,6 +4,26 @@
 
 ---
 
+### 2026-06-20 — HORIZON v1 Ground-Up Build + S4 Intake Tool + Site Reroute
+**Commit:** (pending)
+**Files Changed:**
+- `horizon-v1/index.html` (new) — ground-up v1 build, visual replica, read-only, 5 workspaces.
+- `horizon-v1/data.json` (new) — initial S4-published dataset (PMS-300T, 16 hulls).
+- `horizon-v1/README.md` (new) — managed-service deployment notes.
+- `horizon-intake/index.html` (new) — S4 internal data-entry tool (CSV/JSON in/out).
+- `horizon-intake/README.md` (new) — internal usage and publish workflow.
+- `index.html`
+  - `HORIZON_TARGET` defaults to `/horizon-v1/` (was `/horizon-preview/`).
+  - Site HORIZON buttons now default-point at `/horizon-v1/` and follow the toggle.
+- `CONVERSATION_LOG.md`
+  - Added Session 42 build, validation, and operating-model notes.
+
+**Why:** Deliver a clean, trustworthy v1 customers can consume while S4 retains
+operational data stewardship via a controlled intake. Preserves legacy and
+preview surfaces, but ships a focused, performant launch surface.
+
+---
+
 ### 2026-06-20 — Website Routing Update: HORIZON Button to Preview Build
 **Commit:** (pending)
 **Files Changed:**

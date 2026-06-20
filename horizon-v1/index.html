@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="en">
+<!--
+  HORIZON v1.0 — Public Read-Only Build (Managed by S4 Systems)
+  - Single-file. No build step. No backend.
+  - Reads operational data from ./data.json (S4-controlled source of truth).
+  - Visual replica of MANIFEST/HORIZON design system.
+  - Public scope: Schedule & Gantt, Data Entry (read-only display),
+    Acquisition Profile, Trends & Metrics, Command Summary, Export CSV, Print.
+  - All editing, AI, baseline, import, slide editor, etc. are intentionally
+    omitted in v1.0 and gated behind future-version releases.
+-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HORIZON — MANIFEST</title>
+  <meta name="description" content="HORIZON v1.0 — Program Schedule for PMS 300T (S4 Systems managed-service preview)." />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#fafaf9; --surface-0:#ffffff; --surface-1:#f5f5f4; --surface-2:#e7e5e4;
+      --border:#d6d3d1; --border-subtle:#e7e5e4; --border-strong:#a8a29e;
+      --text-1:#1c1917; --text-2:#292524; --text-3:#57534e; --text-4:#78716c; --text-5:#a8a29e;
+      --accent:#0c4a6e; --accent-2:#075985; --accent-bg:#f0f9ff;
+      --nav-bg:#001f3f; --nav-bg-2:#003366; --banner-text:#fafaf9;
+      --success:#166534; --success-bg:#f0fdf4;
+      --warning:#854d0e; --warning-bg:#fefce8;
+      --error:#991b1b;   --error-bg:#fef2f2;
+      --info:#0c4a6e;    --info-bg:#f0f9ff;
+      --blue-action:#1a73e8; --blue-action-dk:#185ea5;
+      --blue-action-lt:#e8f0fe; --blue-action-txt:#1557b0;
+      --destructive:#d93025; --destructive-lt:#fce8e6; --destructive-bdr:#f5c6c3;
+      --ease:cubic-bezier(.4,0,.2,1); --m-fast:100ms; --m:180ms;
+      --sidebar-w:220px; --content-px:24px; --content-py:18px;
+      --ms-ca:#92400e; --ms-soc:#c2410c; --ms-lch:#1d4ed8;
+      --ms-bt:#075985; --ms-at:#6d28d9;  --ms-del:#166534;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:hidden}
+    button{font:inherit;cursor:pointer;color:inherit}
+    input,select{font:inherit;color:inherit}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{color:var(--accent-2)}
+
+    .app{display:flex;flex-direction:column;height:100vh}
+    .banner{flex:0 0 auto;background:var(--nav-bg);color:var(--banner-text);font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1.5px;text-align:center;padding:5px 28px;border-bottom:1px solid #44403c;z-index:200}
+    .shell{flex:1;display:flex;min-height:0}
+
+    /* Sidebar */
+    .header{flex:0 0 var(--sidebar-w);background:var(--nav-bg);overflow-y:auto;display:flex;flex-direction:column;z-index:150}
+    .brand{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .brand h1{font-family:'IBM Plex Serif',Georgia,serif;font-size:18px;font-weight:500;color:var(--banner-text);letter-spacing:.2px}
+    .brand .sub{margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:rgba(250,250,249,.45)}
+    .brand .powered{margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:rgba(250,250,249,.4)}
+    .nav-section{padding:14px 0 4px;border-bottom:1px solid rgba(255,255,255,.05)}
+    .nav-section::before{content:attr(data-label);display:block;padding:0 20px 6px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:rgba(250,250,249,.45)}
+    .nav-item{display:block;width:100%;text-align:left;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:400;padding:8px 20px;border:none;border-left:2px solid transparent;background:transparent;color:rgba(250,250,249,.65);transition:all var(--m-fast) var(--ease)}
+    .nav-item:hover{background:rgba(250,250,249,.05);color:var(--banner-text);border-left-color:var(--banner-text)}
+    .nav-item.active{background:rgba(250,250,249,.07);color:var(--banner-text);border-left-color:var(--accent);font-weight:500}
+    .nav-select{width:calc(100% - 32px);margin:0 16px 10px;border:1px solid rgba(255,255,255,.18);border-radius:8px;background:rgba(255,255,255,.06);color:var(--banner-text);font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:8px 10px;outline:none}
+    .nav-select option{background:var(--nav-bg);color:var(--banner-text)}
+    .nav-footer{padding:14px 20px 18px;margin-top:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;line-height:1.8;letter-spacing:.8px;text-transform:uppercase;color:rgba(250,250,249,.32);border-top:1px solid rgba(255,255,255,.06)}
+    .nav-footer a{color:rgba(250,250,249,.55)}
+    .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#34a853;margin-right:6px;vertical-align:middle}
+    .status-dot.err{background:#ea4335}
+
+    /* Main */
+    .main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;padding:var(--content-py) var(--content-px) 0;gap:12px}
+    .page-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+    .page-head h2{font-family:'IBM Plex Serif',serif;font-size:22px;font-weight:500;letter-spacing:.1px;color:var(--text-1)}
+    .page-head .meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-4);letter-spacing:.2px}
+    .page-head .right{margin-left:auto;display:flex;gap:8px}
+
+    .toolbar{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface-0);border:1px solid var(--border);flex-wrap:wrap}
+    .tg{display:flex;align-items:center;gap:6px}
+    .tlbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-4)}
+    .tdiv{width:1px;height:22px;background:var(--border)}
+
+    .sel,.inp{font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:5px 9px;border:1px solid var(--border-strong);background:var(--surface-0);color:var(--text-1);border-radius:0;outline:none}
+    .sel:focus,.inp:focus{border-color:var(--accent)}
+    .sel.mono,.inp.mono{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.4px}
+    .yr-sel{min-width:78px}
+
+    .chip-btn{font-family:'IBM Plex Sans',sans-serif;font-size:11px;font-weight:500;padding:4px 11px;border:1px solid var(--border-strong);border-radius:99px;background:var(--surface-0);color:var(--text-2);transition:all var(--m-fast) var(--ease)}
+    .chip-btn:hover{background:var(--surface-1)}
+    .chip-btn.active{background:var(--nav-bg);border-color:var(--nav-bg);color:#fff;font-weight:600}
+
+    .btn{font-family:'IBM Plex Sans',sans-serif;font-size:11px;font-weight:500;padding:6px 12px;border:1px solid transparent;border-radius:0;background:var(--surface-0);color:var(--text-2);transition:all var(--m-fast) var(--ease);display:inline-flex;align-items:center;gap:6px}
+    .btn:hover{background:var(--surface-1);border-color:var(--border-strong)}
+    .btn.primary{background:var(--blue-action);color:#fff;border-color:var(--blue-action);border-radius:99px;padding:6px 14px}
+    .btn.primary:hover{background:#1463cf}
+    .btn.ghost{background:var(--blue-action-lt);color:var(--blue-action-txt);border-color:transparent;border-radius:99px;padding:6px 14px}
+    .btn.outline{background:var(--surface-0);color:var(--text-1);border:1px solid var(--border-strong)}
+    .btn.tiny{font-size:10px;padding:3px 9px}
+
+    /* KPI */
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+    .kpi{background:var(--surface-0);padding:12px 14px}
+    .kpi-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-4);margin-bottom:6px}
+    .kpi-val{font-family:'IBM Plex Serif',Georgia,serif;font-size:26px;font-weight:500;line-height:1;letter-spacing:-.4px;font-variant-numeric:tabular-nums;color:var(--text-1)}
+    .kpi-val.green{color:var(--success)} .kpi-val.amber{color:var(--warning)} .kpi-val.red{color:var(--error)} .kpi-val.blue{color:var(--accent)}
+
+    /* Card */
+    .card{background:var(--surface-0);border:1px solid var(--border);display:flex;flex-direction:column;min-height:0}
+    .chd{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .chd h3{font-family:'IBM Plex Serif',serif;font-size:16px;font-weight:500;letter-spacing:.1px;color:var(--text-1)}
+    .chd .count{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 9px;background:var(--surface-1);border:1px solid var(--border);letter-spacing:.6px;text-transform:uppercase;color:var(--text-3)}
+    .chd .spacer{flex:1}
+
+    .scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:24px}
+
+    /* Gantt */
+    .gantt-wrap{display:flex;min-height:0;background:var(--surface-0);height:460px;max-height:65vh}
+    .gantt-left{flex:0 0 200px;height:100%;background:var(--surface-1);border-right:1px solid var(--border);overflow:auto}
+    .gantt-right{flex:1;height:100%;overflow-x:auto;overflow-y:auto;background:var(--surface-0)}
+    .gantt-left-hdr,.gantt-right-hdr{height:36px;background:var(--surface-1);border-bottom:1px solid var(--border);display:flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-2);position:sticky;top:0;z-index:2}
+    .gantt-left-hdr{padding:0 12px;justify-content:space-between}
+    .gantt-row-name{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;fill:var(--text-1)}
+    .gantt-row-fleet{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:var(--text-4);letter-spacing:.6px;text-transform:uppercase}
+    .gantt-fy-tick{stroke:var(--border-subtle);stroke-width:1}
+    .gantt-fy-label{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;fill:var(--text-3);letter-spacing:.8px}
+    .gantt-row-stripe{fill:var(--surface-0)}
+    .gantt-row-stripe.alt{fill:#fbfaf8}
+    .gantt-span{stroke:none;opacity:.55}
+    .gantt-now-line{stroke:var(--destructive);stroke-width:2.5;stroke-dasharray:6 4}
+    .gantt-now-label{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:800;fill:var(--destructive);letter-spacing:.8px}
+
+    .legend{display:flex;align-items:center;gap:16px;padding:8px 14px;border-top:1px solid var(--border);background:var(--surface-1);flex-wrap:wrap}
+    .li{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3)}
+
+    /* Sheet */
+    .sheet-wrap{overflow:auto;background:var(--surface-0);max-height:560px}
+    table.sheet{width:100%;border-collapse:collapse;min-width:1200px}
+    .sheet th{position:sticky;top:0;z-index:2;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--text-2);text-align:left;padding:9px 12px;background:var(--surface-1);border-bottom:1px solid var(--border);white-space:nowrap;letter-spacing:.8px;text-transform:uppercase}
+    .sheet td{padding:7px 12px;border-bottom:1px solid var(--border-subtle);font-size:12px;color:var(--text-1);font-variant-numeric:tabular-nums;white-space:nowrap}
+    .sheet td:first-child{font-family:'IBM Plex Mono',monospace;font-weight:500}
+    .sheet tr.dr:hover td{background:var(--surface-1)}
+    .sheet td.empty-date{color:var(--text-5);font-style:italic}
+
+    .chip{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:99px;border:1px solid;text-transform:uppercase;letter-spacing:.7px;line-height:1.4}
+    .chip.on-track{color:var(--success);border-color:var(--success);background:var(--success-bg)}
+    .chip.at-risk{color:var(--warning);border-color:var(--warning);background:var(--warning-bg)}
+    .chip.delayed{color:var(--error);border-color:var(--error);background:var(--error-bg)}
+    .chip.not-planned{color:var(--text-4);border-color:var(--border-strong);background:var(--surface-1)}
+    .chip.craft{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:0;border:1px solid var(--border);background:var(--surface-1);color:var(--text-2)}
+
+    /* Acq panel */
+    .acq-panel{display:none}
+    .acq-panel.open{display:block}
+    table.acq{width:100%;border-collapse:collapse;min-width:760px}
+    .acq th,.acq td{padding:7px 12px;font-size:12px;border-bottom:1px solid var(--border-subtle);text-align:left}
+    .acq th{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:var(--surface-1);color:var(--text-2)}
+    .acq td:first-child{font-family:'IBM Plex Mono',monospace;font-weight:500}
+
+    /* Page sections */
+    .view{display:none}
+    .view.active{display:flex;flex-direction:column;gap:12px;min-height:0;flex:1}
+
+    /* Metrics blocks */
+    .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .metric{background:var(--surface-0);border:1px solid var(--border);padding:14px 16px}
+    .metric h4{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-4);margin-bottom:8px}
+    .metric .v{font-family:'IBM Plex Serif',Georgia,serif;font-size:30px;font-weight:500;line-height:1;color:var(--text-1);font-variant-numeric:tabular-nums}
+    .metric .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4);margin-top:6px;letter-spacing:.4px}
+
+    .bar-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-family:'IBM Plex Mono',monospace;font-size:11px}
+    .bar-row .lbl{width:64px;color:var(--text-3)}
+    .bar-row .bar{flex:1;height:14px;background:var(--surface-1);border:1px solid var(--border);position:relative}
+    .bar-row .bar .fill{height:100%;background:var(--accent)}
+    .bar-row .val{width:48px;text-align:right;color:var(--text-2);font-weight:600}
+
+    .cmd-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:12px}
+    @media (max-width:1000px){.cmd-grid{grid-template-columns:1fr}}
+    .ribbon{background:linear-gradient(135deg,var(--nav-bg) 0%,var(--nav-bg-2) 100%);color:#fff;padding:18px 22px;border:1px solid var(--nav-bg)}
+    .ribbon h3{font-family:'IBM Plex Serif',serif;font-size:18px;font-weight:500;margin-bottom:6px;letter-spacing:.1px}
+    .ribbon .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.6)}
+    .ribbon .big{font-family:'IBM Plex Serif',serif;font-size:48px;font-weight:500;line-height:1;margin-top:10px;font-variant-numeric:tabular-nums}
+    .ribbon .ok{color:#34a853}
+    .ribbon .warn{color:#fbbc04}
+
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--nav-bg);color:var(--banner-text);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;padding:11px 18px;letter-spacing:.6px;text-transform:uppercase;box-shadow:0 8px 16px rgba(28,25,23,.2);z-index:500;transform:translateY(20px);opacity:0;transition:all var(--m) var(--ease);pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.err{background:var(--destructive)}
+
+    .loading{display:flex;align-items:center;justify-content:center;height:200px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-4)}
+
+    @media print{
+      .banner,.header,.toolbar,.toast,.nav-cta,.legend,.page-head .right{display:none!important}
+      .main{padding:0}
+      body{overflow:visible}
+      .sheet-wrap{max-height:none;overflow:visible}
+      .gantt-wrap{height:auto;max-height:none}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="banner" id="bannerLine">MANIFEST · HORIZON · INTERNAL · S4 SYSTEMS · OPERATIONAL CONTINUITY</div>
+
+    <div class="shell">
+      <aside class="header">
+        <div class="brand">
+          <h1>HORIZON</h1>
+          <div class="sub">Program · Schedule · Foresight</div>
+          <div class="powered" id="brandPowered">PMS 300T · S4 Systems · MANIFEST</div>
+        </div>
+
+        <nav class="nav-section" data-label="Workspace">
+          <button class="nav-item active" data-view="schedule">Schedule &amp; Gantt</button>
+          <button class="nav-item"        data-view="data">Data Entry</button>
+          <button class="nav-item"        data-view="acq">Acquisition Profile</button>
+          <button class="nav-item"        data-view="metrics">Trends &amp; Metrics</button>
+          <button class="nav-item"        data-view="command">Command Summary</button>
+        </nav>
+
+        <nav class="nav-section" data-label="Filter Craft">
+          <select class="nav-select" id="craftSel">
+            <option value="">All Hulls</option>
+          </select>
+        </nav>
+
+        <nav class="nav-section" data-label="Status">
+          <select class="nav-select" id="statusSel">
+            <option value="all">All Status</option>
+            <option value="on-track">On Track</option>
+            <option value="at-risk">At Risk</option>
+            <option value="delayed">Delayed</option>
+            <option value="not-planned">Not Planned</option>
+          </select>
+        </nav>
+
+        <nav class="nav-section" data-label="Tools">
+          <button class="nav-item" id="btnExport">Export CSV</button>
+          <button class="nav-item" id="btnPrint">Print / PDF</button>
+        </nav>
+
+        <div class="nav-footer">
+          <div><span class="status-dot" id="srcDot"></span><span id="srcLabel">Loading…</span></div>
+          <div id="publishedAt">—</div>
+          <div>HORIZON · v1.0.0 · Managed by S4 Systems</div>
+          <div><a href="/">Return to s4ledger.com</a></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="page-head">
+          <h2 id="pageTitle">Program Schedule</h2>
+          <div class="meta" id="pageMeta">PMS 300T · All Hulls · FY26–FY28</div>
+          <div class="right">
+            <button class="btn outline" id="zoomOut" title="Zoom out">−</button>
+            <button class="btn outline" id="zoomReset"><span id="zoomLbl">100%</span></button>
+            <button class="btn outline" id="zoomIn" title="Zoom in">＋</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="tg">
+            <span class="tlbl">FY</span>
+            <select class="sel mono yr-sel" id="fyStart"></select>
+            <span style="color:var(--text-4);font-family:'IBM Plex Mono',monospace;font-size:10px">→</span>
+            <select class="sel mono yr-sel" id="fyEnd"></select>
+          </div>
+          <div class="tdiv"></div>
+          <div class="tg" id="msToggles"><span class="tlbl">Milestones</span></div>
+          <div class="tdiv"></div>
+          <div class="tg">
+            <span class="tlbl">Search</span>
+            <input class="inp" id="search" placeholder="Hull, builder, contract…" style="width:220px" />
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="kpi-lbl">Hulls Tracked</div><div class="kpi-val blue" id="kpiTotal">—</div></div>
+          <div class="kpi"><div class="kpi-lbl">On Track</div><div class="kpi-val green" id="kpiOk">—</div></div>
+          <div class="kpi"><div class="kpi-lbl">At Risk</div><div class="kpi-val amber" id="kpiRisk">—</div></div>
+          <div class="kpi"><div class="kpi-lbl">Delayed</div><div class="kpi-val red" id="kpiLate">—</div></div>
+        </div>
+
+        <!-- VIEW: Schedule & Gantt -->
+        <section class="view active" data-view="schedule">
+          <div class="scroll">
+            <section class="card">
+              <div class="chd">
+                <h3>Gantt</h3>
+                <span class="count" id="ganttCount">0 hulls</span>
+                <div class="spacer"></div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4)" id="ganttRange">FY26 → FY28</span>
+              </div>
+              <div class="gantt-wrap" id="ganttWrap">
+                <div class="gantt-left">
+                  <div class="gantt-left-hdr"><span>Hull</span><span>Fleet</span></div>
+                  <svg id="ganttLeftSvg" width="200" height="40"></svg>
+                </div>
+                <div class="gantt-right" id="ganttRightWrap">
+                  <div class="gantt-right-hdr" id="ganttRightHdr"></div>
+                  <svg id="ganttRightSvg" width="800" height="40"></svg>
+                </div>
+              </div>
+              <div class="legend" id="ganttLegend"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- VIEW: Data Entry (read-only) -->
+        <section class="view" data-view="data">
+          <div class="scroll">
+            <section class="card">
+              <div class="chd">
+                <h3>Schedule</h3>
+                <span class="count" id="sheetCount">0 rows</span>
+                <div class="spacer"></div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-4)">Read-only · published by S4 Systems</span>
+              </div>
+              <div class="sheet-wrap">
+                <table class="sheet" id="sheet"></table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- VIEW: Acquisition Profile -->
+        <section class="view" data-view="acq">
+          <div class="scroll">
+            <section class="card">
+              <div class="chd">
+                <h3>Acquisition Events</h3>
+                <span class="count">SRR · PDR · CDR · SDP · IOTE</span>
+              </div>
+              <div class="sheet-wrap">
+                <table class="acq" id="acqTable"></table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- VIEW: Trends & Metrics -->
+        <section class="view" data-view="metrics">
+          <div class="scroll">
+            <section class="card">
+              <div class="chd"><h3>Status Breakdown</h3></div>
+              <div style="padding:14px 16px" id="metricBars"></div>
+            </section>
+            <section class="card">
+              <div class="chd"><h3>Fleet Distribution</h3></div>
+              <div style="padding:14px 16px" id="fleetBars"></div>
+            </section>
+            <section class="card">
+              <div class="chd"><h3>Upcoming Deliveries (next 12 months)</h3></div>
+              <div class="sheet-wrap">
+                <table class="sheet" id="upcomingTable"></table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- VIEW: Command Summary -->
+        <section class="view" data-view="command">
+          <div class="scroll">
+            <section class="ribbon" id="cmdRibbon">
+              <div class="sub">Command Dashboard · <span id="cmdProgramLbl">PMS 300T</span></div>
+              <h3 id="cmdTitle">Program Brief</h3>
+              <div class="big ok" id="cmdBig">—</div>
+              <div class="sub" id="cmdMeta">—</div>
+            </section>
+            <div class="cmd-grid">
+              <section class="card">
+                <div class="chd"><h3>Force Disposition</h3></div>
+                <div style="padding:14px 16px" id="forceDisposition"></div>
+              </section>
+              <section class="card">
+                <div class="chd"><h3>Upcoming Decisions (next 60 days)</h3></div>
+                <div class="sheet-wrap">
+                  <table class="sheet" id="decisionsTable"></table>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function(){
+    "use strict";
+
+    var DATA_URL = "./data.json";
+    var STORAGE_PREF = "horizon_v1_prefs";
+
+    var DATA = null;
+    var PREFS = {
+      view:"schedule", craft:"", status:"all", search:"",
+      fyStart:null, fyEnd:null, msVisible:{}, zoom:1.0
+    };
+
+    function $(s,r){return (r||document).querySelector(s)}
+    function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+    function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c]})}
+    function toast(msg,isErr){var t=$("#toast");t.textContent=msg;t.className="toast show"+(isErr?" err":"");setTimeout(function(){t.className="toast"},2400)}
+
+    function ymToDate(s){
+      if(!s) return null;
+      var p=String(s).split("-").map(function(x){return parseInt(x,10)});
+      if(!p[0]||!p[1]) return null;
+      return new Date(p[0], p[1]-1, p[2]||15);
+    }
+    function fmtMonth(s){
+      var d=ymToDate(s); if(!d) return "—";
+      var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      return m[d.getMonth()]+" "+d.getFullYear();
+    }
+    function fyOfYM(s){
+      var d=ymToDate(s); if(!d) return null;
+      var m=d.getMonth()+1; return (m>=10? d.getFullYear()+1 : d.getFullYear());
+    }
+    function loadPrefs(){
+      try{var raw=localStorage.getItem(STORAGE_PREF); if(raw) Object.assign(PREFS, JSON.parse(raw))}catch(e){}
+    }
+    function savePrefs(){
+      try{localStorage.setItem(STORAGE_PREF, JSON.stringify(PREFS))}catch(e){}
+    }
+
+    function fetchData(){
+      var url = DATA_URL + "?v=" + Date.now();
+      return fetch(url,{cache:"no-store"}).then(function(r){
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        return r.json();
+      });
+    }
+
+    function filteredHulls(){
+      if(!DATA) return [];
+      var q = (PREFS.search||"").toLowerCase().trim();
+      return DATA.hulls.filter(function(h){
+        if(PREFS.craft && h.type!==PREFS.craft) return false;
+        if(PREFS.status!=="all" && h.status!==PREFS.status) return false;
+        if(q){
+          var hay = (h.designation+" "+(h.sf&&h.sf.builder||"")+" "+(h.sf&&h.sf.contract||"")+" "+h.fleet+" "+h.type).toLowerCase();
+          if(hay.indexOf(q)===-1) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderKPIs(){
+      var hulls = filteredHulls();
+      $("#kpiTotal").textContent = hulls.length;
+      $("#kpiOk").textContent    = hulls.filter(function(h){return h.status==="on-track"}).length;
+      $("#kpiRisk").textContent  = hulls.filter(function(h){return h.status==="at-risk"}).length;
+      $("#kpiLate").textContent  = hulls.filter(function(h){return h.status==="delayed"}).length;
+    }
+
+    function renderContextMeta(){
+      var program = DATA && DATA.program || {};
+      $("#pageMeta").textContent = (program.label||"")+" · "+ (PREFS.craft||"All Hulls") + " · FY"+(PREFS.fyStart%100)+"–FY"+(PREFS.fyEnd%100);
+      $("#ganttRange").textContent = "FY"+(PREFS.fyStart%100)+" → FY"+(PREFS.fyEnd%100);
+    }
+
+    function buildToolbar(){
+      var msWrap = $("#msToggles");
+      msWrap.innerHTML = '<span class="tlbl">Milestones</span>';
+      Object.keys(DATA.milestones).forEach(function(k){
+        var m = DATA.milestones[k];
+        if(PREFS.msVisible[k]==null) PREFS.msVisible[k]=true;
+        var b = document.createElement("button");
+        b.className = "chip-btn"+(PREFS.msVisible[k]?" active":"");
+        b.textContent = k;
+        b.title = m.label;
+        b.style.borderColor = "transparent";
+        b.style.background = PREFS.msVisible[k] ? m.color : "var(--surface-0)";
+        b.style.color = PREFS.msVisible[k] ? "#fff" : "var(--text-2)";
+        b.addEventListener("click", function(){
+          PREFS.msVisible[k] = !PREFS.msVisible[k];
+          b.style.background = PREFS.msVisible[k] ? m.color : "var(--surface-0)";
+          b.style.color = PREFS.msVisible[k] ? "#fff" : "var(--text-2)";
+          b.classList.toggle("active", PREFS.msVisible[k]);
+          renderGantt(); savePrefs();
+        });
+        msWrap.appendChild(b);
+      });
+
+      var craftSel = $("#craftSel");
+      var types = {};
+      DATA.hulls.forEach(function(h){ types[h.type]=true });
+      craftSel.innerHTML = '<option value="">All Hulls</option>' +
+        Object.keys(types).sort().map(function(t){
+          return '<option value="'+esc(t)+'">'+esc(t)+'</option>';
+        }).join("");
+      craftSel.value = PREFS.craft || "";
+
+      var sSel = $("#statusSel");
+      sSel.value = PREFS.status || "all";
+
+      var fyMin = (DATA.fyRange && DATA.fyRange.start) || 2024;
+      var fyMax = (DATA.fyRange && DATA.fyRange.end) || 2030;
+      var opts = "";
+      for(var y=fyMin;y<=fyMax;y++) opts += '<option value="'+y+'">FY'+String(y).slice(-2)+'</option>';
+      $("#fyStart").innerHTML = opts;
+      $("#fyEnd").innerHTML = opts;
+      if(PREFS.fyStart==null || PREFS.fyStart<fyMin || PREFS.fyStart>fyMax) PREFS.fyStart = Math.max(fyMin, 2026);
+      if(PREFS.fyEnd==null   || PREFS.fyEnd<fyMin   || PREFS.fyEnd>fyMax)   PREFS.fyEnd   = Math.min(fyMax, 2028);
+      if(PREFS.fyEnd < PREFS.fyStart) PREFS.fyEnd = PREFS.fyStart;
+      $("#fyStart").value = PREFS.fyStart;
+      $("#fyEnd").value   = PREFS.fyEnd;
+      $("#search").value  = PREFS.search || "";
+    }
+
+    function statusColor(st){
+      return st==="on-track" ? "#16a34a"
+           : st==="at-risk"  ? "#ca8a04"
+           : st==="delayed"  ? "#dc2626"
+           : "#a8a29e";
+    }
+
+    function renderGantt(){
+      var hulls = filteredHulls();
+      $("#ganttCount").textContent = hulls.length+" hulls";
+
+      var fyStart = PREFS.fyStart, fyEnd = PREFS.fyEnd;
+      var months = (fyEnd - fyStart + 1) * 12;
+      var monthW = 26 * (PREFS.zoom || 1);
+      var rowH = 28;
+      var width = months * monthW;
+      var height = Math.max(40, hulls.length*rowH);
+
+      // Header (right)
+      var hdr = $("#ganttRightHdr");
+      hdr.innerHTML = "";
+      hdr.style.width = width + "px";
+      var hsvg = '<svg width="'+width+'" height="36" xmlns="http://www.w3.org/2000/svg">';
+      for(var i=0;i<(fyEnd-fyStart+1);i++){
+        var fy = fyStart+i;
+        var x = i*12*monthW;
+        hsvg += '<line class="gantt-fy-tick" x1="'+x+'" x2="'+x+'" y1="0" y2="36" />';
+        hsvg += '<text class="gantt-fy-label" x="'+(x+8)+'" y="22">FY'+String(fy).slice(-2)+'</text>';
+      }
+      hsvg += '</svg>';
+      hdr.innerHTML = hsvg;
+
+      // Left names svg
+      var leftSvg = $("#ganttLeftSvg");
+      leftSvg.setAttribute("width", 200);
+      leftSvg.setAttribute("height", height);
+      var ltxt = "";
+      hulls.forEach(function(h,idx){
+        var y = idx*rowH;
+        ltxt += '<rect class="gantt-row-stripe '+(idx%2?'alt':'')+'" x="0" y="'+y+'" width="200" height="'+rowH+'" />';
+        ltxt += '<text class="gantt-row-name" x="12" y="'+(y+rowH/2+4)+'">'+esc(h.designation)+'</text>';
+        ltxt += '<text class="gantt-row-fleet" x="148" y="'+(y+rowH/2+4)+'">'+esc(h.fleet)+'</text>';
+      });
+      leftSvg.innerHTML = ltxt;
+
+      // Right body svg
+      var rsvg = $("#ganttRightSvg");
+      rsvg.setAttribute("width", width);
+      rsvg.setAttribute("height", height);
+
+      function xOf(ym){
+        var d = ymToDate(ym);
+        if(!d) return null;
+        var yr = d.getFullYear(), mo = d.getMonth()+1;
+        var fy = (mo>=10 ? yr+1 : yr);
+        if(fy < fyStart || fy > fyEnd) return null;
+        var fyMo = (mo>=10 ? mo-10 : mo+2);
+        var fyIdx = fy - fyStart;
+        return fyIdx*12*monthW + fyMo*monthW + monthW/2;
+      }
+
+      var body = "";
+      // backgrounds + FY ticks
+      for(var i2=0;i2<(fyEnd-fyStart+1);i2++){
+        body += '<line class="gantt-fy-tick" x1="'+(i2*12*monthW)+'" x2="'+(i2*12*monthW)+'" y1="0" y2="'+height+'" />';
+      }
+      hulls.forEach(function(h,idx){
+        var y = idx*rowH;
+        body += '<rect class="gantt-row-stripe '+(idx%2?'alt':'')+'" x="0" y="'+y+'" width="'+width+'" height="'+rowH+'" />';
+
+        // span CA → DEL
+        var caX = xOf(h.ms&&h.ms.CA);
+        var delX = xOf(h.ms&&h.ms.DEL);
+        if(caX!=null && delX!=null && delX>caX){
+          body += '<rect class="gantt-span" x="'+caX+'" y="'+(y+rowH/2-5)+'" width="'+(delX-caX)+'" height="10" fill="'+statusColor(h.status)+'" />';
+        }
+
+        // milestones
+        Object.keys(DATA.milestones).forEach(function(k){
+          if(!PREFS.msVisible[k]) return;
+          var ym = h.ms && h.ms[k];
+          if(!ym) return;
+          var x = xOf(ym);
+          if(x==null) return;
+          var col = DATA.milestones[k].color;
+          body += '<circle cx="'+x+'" cy="'+(y+rowH/2)+'" r="5" fill="'+col+'" stroke="#fff" stroke-width="1.5" />';
+        });
+      });
+
+      // Today line
+      var today = new Date();
+      var tym = today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0");
+      var tx = xOf(tym);
+      if(tx!=null){
+        body += '<line class="gantt-now-line" x1="'+tx+'" x2="'+tx+'" y1="0" y2="'+height+'" />';
+        body += '<text class="gantt-now-label" x="'+(tx+6)+'" y="14">TODAY</text>';
+      }
+      rsvg.innerHTML = body;
+
+      // legend
+      var lg = $("#ganttLegend");
+      lg.innerHTML = Object.keys(DATA.milestones).map(function(k){
+        var m = DATA.milestones[k];
+        return '<span class="li"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+m.color+'"></span>'+esc(k)+' · '+esc(m.label)+'</span>';
+      }).join("");
+    }
+
+    function renderSheet(){
+      var hulls = filteredHulls();
+      $("#sheetCount").textContent = hulls.length+" rows";
+      var msKeys = Object.keys(DATA.milestones);
+      var sfFields = [
+        {k:"contract", lbl:"Contract"},
+        {k:"builder",  lbl:"Builder"},
+        {k:"uic",      lbl:"UIC"},
+        {k:"fy_approp",lbl:"FY Approp"},
+        {k:"pm_secnav",lbl:"PM Est/SECNAV"}
+      ];
+      var h = "<thead><tr><th>Hull</th><th>Type</th><th>Fleet</th><th>Status</th>";
+      msKeys.forEach(function(k){h+="<th>"+esc(k)+"</th>"});
+      sfFields.forEach(function(f){h+="<th>"+esc(f.lbl)+"</th>"});
+      h += "</tr></thead><tbody>";
+      hulls.forEach(function(hull){
+        h += '<tr class="dr">';
+        h += '<td>'+esc(hull.designation)+'</td>';
+        h += '<td><span class="chip craft">'+esc(hull.type)+'</span></td>';
+        h += '<td>'+esc(hull.fleet)+'</td>';
+        h += '<td><span class="chip '+hull.status+'">'+esc(hull.status.replace("-"," "))+'</span></td>';
+        msKeys.forEach(function(k){
+          var d = hull.ms && hull.ms[k] || "";
+          h += '<td class="'+(d?"":"empty-date")+'">'+esc(fmtMonth(d))+'</td>';
+        });
+        sfFields.forEach(function(f){
+          var v = hull.sf && hull.sf[f.k] || "";
+          h += '<td>'+(v?esc(v):'<span style="color:var(--text-5)">—</span>')+'</td>';
+        });
+        h += '</tr>';
+      });
+      h += "</tbody>";
+      $("#sheet").innerHTML = h;
+    }
+
+    function renderAcq(){
+      var hulls = filteredHulls();
+      var codes = Object.keys(DATA.acqEvents);
+      var h = "<thead><tr><th>Hull</th><th>Type</th>";
+      codes.forEach(function(c){h+="<th>"+esc(c)+"</th>"});
+      h += "</tr></thead><tbody>";
+      hulls.forEach(function(hull){
+        h += '<tr class="dr"><td>'+esc(hull.designation)+'</td><td><span class="chip craft">'+esc(hull.type)+'</span></td>';
+        codes.forEach(function(c){
+          var d = hull.acq && hull.acq[c];
+          h += '<td class="'+(d?"":"empty-date")+'">'+esc(fmtMonth(d))+'</td>';
+        });
+        h += '</tr>';
+      });
+      h += "</tbody>";
+      $("#acqTable").innerHTML = h;
+    }
+
+    function renderMetrics(){
+      var hulls = filteredHulls();
+      var total = hulls.length || 1;
+      var groups = {"on-track":0,"at-risk":0,"delayed":0,"not-planned":0};
+      hulls.forEach(function(h){groups[h.status]=(groups[h.status]||0)+1});
+
+      var colors = {"on-track":"#16a34a","at-risk":"#ca8a04","delayed":"#dc2626","not-planned":"#a8a29e"};
+      var labels = {"on-track":"On Track","at-risk":"At Risk","delayed":"Delayed","not-planned":"Not Planned"};
+      var html = "";
+      Object.keys(groups).forEach(function(k){
+        var pct = Math.round((groups[k]/total)*100);
+        html += '<div class="bar-row"><span class="lbl">'+esc(labels[k])+'</span>'
+              + '<span class="bar"><span class="fill" style="width:'+pct+'%;background:'+colors[k]+'"></span></span>'
+              + '<span class="val">'+groups[k]+' · '+pct+'%</span></div>';
+      });
+      $("#metricBars").innerHTML = html;
+
+      var fleets = {};
+      hulls.forEach(function(h){fleets[h.fleet]=(fleets[h.fleet]||0)+1});
+      var fhtml = "";
+      Object.keys(fleets).sort().forEach(function(f){
+        var pct = Math.round((fleets[f]/total)*100);
+        fhtml += '<div class="bar-row"><span class="lbl">'+esc(f)+'</span>'
+              + '<span class="bar"><span class="fill" style="width:'+pct+'%"></span></span>'
+              + '<span class="val">'+fleets[f]+' · '+pct+'%</span></div>';
+      });
+      $("#fleetBars").innerHTML = fhtml;
+
+      // Upcoming deliveries in next 12 months
+      var now = new Date();
+      var horizon = new Date(now.getFullYear(), now.getMonth()+12, now.getDate());
+      var rows = [];
+      hulls.forEach(function(h){
+        var d = ymToDate(h.ms && h.ms.DEL);
+        if(d && d>=now && d<=horizon){
+          rows.push({hull:h.designation, type:h.type, fleet:h.fleet, status:h.status, when:fmtMonth(h.ms.DEL), sortAt:d});
+        }
+      });
+      rows.sort(function(a,b){return a.sortAt - b.sortAt});
+      var t = "<thead><tr><th>Hull</th><th>Type</th><th>Fleet</th><th>Status</th><th>Delivery</th></tr></thead><tbody>";
+      rows.forEach(function(r){
+        t += '<tr class="dr"><td>'+esc(r.hull)+'</td><td><span class="chip craft">'+esc(r.type)+'</span></td>'
+           + '<td>'+esc(r.fleet)+'</td>'
+           + '<td><span class="chip '+r.status+'">'+esc(r.status.replace("-"," "))+'</span></td>'
+           + '<td>'+esc(r.when)+'</td></tr>';
+      });
+      if(!rows.length) t += '<tr><td colspan="5" style="color:var(--text-4)">No deliveries scheduled in the next 12 months.</td></tr>';
+      t += "</tbody>";
+      $("#upcomingTable").innerHTML = t;
+    }
+
+    function renderCommand(){
+      var hulls = filteredHulls();
+      var total = hulls.length;
+      var ok = hulls.filter(function(h){return h.status==="on-track"}).length;
+      var pct = total ? Math.round((ok/total)*100) : 0;
+      $("#cmdProgramLbl").textContent = (DATA.program && DATA.program.label) || "Program";
+      $("#cmdTitle").textContent = (DATA.program && DATA.program.label || "")+" Program Brief";
+      var big = $("#cmdBig");
+      big.textContent = pct + "%";
+      big.className = "big " + (pct>=80?"ok":pct>=60?"warn":"");
+      var when = new Date();
+      $("#cmdMeta").textContent = total+" hulls tracked · "+when.toDateString();
+
+      // Force disposition
+      var groups = {"on-track":0,"at-risk":0,"delayed":0,"not-planned":0};
+      hulls.forEach(function(h){groups[h.status]=(groups[h.status]||0)+1});
+      var fd = '<div class="metric-grid">';
+      fd += '<div class="metric"><h4>Total Hulls</h4><div class="v">'+total+'</div></div>';
+      fd += '<div class="metric"><h4>On Track</h4><div class="v" style="color:var(--success)">'+groups["on-track"]+'</div><div class="sub">'+(total?Math.round(groups["on-track"]/total*100):0)+'%</div></div>';
+      fd += '<div class="metric"><h4>At Risk</h4><div class="v" style="color:var(--warning)">'+groups["at-risk"]+'</div><div class="sub">'+(total?Math.round(groups["at-risk"]/total*100):0)+'%</div></div>';
+      fd += '<div class="metric"><h4>Delayed</h4><div class="v" style="color:var(--error)">'+groups["delayed"]+'</div><div class="sub">'+(total?Math.round(groups["delayed"]/total*100):0)+'%</div></div>';
+      fd += '</div>';
+      $("#forceDisposition").innerHTML = fd;
+
+      // Decisions next 60 days
+      var now = new Date();
+      var soon = new Date(now.getTime() + 60*86400000);
+      var rows = [];
+      hulls.forEach(function(h){
+        Object.keys(DATA.milestones).forEach(function(k){
+          var ym = h.ms && h.ms[k];
+          var d = ymToDate(ym);
+          if(d && d>=now && d<=soon){
+            rows.push({hull:h.designation, ms:k, when:fmtMonth(ym), days:Math.round((d-now)/86400000), sortAt:d});
+          }
+        });
+      });
+      rows.sort(function(a,b){return a.sortAt - b.sortAt});
+      var t = "<thead><tr><th>Hull</th><th>MS</th><th>Date</th><th>Window</th></tr></thead><tbody>";
+      rows.forEach(function(r){
+        t += '<tr class="dr"><td>'+esc(r.hull)+'</td><td><span class="chip craft">'+esc(r.ms)+'</span></td>'
+           + '<td>'+esc(r.when)+'</td><td>in '+r.days+'d</td></tr>';
+      });
+      if(!rows.length) t += '<tr><td colspan="4" style="color:var(--text-4)">No decisions in the next 60 days.</td></tr>';
+      t += "</tbody>";
+      $("#decisionsTable").innerHTML = t;
+    }
+
+    function renderAll(){
+      if(!DATA) return;
+      buildToolbar();
+      renderContextMeta();
+      renderKPIs();
+      renderGantt();
+      renderSheet();
+      renderAcq();
+      renderMetrics();
+      renderCommand();
+    }
+
+    function switchView(name){
+      PREFS.view = name;
+      savePrefs();
+      $$(".nav-item[data-view]").forEach(function(b){
+        b.classList.toggle("active", b.dataset.view===name);
+      });
+      $$(".view").forEach(function(s){
+        s.classList.toggle("active", s.dataset.view===name);
+      });
+      var titles = {
+        schedule:"Program Schedule",
+        data:"Data Entry",
+        acq:"Acquisition Profile",
+        metrics:"Trends & Metrics",
+        command:"Command Summary"
+      };
+      $("#pageTitle").textContent = titles[name] || "HORIZON";
+    }
+
+    function exportCSV(){
+      if(!DATA) return;
+      var hulls = filteredHulls();
+      var msKeys = Object.keys(DATA.milestones);
+      var sf = ["contract","builder","uic","fy_approp","pm_secnav"];
+      var head = ["designation","type","fleet","status"].concat(msKeys.map(function(k){return "ms_"+k})).concat(sf);
+      var lines = [head.join(",")];
+      hulls.forEach(function(h){
+        var row = [h.designation, h.type, h.fleet, h.status];
+        msKeys.forEach(function(k){row.push((h.ms&&h.ms[k])||"")});
+        sf.forEach(function(k){row.push((h.sf&&h.sf[k])||"")});
+        lines.push(row.map(function(v){
+          v = String(v==null?"":v);
+          return /[,"\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+        }).join(","));
+      });
+      var blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "horizon_v1_schedule.csv"; document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); a.remove()},250);
+      toast("CSV exported");
+    }
+
+    function wire(){
+      $$(".nav-item[data-view]").forEach(function(b){
+        b.addEventListener("click", function(){switchView(b.dataset.view)});
+      });
+      $("#craftSel").addEventListener("change", function(){ PREFS.craft=this.value; savePrefs(); renderAll() });
+      $("#statusSel").addEventListener("change", function(){ PREFS.status=this.value; savePrefs(); renderAll() });
+      $("#search").addEventListener("input", function(){ PREFS.search=this.value; savePrefs(); renderKPIs(); renderSheet(); renderAcq(); renderGantt(); renderMetrics(); renderCommand() });
+      $("#fyStart").addEventListener("change", function(){ PREFS.fyStart=+this.value; if(PREFS.fyEnd<PREFS.fyStart){PREFS.fyEnd=PREFS.fyStart; $("#fyEnd").value=PREFS.fyEnd} savePrefs(); renderContextMeta(); renderGantt() });
+      $("#fyEnd").addEventListener("change", function(){ PREFS.fyEnd=+this.value; if(PREFS.fyEnd<PREFS.fyStart){PREFS.fyStart=PREFS.fyEnd; $("#fyStart").value=PREFS.fyStart} savePrefs(); renderContextMeta(); renderGantt() });
+      $("#zoomIn").addEventListener("click", function(){PREFS.zoom=Math.min(2,(PREFS.zoom||1)+0.1); $("#zoomLbl").textContent=Math.round(PREFS.zoom*100)+"%"; savePrefs(); renderGantt()});
+      $("#zoomOut").addEventListener("click", function(){PREFS.zoom=Math.max(0.5,(PREFS.zoom||1)-0.1); $("#zoomLbl").textContent=Math.round(PREFS.zoom*100)+"%"; savePrefs(); renderGantt()});
+      $("#zoomReset").addEventListener("click", function(){PREFS.zoom=1; $("#zoomLbl").textContent="100%"; savePrefs(); renderGantt()});
+      $("#btnExport").addEventListener("click", exportCSV);
+      $("#btnPrint").addEventListener("click", function(){window.print()});
+
+      // Keep left/right gantt vertically synced
+      var l = $(".gantt-left"), r = $("#ganttRightWrap"), syncing=false;
+      l.addEventListener("scroll", function(){if(syncing)return;syncing=true;r.scrollTop=l.scrollTop;syncing=false});
+      r.addEventListener("scroll", function(){if(syncing)return;syncing=true;l.scrollTop=r.scrollTop;syncing=false});
+    }
+
+    function setSource(ok, label){
+      $("#srcDot").className = "status-dot"+(ok?"":" err");
+      $("#srcLabel").textContent = label;
+    }
+
+    function boot(){
+      loadPrefs();
+      wire();
+      switchView(PREFS.view || "schedule");
+      $("#zoomLbl").textContent = Math.round((PREFS.zoom||1)*100)+"%";
+
+      fetchData().then(function(j){
+        DATA = j;
+        if(DATA && DATA.program){
+          $("#brandPowered").textContent = (DATA.program.id||"")+" · S4 Systems · MANIFEST";
+          $("#bannerLine").textContent = "MANIFEST · HORIZON · INTERNAL · S4 SYSTEMS · "+(DATA.program.label||"OPERATIONAL CONTINUITY");
+        }
+        $("#publishedAt").textContent = "Published " + (DATA.publishedAt ? new Date(DATA.publishedAt).toLocaleString() : "—");
+        setSource(true, "Live");
+        renderAll();
+      }).catch(function(e){
+        setSource(false, "Source error");
+        $("#publishedAt").textContent = "Source unreachable";
+        var card = '<section class="card"><div class="chd"><h3>Data unavailable</h3></div>'
+          + '<div style="padding:16px;color:var(--text-3);font-family:\'IBM Plex Mono\',monospace;font-size:11px">'
+          + 'Unable to load <code>./data.json</code>. S4 Systems publishes operational data through a controlled intake. '
+          + 'Please refresh shortly. Details: '+esc(e.message)+'</div></section>';
+        document.querySelectorAll(".view").forEach(function(v){v.innerHTML='<div class="scroll">'+card+'</div>'});
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", boot);
+  })();
+  </script>
+</body>
+</html>
