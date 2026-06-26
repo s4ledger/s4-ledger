@@ -4,6 +4,16 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 3.3 (Multi-Step Planner)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/planner.py` (new) — heuristic + LLM-backed planner. Chains tools deterministically for common phrases ("Gate 5 package" etc.).
+- `s4ight/backend/agents.py` — `Orchestrator.route` tries planner first; on hit, runs each step and composes an executive-markdown synthesis plus `plan_steps` payload.
+- `s4ight/backend/main.py`, `api/s4ight.py` — `ChatResponse` carries optional `plan_steps`.
+- `s4ight/index.html` — renders each plan step's output via `renderToolResult` so all deliverables show inline.
+
+---
+
 ### 2026-06-26 — S4ight Wave 3.2 (Citation Popovers)
 **Commit:** (pending)
 **Files Changed:**

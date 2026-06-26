@@ -1,5 +1,62 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.4 — S4ight Wave 3.2: Citation Popovers (2026-06-26)
+## Last Updated: Session 43.5 — S4ight Wave 3.3: Multi-Step Planner (2026-06-26)
+
+---
+
+## Session 43.5 — S4ight Wave 3.3: Multi-Step Planner (2026-06-26)
+
+**Goal:** Single-prompt orchestration of multiple structured deliverables.
+For prompts like "prepare my Gate 5 package", S4ight now plans and runs
+a sequence of tools and returns the full set of artifacts in one turn.
+
+**New / modified files:**
+- `s4ight/backend/planner.py` (new):
+  - **Heuristic plans** for the highest-value phrases ("Gate 4/5/6
+    package", "full sustainment package", "ILA readiness", "program
+    health sweep") — no LLM cost, deterministic.
+  - **LLM-backed planner** as fallback. Uses OpenAI `response_format`
+    `json_object` for safe JSON. Tools and arg names allow-listed; max
+    4 steps; no duplicates.
+  - `plan()` → ordered steps; `execute()` runs them via existing tools.
+- `s4ight/backend/agents.py`:
+  - `Orchestrator.route` tries the planner first. If any step succeeds,
+    it returns a "Planner" agent response carrying:
+      - executive-markdown synthesis
+      - `plan_steps`: each step's tool name, args, output
+  - Updates memory with a compact record of the plan run.
+- `s4ight/backend/main.py` + `api/s4ight.py` — `ChatResponse` now
+  carries an optional `plan_steps` array.
+- `s4ight/index.html` — for any response with `plan_steps`, the UI
+  renders each step's tool output using `renderToolResult` (so the
+  user sees four properly-formatted deliverables in sequence).
+
+**Heuristic chains:**
+- `Gate 5 package` → outline + LCSP draft + risk register + ILA gap analysis
+- `Gate 4 package` → outline + LCSP draft + risk register
+- `Gate 6 package` → outline + LCSP draft + risk register + IMS triage
+- `ILA readiness` → ILA gap + LCSP draft + risk register
+- `Program health sweep` → EVMS triage + IMS triage + risk register
+- `Full sustainment package` → LCSP draft + ILS checklist + risk register + ILA gap
+
+**Differentiation:** generic AI tools make you ask four times. S4ight
+recognizes the macro intent and delivers the whole package in one turn,
+all of it structured and cite-backed.
+
+**Validation:**
+- All 13 backend modules + Vercel handler import cleanly.
+- Heuristic dry-run for "Gate 5 package" returns and executes the
+  expected 4-step chain.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health`
+
+**Next (Wave 4 candidates):**
+- Audit drain to Supabase (persistent JSONL for ATO retention).
+- Auth + program-scoped RBAC.
+- Server-Sent Events streaming for first-token latency.
+- Export deliverables (each plan step → Markdown / PDF / DOCX download).
+- Eval harness: add multi-step golden Q/A.
 
 ---
 

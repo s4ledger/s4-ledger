@@ -253,6 +253,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             "engine": result.get("engine"),
             "tool_used": result.get("tool_used"),
             "tool_result": result.get("tool_result"),
+            "plan_steps": result.get("plan_steps"),
             "session_id": session_id,
             "request_id": request_id,
             "elapsed_ms": elapsed_ms,

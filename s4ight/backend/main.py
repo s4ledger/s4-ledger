@@ -82,6 +82,7 @@ class ChatResponse(BaseModel):
     engine: Optional[str] = None
     tool_used: Optional[str] = None
     tool_result: Optional[Dict[str, Any]] = None
+    plan_steps: Optional[List[Dict[str, Any]]] = None
     session_id: str
     elapsed_ms: int
 
@@ -159,6 +160,7 @@ async def chat(req: ChatRequest) -> ChatResponse:
         engine=result.get("engine"),
         tool_used=result.get("tool_used"),
         tool_result=result.get("tool_result"),
+        plan_steps=result.get("plan_steps"),
         session_id=session_id,
         elapsed_ms=elapsed_ms,
     )

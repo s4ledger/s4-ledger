@@ -17,6 +17,7 @@ from retriever import build_context, get_grounded_response
 from tools import AVAILABLE_TOOLS
 from memory import store as memory_store, ConversationMemory
 from llm_providers import get_provider
+from planner import plan as plan_query, execute as execute_plan
 from config import REQUIRE_LLM
 
 log = logging.getLogger("s4ight.agents")
@@ -319,8 +320,82 @@ class Orchestrator:
         program: str = "PMS 325",
         session_id: str = "default",
     ) -> Dict[str, Any]:
+        # 1) Try the multi-step planner. Triggers on phrases like
+        #    "prepare my Gate 5 package", "full sustainment package", etc.
+        try:
+            steps = plan_query(query, program)
+        except Exception as e:  # pragma: no cover
+            log.warning("Planner failed: %s", e)
+            steps = []
+
+        if steps:
+            results = execute_plan(steps, program)
+            results = [r for r in results if "output" in r]
+            if results:
+                return self._compose_multi_step_response(
+                    query=query,
+                    program=program,
+                    session_id=session_id,
+                    steps=steps,
+                    results=results,
+                )
+
+        # 2) Single-agent fallback (existing behaviour).
         agent = self._pick(query)
         return agent.run(query=query, program=program, session_id=session_id)
+
+    # ----- Multi-step response composer -----
+
+    def _compose_multi_step_response(
+        self,
+        query: str,
+        program: str,
+        session_id: str,
+        steps: List[Dict[str, Any]],
+        results: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        # Build an executive markdown summary referencing each deliverable.
+        lines: List[str] = []
+        lines.append(f"## Multi-step plan executed — {program}")
+        lines.append("")
+        lines.append("S4ight ran a coordinated set of tools to produce the deliverables below.")
+        lines.append("")
+        lines.append("**Plan:**")
+        for i, s in enumerate(steps, start=1):
+            reason = s.get("reason") or ""
+            lines.append(f"{i}. `{s['tool']}` — {reason}".rstrip(" —"))
+        lines.append("")
+        lines.append("**Deliverables produced this turn:**")
+        for r in results:
+            lines.append(f"- `{r['tool']}` ✓")
+        lines.append("")
+        lines.append("### Next actions")
+        lines.append("- Review each deliverable below.")
+        lines.append("- Adjust scope (program / platform / section) and rerun if needed.")
+        lines.append("- Tie outputs to the next gate review or sustainment decision event.")
+
+        synthesis = "\n".join(lines)
+
+        # Update memory with a compact record of what happened.
+        mem: ConversationMemory = memory_store.get(session_id)
+        mem.add_turn("user", query, program=program, agent="Planner")
+        mem.add_turn(
+            "assistant",
+            f"Ran {len(results)}-step plan: " + ", ".join(r["tool"] for r in results),
+            program=program,
+            agent="Planner",
+        )
+
+        return {
+            "agent": "Planner",
+            "focus": "Multi-step orchestration",
+            "response": synthesis,
+            "engine": "planner",
+            "sources": [],
+            "tool_used": None,
+            "tool_result": None,
+            "plan_steps": [{"tool": r["tool"], "output": r["output"], "args": r.get("args", {}), "reason": r.get("reason", "")} for r in results],
+        }
 
 
 orchestrator = Orchestrator()

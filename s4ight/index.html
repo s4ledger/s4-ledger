@@ -486,6 +486,13 @@
       if (j.tool_result) {
         addMsg("tool", renderToolResult(j.tool_used, j.tool_result), { head: `tool: ${j.tool_used}` });
       }
+      if (Array.isArray(j.plan_steps) && j.plan_steps.length) {
+        j.plan_steps.forEach((step) => {
+          addMsg("tool", renderToolResult(step.tool, step.output), {
+            head: `plan step · ${step.tool}`
+          });
+        });
+      }
     } catch (e) {
       placeholder.remove();
       addMsg("assistant", `<span style="color: var(--danger)">Error: ${escapeHtml(String(e.message || e))}</span>`);
