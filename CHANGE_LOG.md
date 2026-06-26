@@ -4,6 +4,13 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 4.1 (Deliverable Export: MD / DOCX / PDF)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/index.html` — client-side exporters (marked + DOMPurify already loaded; added `docx@8.5` + `html2pdf.js@0.10` from cdn.jsdelivr). `renderToolResult` returns `{md, html, title}`. `addMsg` accepts `extras.exportable` and renders an export bar (Copy MD · MD · DOCX · PDF). Every assistant + tool + planner-step message is now exportable.
+
+---
+
 ### 2026-06-26 — S4ight Wave 3.3 (Multi-Step Planner)
 **Commit:** (pending)
 **Files Changed:**

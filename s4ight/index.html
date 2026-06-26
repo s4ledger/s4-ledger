@@ -7,6 +7,8 @@
   <title>S4ight — S4 Systems AI (Preview)</title>
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
   <style>
     :root {
       --bg: #0b1220;
@@ -170,6 +172,16 @@
       cursor: pointer; font-size: 14px; padding: 0 4px;
     }
     .docitem.uploading { opacity: 0.7; }
+    .export-bar {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+      padding-top: 8px; border-top: 1px dashed var(--line);
+    }
+    .export-bar button {
+      width: auto; padding: 4px 10px; font-size: 11.5px;
+      background: #0f1830; border: 1px solid var(--line); color: var(--text);
+      cursor: pointer; border-radius: 6px;
+    }
+    .export-bar button:hover { border-color: var(--accent-2); color: var(--accent-2); }
     .sources { color: var(--muted); font-size: 12px; margin-top: 6px; }
     .sources span { display: inline-block; background: #0f1830; padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
 
@@ -369,9 +381,227 @@
       }).join("");
       el.appendChild(s);
     }
+    if (extras.exportable && extras.exportable.md) {
+      el.appendChild(buildExportBar(extras.exportable));
+    }
     chat.appendChild(el);
     chat.scrollTop = chat.scrollHeight;
     return el;
+  }
+
+  // ----- Export helpers -----
+  function safeFilename(s) {
+    return (s || "deliverable")
+      .replace(/[\/\\:*?"<>|]/g, "")
+      .replace(/\s+/g, "_")
+      .slice(0, 80);
+  }
+
+  function triggerDownload(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
+  }
+
+  function exportMarkdown(md, title) {
+    const stamp = new Date().toISOString().slice(0, 10);
+    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+    triggerDownload(blob, `${safeFilename(title)}_${stamp}.md`);
+  }
+
+  function exportPDF(html, title) {
+    if (!window.html2pdf) { alert("PDF library not loaded yet — try again in a moment."); return; }
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "padding:24px;font-family:Helvetica,Arial,sans-serif;color:#0a1020;background:#fff;line-height:1.45;";
+    wrap.innerHTML = `<h2 style="margin:0 0 12px;color:#0a1020">${escapeHtml(title || "S4ight Deliverable")}</h2>` +
+      `<div style="font-size:11px;color:#475569;margin-bottom:12px">S4ight · S4 Systems, LLC · ${new Date().toLocaleString()}</div>` +
+      `<div>${html}</div>`;
+    // Tables need light styling for print.
+    wrap.querySelectorAll("table").forEach(t => {
+      t.style.borderCollapse = "collapse";
+      t.style.width = "100%";
+      t.style.fontSize = "11px";
+    });
+    wrap.querySelectorAll("th,td").forEach(td => {
+      td.style.border = "1px solid #cbd5e1";
+      td.style.padding = "5px 7px";
+      td.style.textAlign = "left";
+    });
+    window.html2pdf().set({
+      margin: 12,
+      filename: `${safeFilename(title)}_${new Date().toISOString().slice(0,10)}.pdf`,
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+    }).from(wrap).save();
+  }
+
+  // Lightweight markdown -> DOCX converter for the patterns we emit
+  // (paragraphs, bold, lists, blockquotes, fenced code, GitHub tables).
+  function buildDocxParagraphsFromMarkdown(md, title) {
+    if (!window.docx) return null;
+    const d = window.docx;
+    const out = [];
+    out.push(new d.Paragraph({
+      text: title || "S4ight Deliverable",
+      heading: d.HeadingLevel.HEADING_1,
+    }));
+    out.push(new d.Paragraph({
+      children: [new d.TextRun({
+        text: `S4ight · S4 Systems · ${new Date().toLocaleString()}`,
+        italics: true, color: "475569", size: 18
+      })]
+    }));
+    out.push(new d.Paragraph({ text: "" }));
+
+    const lines = md.split("\n");
+    let inCode = false; let codeBuf = [];
+    let tableBuf = null; // {head:[], rows:[[]]}
+
+    function flushTable() {
+      if (!tableBuf) return;
+      const rows = [];
+      if (tableBuf.head.length) {
+        rows.push(new d.TableRow({
+          children: tableBuf.head.map(h => new d.TableCell({
+            children: [new d.Paragraph({ children: [new d.TextRun({ text: h, bold: true })] })],
+            shading: { fill: "0F1830", color: "auto", type: d.ShadingType.CLEAR }
+          }))
+        }));
+      }
+      for (const r of tableBuf.rows) {
+        rows.push(new d.TableRow({
+          children: r.map(cell => new d.TableCell({
+            children: [new d.Paragraph(cell)]
+          }))
+        }));
+      }
+      out.push(new d.Table({ rows, width: { size: 100, type: d.WidthType.PERCENTAGE } }));
+      tableBuf = null;
+    }
+
+    function paragraphFromInline(text) {
+      // Bold splitting on **foo**
+      const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
+      const runs = parts.map(p => {
+        if (p.startsWith("**") && p.endsWith("**")) {
+          return new d.TextRun({ text: p.slice(2, -2), bold: true });
+        }
+        return new d.TextRun({ text: p });
+      });
+      return new d.Paragraph({ children: runs });
+    }
+
+    for (let raw of lines) {
+      if (raw.trim().startsWith("```")) {
+        if (inCode) {
+          out.push(new d.Paragraph({
+            children: [new d.TextRun({ text: codeBuf.join("\n"), font: "Menlo", size: 18 })]
+          }));
+          codeBuf = []; inCode = false;
+        } else {
+          inCode = true;
+        }
+        continue;
+      }
+      if (inCode) { codeBuf.push(raw); continue; }
+
+      const line = raw.replace(/\r$/, "");
+      const trimmed = line.trim();
+
+      // Table row?
+      if (/^\|.+\|$/.test(trimmed)) {
+        const cells = trimmed.slice(1, -1).split("|").map(s => s.trim());
+        const isSep = cells.every(c => /^-{2,}$/.test(c.replace(/:/g, "")));
+        if (isSep) continue;
+        if (!tableBuf) tableBuf = { head: cells, rows: [] };
+        else tableBuf.rows.push(cells);
+        continue;
+      } else if (tableBuf) {
+        flushTable();
+      }
+
+      if (!trimmed) { out.push(new d.Paragraph({ text: "" })); continue; }
+
+      // Headings
+      let m;
+      if ((m = /^(#{1,4})\s+(.*)$/.exec(trimmed))) {
+        const lvl = m[1].length;
+        const head = [d.HeadingLevel.HEADING_1, d.HeadingLevel.HEADING_2,
+                      d.HeadingLevel.HEADING_3, d.HeadingLevel.HEADING_4][lvl - 1];
+        out.push(new d.Paragraph({ text: m[2], heading: head }));
+        continue;
+      }
+      // Blockquote
+      if (trimmed.startsWith("> ")) {
+        out.push(new d.Paragraph({
+          children: [new d.TextRun({ text: trimmed.slice(2), italics: true, color: "475569" })],
+          indent: { left: 360 },
+        }));
+        continue;
+      }
+      // Ordered list
+      if ((m = /^(\d+)\.\s+(.*)$/.exec(trimmed))) {
+        out.push(new d.Paragraph({
+          children: [
+            new d.TextRun({ text: `${m[1]}. `, bold: true }),
+            ...paragraphFromInline(m[2]).options.children,
+          ],
+          indent: { left: 360 },
+        }));
+        continue;
+      }
+      // Unordered list
+      if ((m = /^[-*]\s+(.*)$/.exec(trimmed))) {
+        out.push(new d.Paragraph({
+          children: [
+            new d.TextRun({ text: "• ", bold: true }),
+            ...paragraphFromInline(m[1]).options.children,
+          ],
+          indent: { left: 360 },
+        }));
+        continue;
+      }
+      // Regular paragraph
+      out.push(paragraphFromInline(trimmed));
+    }
+    flushTable();
+    return out;
+  }
+
+  async function exportDOCX(md, title) {
+    if (!window.docx) { alert("DOCX library not loaded yet — try again in a moment."); return; }
+    const paragraphs = buildDocxParagraphsFromMarkdown(md, title);
+    if (!paragraphs) return;
+    const d = window.docx;
+    const doc = new d.Document({
+      creator: "S4ight",
+      title: title || "S4ight Deliverable",
+      description: "Generated by S4ight",
+      sections: [{ properties: {}, children: paragraphs }],
+    });
+    const blob = await d.Packer.toBlob(doc);
+    triggerDownload(blob, `${safeFilename(title)}_${new Date().toISOString().slice(0,10)}.docx`);
+  }
+
+  function buildExportBar(exp) {
+    const bar = document.createElement("div");
+    bar.className = "export-bar";
+    const mkBtn = (label, fn) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = label;
+      b.addEventListener("click", fn);
+      return b;
+    };
+    bar.appendChild(mkBtn("Copy MD", async () => {
+      try { await navigator.clipboard.writeText(exp.md); }
+      catch { /* ignore */ }
+    }));
+    bar.appendChild(mkBtn("Download .md", () => exportMarkdown(exp.md, exp.title)));
+    bar.appendChild(mkBtn("Download .docx", () => exportDOCX(exp.md, exp.title)));
+    bar.appendChild(mkBtn("Download .pdf", () => exportPDF(exp.html, exp.title)));
+    return bar;
   }
 
   function formatAssistant(text) {
@@ -380,19 +610,24 @@
 
   function renderToolResult(name, result) {
     if (!result || typeof result !== "object") {
-      return "<pre>" + escapeHtml(String(result)) + "</pre>";
+      const md = String(result);
+      return { md, html: "<pre>" + escapeHtml(md) + "</pre>" };
     }
     let md = "";
+    let title = name;
     if (name === "generate_ils_checklist" && result.checklist_items) {
-      md += `**ILS Checklist — ${result.element} on ${result.platform}**\n\n`;
+      title = `ILS Checklist — ${result.element} on ${result.platform}`;
+      md += `**${title}**\n\n`;
       md += result.checklist_items.map((x, i) => `${i + 1}. ${x}`).join("\n");
       if (result.notes) md += `\n\n> ${result.notes}`;
     } else if (name === "generate_acquisition_outline" && result.recommended_sections) {
-      md += `**${result.milestone} Outline — ${result.program}**\n\n`;
+      title = `${result.milestone} Outline — ${result.program}`;
+      md += `**${title}**\n\n`;
       md += result.recommended_sections.map((x, i) => `${i + 1}. ${x}`).join("\n");
       if (result.s4_recommendation) md += `\n\n> ${result.s4_recommendation}`;
     } else if (name === "generate_risk_register" && Array.isArray(result.risks)) {
-      md += `**Risk Register — ${result.program}**\n\n`;
+      title = `Risk Register — ${result.program}`;
+      md += `**${title}**\n\n`;
       md += "| ID | Title | Category | L | C | Mitigation |\n";
       md += "|----|-------|----------|---|---|------------|\n";
       for (const r of result.risks) {
@@ -400,28 +635,32 @@
       }
       if (result.notes) md += `\n> ${result.notes}`;
     } else if (name === "draft_lcsp_section" && result.draft) {
-      md += `**LCSP Draft — ${result.section} (${result.program})**\n\n${result.draft}`;
+      title = `LCSP Draft — ${result.section} (${result.program})`;
+      md += `**${title}**\n\n${result.draft}`;
     } else if (name === "triage_ims_critical_path" && result.findings) {
-      md += `**IMS Critical-Path Triage — ${result.program}**\n\n`;
+      title = `IMS Critical-Path Triage — ${result.program}`;
+      md += `**${title}**\n\n`;
       md += "| # | Finding | Severity | Action |\n|---|---------|----------|--------|\n";
       result.findings.forEach((f, i) => {
         md += `| ${i + 1} | ${f.finding} | ${f.severity} | ${f.action} |\n`;
       });
     } else if (name === "triage_evms_variance" && result.findings) {
-      md += `**EVMS Variance Triage — ${result.program}**\n\n`;
+      title = `EVMS Variance Triage — ${result.program}`;
+      md += `**${title}**\n\n`;
       md += "| Metric | Value | Verdict | Action |\n|--------|-------|---------|--------|\n";
       result.findings.forEach((f) => {
         md += `| ${f.metric} | ${f.value} | ${f.verdict} | ${f.action} |\n`;
       });
     } else if (name === "gap_analyze_ila_finding" && result.gaps) {
-      md += `**ILA Gap Analysis — ${result.finding_title || ""}**\n\n`;
+      title = `ILA Gap Analysis — ${result.finding_title || ""}`;
+      md += `**${title}**\n\n`;
       md += result.gaps.map((g, i) =>
         `${i + 1}. **${g.ips_element}** — ${g.gap}\n   - Owner: ${g.owner}\n   - Due: ${g.due}\n   - Success: ${g.success_criteria}`
       ).join("\n");
     } else {
       md = "```json\n" + JSON.stringify(result, null, 2) + "\n```";
     }
-    return renderMarkdown(md);
+    return { md, html: renderMarkdown(md), title };
   }
 
   async function checkHealth() {
@@ -489,18 +728,30 @@
 
       const head = `${j.agent || "S4ight"} · ${j.engine || "engine"} · ${j.elapsed_ms}ms`;
       placeholder.remove();
-      addMsg("assistant", formatAssistant(j.response || ""), {
+      const assistantMd = j.response || "";
+      addMsg("assistant", formatAssistant(assistantMd), {
         head,
-        sources: j.sources || []
+        sources: j.sources || [],
+        exportable: assistantMd.trim() ? {
+          md: assistantMd,
+          html: renderMarkdown(assistantMd),
+          title: `S4ight Response · ${programSel.value}`
+        } : null
       });
 
       if (j.tool_result) {
-        addMsg("tool", renderToolResult(j.tool_used, j.tool_result), { head: `tool: ${j.tool_used}` });
+        const r = renderToolResult(j.tool_used, j.tool_result);
+        addMsg("tool", r.html, {
+          head: `tool: ${j.tool_used}`,
+          exportable: { md: r.md, html: r.html, title: r.title }
+        });
       }
       if (Array.isArray(j.plan_steps) && j.plan_steps.length) {
         j.plan_steps.forEach((step) => {
-          addMsg("tool", renderToolResult(step.tool, step.output), {
-            head: `plan step · ${step.tool}`
+          const r = renderToolResult(step.tool, step.output);
+          addMsg("tool", r.html, {
+            head: `plan step · ${step.tool}`,
+            exportable: { md: r.md, html: r.html, title: r.title }
           });
         });
       }

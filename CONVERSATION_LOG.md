@@ -1,5 +1,53 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.5 — S4ight Wave 3.3: Multi-Step Planner (2026-06-26)
+## Last Updated: Session 43.7 — S4ight Wave 4.1: Deliverable Export (MD/DOCX/PDF) (2026-06-26)
+
+---
+
+## Session 43.7 — S4ight Wave 4.1: Deliverable Export (2026-06-26)
+
+**Goal:** Make every S4ight output a downloadable artifact, not just chat.
+Users can now grab any assistant response, tool output, or planner step
+as Markdown, DOCX, or PDF in one click.
+
+**Approach:** **Client-side** export — keeps Vercel function time low,
+no server round-trip needed. Uses cdn.jsdelivr (already CSP-allowed):
+- `marked@12` + `DOMPurify@3` (already loaded) for safe markdown HTML.
+- `docx@8.5` UMD bundle to generate proper Word `.docx` files in the browser.
+- `html2pdf.js@0.10` for vector PDF output with on-brand styling.
+
+**New / modified files:**
+- `s4ight/index.html`:
+  - Loaded `docx` and `html2pdf` from cdn.jsdelivr.
+  - `renderToolResult` now returns `{md, html, title}` (was raw HTML).
+    Backwards-compatible with the citation popovers and message
+    rendering.
+  - `addMsg(role, text, extras)` accepts `extras.exportable = {md,
+    html, title}`. When present, the message gets an export bar with
+    four buttons:
+      - **Copy MD** — copies the markdown source to clipboard.
+      - **Download .md** — `.md` file with timestamped name.
+      - **Download .docx** — proper Word doc built via the `docx`
+        library (headings, bold, lists, blockquotes, **tables**,
+        fenced code).
+      - **Download .pdf** — PDF rendered from the styled HTML
+        snapshot via html2pdf.js. Brand header + timestamp footer.
+  - Every assistant response **and** every tool / plan-step output now
+    carries `exportable`, so any deliverable in the conversation can be
+    exported individually.
+  - Filenames sanitized; timestamped (YYYY-MM-DD).
+
+**Differentiation:** S4ight is now a deliverable factory, not a chat
+window. A user can ask for a "Gate 5 package", get four structured
+artifacts, and download each as a real `.docx` for sharing inside their
+program office — without copy/paste, without leaving the browser, and
+with no server-side build cost.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health`
+
+**Next (Wave 4.2):** Streaming responses (SSE) — drop first-token
+latency to ~600 ms so the perceived speed matches ChatGPT.
 
 ---
 
