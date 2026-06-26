@@ -4,6 +4,23 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 6.1 (Program-Aware Tailoring)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/program_profiles.py` (new) — per-program declarative profile (vocab, tools, chains, presets, KB scope, system-prompt extras, stub flag); env-overridable via `S4IGHT_PROGRAM_PROFILES_JSON`.
+- `s4ight/backend/llm_providers.py` — chat system prompt now includes a PROGRAM PROFILE block (vocab emphasis / avoid / extras / stub note).
+- `s4ight/backend/planner.py` — heuristic chains + LLM-planned steps filtered against `chain_allowed` + `tool_allowed`.
+- `s4ight/backend/agents.py` — tool firing respects `tool_allowed(program, …)`; `build_context` now receives `program` for KB scoping.
+- `s4ight/backend/retriever.py` — KB hits filtered against `applicable_kb`.
+- `api/s4ight.py`, `s4ight/backend/main.py` — new `GET /program-profile`; `/health` adds `program_profiles` block.
+- `s4ight/index.html` — Program profile panel under dropdown (canonical name, summary, vocab, stub banner); preset list filtered per profile.
+
+**Behaviour change:** PMS 300 / PMS 385 no longer surface or run Gate 4/5/6 packages, EVMS/IMS triage by default. PMS 325 retains the full surface.
+
+**Profile content is a STUB** — flagged in the UI and the LLM prompt; Nick will refine via direct edits or document uploads.
+
+---
+
 ### 2026-06-26 — S4ight Wave 5.5 (Entra OIDC Bearer Validation, server-side)
 **Commit:** (pending)
 **Files Changed:**

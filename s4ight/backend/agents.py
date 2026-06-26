@@ -173,6 +173,7 @@ class BaseAgent:
         context, sources = build_context(
             query, session_id=session_id,
             allowed_classifications=allowed_classifications,
+            program=program,
         )
 
         base = self._llm_or_fallback(
@@ -191,8 +192,15 @@ class BaseAgent:
             "engine": base["engine"],
         }
 
-        # Tool firing
+        # Tool firing — respect the program profile's allow/block lists.
         tool_name = self._tool_for(query)
+        if tool_name and tool_name in AVAILABLE_TOOLS:
+            try:
+                from program_profiles import tool_allowed  # noqa: WPS433
+                if not tool_allowed(program, tool_name):
+                    tool_name = None
+            except Exception:
+                pass
         if tool_name and tool_name in AVAILABLE_TOOLS:
             try:
                 result = self._invoke_tool(tool_name, query, program)

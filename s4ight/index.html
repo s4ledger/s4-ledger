@@ -172,6 +172,20 @@
       cursor: pointer; font-size: 14px; padding: 0 4px;
     }
     .docitem.uploading { opacity: 0.7; }
+    .profile-panel {
+      margin-top: 8px;
+      background: #0f1830; border: 1px solid var(--line);
+      border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.4;
+    }
+    .profile-panel .pp-name { font-weight: 600; color: var(--text); }
+    .profile-panel .pp-summary { color: var(--muted); margin: 4px 0 6px; }
+    .profile-panel .pp-stub {
+      color: #fbbf24; background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.4);
+      padding: 4px 8px; border-radius: 6px; font-size: 11px; margin-top: 4px;
+    }
+    .profile-panel ul { margin: 4px 0; padding-left: 18px; }
+    .profile-panel li { color: var(--muted); }
     .presets {
       display: flex; flex-direction: column; gap: 6px; margin-top: 4px;
     }
@@ -234,6 +248,7 @@
           <option>PMS 300</option>
           <option>PMS 385</option>
         </select>
+        <div id="programProfile" class="profile-panel"></div>
       </div>
 
       <details>
@@ -939,30 +954,68 @@
     refreshDocs();
   });
 
-  // ----- Quick prompts (one-click presets) -----
+  // ----- Program profile -----
+  // Each preset declares which ID it owns so we can filter against the
+  // program's `applicable_presets` list.
+  let currentProfile = null;
+  async function loadProgramProfile() {
+    const prog = programSel.value;
+    try {
+      const r = await authedFetch(apiBase() + "/program-profile?program=" + encodeURIComponent(prog));
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      currentProfile = await r.json();
+    } catch (e) {
+      currentProfile = null;
+    }
+    renderProfilePanel();
+    renderPresets();
+  }
+  function renderProfilePanel() {
+    const root = $("programProfile");
+    if (!root) return;
+    if (!currentProfile) { root.innerHTML = ""; return; }
+    const p = currentProfile;
+    const emph = (p.vocabulary_emphasis || []).slice(0, 6);
+    const avoid = (p.vocabulary_avoid || []).slice(0, 6);
+    let html = `<div class="pp-name">${escapeHtml(p.canonical_name || p.program || "")}</div>`;
+    if (p.short_summary) {
+      html += `<div class="pp-summary">${escapeHtml(p.short_summary)}</div>`;
+    }
+    if (emph.length) {
+      html += `<div style="font-size:11px;color:var(--muted)">Vocabulary: ${emph.map(escapeHtml).join(", ")}</div>`;
+    }
+    if (avoid.length) {
+      html += `<div style="font-size:11px;color:var(--muted)">Avoid: ${avoid.map(escapeHtml).join(", ")}</div>`;
+    }
+    if (p.stub) {
+      html += `<div class="pp-stub">⚠ ${escapeHtml(p.stub_note || "Program profile is a stub.")}</div>`;
+    }
+    root.innerHTML = html;
+  }
+  programSel.addEventListener("change", loadProgramProfile);
   const PRESETS = [
     { group: "Planner chains", items: [
-      { label: "Prepare Gate 5 package", sub: "outline + LCSP draft + risks + ILA gaps", prompt: "Please prepare my Gate 5 package for ${program}." },
-      { label: "Prepare Gate 4 package", sub: "outline + LCSP draft + risks", prompt: "I need my Gate 4 package put together for ${program}." },
-      { label: "Prepare Gate 6 package", sub: "outline + LCSP draft + risks + IMS triage", prompt: "Build the Gate 6 / FRP-readiness package for ${program}." },
-      { label: "Full ILA readiness sweep", sub: "gap + LCSP + risks", prompt: "Do a full ILA readiness sweep for ${program}." },
-      { label: "Program health sweep", sub: "EVMS + IMS + risks", prompt: "Run a program health sweep for ${program}. Use cpi=0.91 spi=0.93 as the starting point." },
-      { label: "Full sustainment package", sub: "LCSP + ILS checklist + risks + ILA gap", prompt: "Draft the full sustainment package for ${program}." },
+      { id: "preset_gate_5", label: "Prepare Gate 5 package", sub: "outline + LCSP draft + risks + ILA gaps", prompt: "Please prepare my Gate 5 package for ${program}." },
+      { id: "preset_gate_4", label: "Prepare Gate 4 package", sub: "outline + LCSP draft + risks", prompt: "I need my Gate 4 package put together for ${program}." },
+      { id: "preset_gate_6", label: "Prepare Gate 6 package", sub: "outline + LCSP draft + risks + IMS triage", prompt: "Build the Gate 6 / FRP-readiness package for ${program}." },
+      { id: "preset_ila_readiness", label: "Full ILA readiness sweep", sub: "gap + LCSP + risks", prompt: "Do a full ILA readiness sweep for ${program}." },
+      { id: "preset_program_health", label: "Program health sweep", sub: "EVMS + IMS + risks", prompt: "Run a program health sweep for ${program}. Use cpi=0.91 spi=0.93 as the starting point." },
+      { id: "preset_full_sustainment", label: "Full sustainment package", sub: "LCSP + ILS checklist + risks + ILA gap", prompt: "Draft the full sustainment package for ${program}." },
     ]},
     { group: "Single deliverables", items: [
-      { label: "ILS supply-support checklist", sub: "12 elements, platform-specific", prompt: "Build an ILS Supply Support checklist for ${program}." },
-      { label: "Seed risk register", sub: "5 risks, sustainment focus", prompt: "Generate a seed risk register for ${program} sustainment." },
-      { label: "IMS critical-path triage", sub: "DCMA-14 style", prompt: "Triage the IMS for ${program}. Report the 14-point findings and actions." },
-      { label: "EVMS variance triage", sub: "CPI/SPI verdict + VAR plan", prompt: "Triage EVMS for ${program}. cpi=0.88 spi=0.92." },
-      { label: "Draft LCSP section", sub: "Sustainment Strategy & Performance Outcomes", prompt: "Draft the LCSP section 'Sustainment Strategy & Performance Outcomes' for ${program}." },
-      { label: "ILA gap analysis", sub: "Provisioning data immature at MS C", prompt: "Run an ILA gap analysis for ${program}: provisioning data immature at MS C." },
+      { id: "preset_ils_checklist", label: "ILS supply-support checklist", sub: "12 elements, platform-specific", prompt: "Build an ILS Supply Support checklist for ${program}." },
+      { id: "preset_risk_register", label: "Seed risk register", sub: "5 risks, sustainment focus", prompt: "Generate a seed risk register for ${program} sustainment." },
+      { id: "preset_ims_triage", label: "IMS critical-path triage", sub: "DCMA-14 style", prompt: "Triage the IMS for ${program}. Report the 14-point findings and actions." },
+      { id: "preset_evms_triage", label: "EVMS variance triage", sub: "CPI/SPI verdict + VAR plan", prompt: "Triage EVMS for ${program}. cpi=0.88 spi=0.92." },
+      { id: "preset_lcsp_draft", label: "Draft LCSP section", sub: "Sustainment Strategy & Performance Outcomes", prompt: "Draft the LCSP section 'Sustainment Strategy & Performance Outcomes' for ${program}." },
+      { id: "preset_ila_gap", label: "ILA gap analysis", sub: "Provisioning data immature at MS C", prompt: "Run an ILA gap analysis for ${program}: provisioning data immature at MS C." },
     ]},
     { group: "Domain Q&A", items: [
-      { label: "12 IPS elements primer", sub: "what each one owns", prompt: "Walk me through the 12 IPS elements for ${program} and what each one owns." },
-      { label: "Requirements traceability", sub: "CDD → CDRL → LCSP", prompt: "Show me how a CDD KPP threads to a CDRL and the LCSP for ${program}." },
-      { label: "DMSMS playbook", sub: "treatment options", prompt: "Recommend a DMSMS treatment path for a critical obsolete part on ${program}." },
-      { label: "Sustaining engineering sizing", sub: "ISEA capacity planning", prompt: "How should I size sustaining engineering capacity for ${program}?" },
-      { label: "Cyber sustainment in IPS-7", sub: "STIG / POA&M / ATO", prompt: "What belongs in cybersecurity sustainment (IPS Element 7) for ${program}?" },
+      { id: "preset_qa_12_ips", label: "12 IPS elements primer", sub: "what each one owns", prompt: "Walk me through the 12 IPS elements for ${program} and what each one owns." },
+      { id: "preset_qa_traceability", label: "Requirements traceability", sub: "CDD → CDRL → LCSP", prompt: "Show me how a CDD KPP threads to a CDRL and the LCSP for ${program}." },
+      { id: "preset_qa_dmsms", label: "DMSMS playbook", sub: "treatment options", prompt: "Recommend a DMSMS treatment path for a critical obsolete part on ${program}." },
+      { id: "preset_qa_sustaining_eng", label: "Sustaining engineering sizing", sub: "ISEA capacity planning", prompt: "How should I size sustaining engineering capacity for ${program}?" },
+      { id: "preset_qa_cyber_ips7", label: "Cyber sustainment in IPS-7", sub: "STIG / POA&M / ATO", prompt: "What belongs in cybersecurity sustainment (IPS Element 7) for ${program}?" },
     ]},
   ];
 
@@ -970,14 +1023,17 @@
     const root = $("presets");
     if (!root) return;
     root.innerHTML = "";
+    const allowedIds = (currentProfile && currentProfile.applicable_presets) || null;
     PRESETS.forEach(g => {
+      const items = g.items.filter(it => !allowedIds || allowedIds.includes(it.id));
+      if (!items.length) return;
       const wrap = document.createElement("div");
       wrap.className = "preset-group";
       const t = document.createElement("div");
       t.className = "gtitle";
       t.textContent = g.group;
       wrap.appendChild(t);
-      g.items.forEach(it => {
+      items.forEach(it => {
         const b = document.createElement("button");
         b.type = "button"; b.className = "preset-btn";
         b.innerHTML = `${escapeHtml(it.label)}<span class="sub">${escapeHtml(it.sub || "")}</span>`;
@@ -991,6 +1047,11 @@
       });
       root.appendChild(wrap);
     });
+    if (!root.children.length) {
+      root.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:8px">
+        No presets applicable to this program profile yet — type a question directly, or upload program-specific documents to teach S4ight.
+      </div>`;
+    }
   }
   renderPresets();
 

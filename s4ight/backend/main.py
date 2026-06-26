@@ -120,6 +120,15 @@ async def health() -> Dict[str, Any]:
         access_info = _access_health()
     except Exception as e:
         access_info = {"enabled": False, "error": str(e)}
+    try:
+        from program_profiles import all_public
+        profiles_info = {
+            "programs": list(all_public().keys()),
+            "stub_count": sum(1 for p in all_public().values() if p.get("stub")),
+            "profiles": all_public(),
+        }
+    except Exception as e:
+        profiles_info = {"programs": [], "stub_count": 0, "profiles": {}, "error": str(e)}
     return {
         "status": "ok",
         "version": app.version,
@@ -130,8 +139,17 @@ async def health() -> Dict[str, Any]:
         "audit": audit_info,
         "doc_persistence": persist_info,
         "access": access_info,
+        "program_profiles": profiles_info,
         "supported_programs": SUPPORTED_PROGRAMS,
     }
+
+
+@app.get("/program-profile")
+async def program_profile(program: Optional[str] = None) -> Dict[str, Any]:
+    from program_profiles import public_view, all_public
+    if program:
+        return public_view(program)
+    return {"profiles": all_public()}
 
 
 @app.get("/knowledge")

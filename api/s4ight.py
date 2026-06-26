@@ -89,6 +89,19 @@ def _strip_prefix(path: str) -> str:
     return p
 
 
+def _profiles_summary() -> Dict[str, Any]:
+    try:
+        from program_profiles import all_public  # noqa: WPS433
+        view = all_public()
+        return {
+            "programs": list(view.keys()),
+            "stub_count": sum(1 for p in view.values() if p.get("stub")),
+            "profiles": view,
+        }
+    except Exception:
+        return {"programs": [], "stub_count": 0, "profiles": {}}
+
+
 class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this exact name
     server_version = "S4ight/1.0"
 
@@ -177,6 +190,8 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
                 return self._handle_list_documents()
             if route == "/chunk":
                 return self._handle_chunk()
+            if route == "/program-profile":
+                return self._handle_program_profile()
             return self._send_json(404, {"error": "not_found", "route": route})
         except Exception as e:
             log.exception("GET failed")
@@ -242,6 +257,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             "doc_persistence": persist_info,
             "access": _access_health(),
             "supported_programs": SUPPORTED_PROGRAMS,
+            "program_profiles": _profiles_summary(),
             "runtime": "vercel-python",
         })
 
@@ -348,6 +364,15 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         memory_store.clear(session_id)
         doc_store.clear(session_id)
         return self._send_json(200, {"status": "ok", "session_id": session_id, "cleared": True})
+
+    def _handle_program_profile(self):
+        from urllib.parse import parse_qs, urlparse as _up
+        qs = parse_qs(_up(self.path).query or "")
+        prog = (qs.get("program") or [""])[0]
+        from program_profiles import public_view, all_public
+        if prog:
+            return self._send_json(200, public_view(prog))
+        return self._send_json(200, {"profiles": all_public()})
 
     # ------- Documents -------
 

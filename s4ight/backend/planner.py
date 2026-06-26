@@ -110,20 +110,36 @@ Rules:
 """
 
 
-def _heuristic_plan(query: str) -> Optional[List[str]]:
+def _heuristic_plan(query: str, program: str = "PMS 325") -> Optional[List[str]]:
     q = query.lower()
+    try:
+        from program_profiles import chain_allowed, tool_allowed  # noqa: WPS433
+    except Exception:
+        chain_allowed = lambda *a, **kw: True  # type: ignore
+        tool_allowed = lambda *a, **kw: True  # type: ignore
+
+    def _filter_chain(chain: List[str]) -> List[str]:
+        return [t for t in chain if tool_allowed(program, t)]
+
+    def _consider(trigger: str, chain: List[str]) -> Optional[List[str]]:
+        if not chain_allowed(program, trigger):
+            return None
+        filtered = _filter_chain(chain)
+        return filtered if filtered else None
+
     for trigger, chain in INTENT_TEMPLATES.items():
         if trigger in q:
-            return list(chain)
-    # Looser triggers
+            result = _consider(trigger, chain)
+            if result:
+                return result
     if "gate 5" in q and "package" in q:
-        return INTENT_TEMPLATES["gate 5 package"]
+        return _consider("gate 5 package", INTENT_TEMPLATES["gate 5 package"])
     if "gate 4" in q and "package" in q:
-        return INTENT_TEMPLATES["gate 4 package"]
+        return _consider("gate 4 package", INTENT_TEMPLATES["gate 4 package"])
     if "gate 6" in q and "package" in q:
-        return INTENT_TEMPLATES["gate 6 package"]
+        return _consider("gate 6 package", INTENT_TEMPLATES["gate 6 package"])
     if "sustainment package" in q or "full sustainment" in q:
-        return INTENT_TEMPLATES["full sustainment package"]
+        return _consider("full sustainment package", INTENT_TEMPLATES["full sustainment package"])
     return None
 
 
@@ -193,15 +209,27 @@ def _plan_via_llm(query: str, program: str) -> Optional[List[Dict[str, Any]]]:
 def plan(query: str, program: str) -> List[Dict[str, Any]]:
     """Return the (possibly empty) ordered step list."""
     # 1. Heuristic shortcut for the most common phrases — no LLM cost.
-    heur = _heuristic_plan(query)
+    heur = _heuristic_plan(query, program=program)
     if heur:
         out: List[Dict[str, Any]] = []
         for name in heur:
-            out.append({"tool": name, "args": {"program": program} if "program" in ALLOWED_TOOL_PARAMS.get(name, []) else {}, "reason": "heuristic"})
+            out.append({
+                "tool": name,
+                "args": {"program": program} if "program" in ALLOWED_TOOL_PARAMS.get(name, []) else {},
+                "reason": "heuristic",
+            })
         return out
     # 2. LLM-backed plan.
     via_llm = _plan_via_llm(query, program)
-    return via_llm or []
+    if not via_llm:
+        return []
+    # 3. Final filter: drop steps the program profile blocks.
+    try:
+        from program_profiles import tool_allowed  # noqa: WPS433
+        via_llm = [s for s in via_llm if tool_allowed(program, s["tool"])]
+    except Exception:
+        pass
+    return via_llm
 
 
 def execute(steps: List[Dict[str, Any]], program: str) -> List[Dict[str, Any]]:

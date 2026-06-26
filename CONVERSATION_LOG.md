@@ -1,5 +1,85 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.15 — S4ight Wave 5.5: Entra OIDC Bearer Validation (2026-06-26)
+## Last Updated: Session 43.16 — S4ight Wave 6.1: Program-Aware Tailoring (2026-06-26)
+
+---
+
+## Session 43.16 — S4ight Wave 6.1: Program-Aware Tailoring (2026-06-26)
+
+**Goal:** Stop treating PMS 300 / 325 / 385 as identical. Each program
+has different operating practices, terminology, and applicable
+deliverables. S4ight must adapt: vocabulary, available tools, planner
+chains, suggested presets, and the KB it draws from — all per program.
+
+**Honest scope:** I am NOT inventing program facts. Without verifiable
+sources at hand, I declared operational *character* (sustainment-leaning
+vs hybrid vs in-service engineering) and flagged every profile as a
+**stub** that needs domain-expert validation. The architecture is real
+and live; the content is a starting frame that Nick will refine.
+
+**New:**
+- `s4ight/backend/program_profiles.py` — declarative profile per
+  program: canonical_name, short_summary, lifecycle_focus,
+  vocabulary_emphasis/avoid, applicable_tools, blocked_tools,
+  applicable_chains, applicable_presets, system_prompt_extra,
+  applicable_kb, stub flag + stub_note. Env-overridable via
+  `S4IGHT_PROGRAM_PROFILES_JSON` (deploy-time edits without code).
+- `s4ight/backend/llm_providers._build_messages` injects a
+  PROGRAM PROFILE system block on every chat turn (vocab emphasis +
+  avoid + extra guidance + stub note).
+- `s4ight/backend/planner.py` — heuristic chains filtered by
+  `chain_allowed(program, …)`; tool list within each chain filtered by
+  `tool_allowed(program, …)`. PMS 300 / 385 no longer trigger Gate 4/5/6
+  chains.
+- `s4ight/backend/agents.BaseAgent.run` blocks tool firing for tools
+  not allowed by the program profile.
+- `s4ight/backend/retriever.build_context(program=…)` filters curated
+  KB hits by `applicable_kb`. PMS 300 retrieval will not pull
+  acquisition-lifecycle / gate-review docs by default.
+- `api/s4ight.py`, `s4ight/backend/main.py`:
+  - New `GET /program-profile?program=…` (and bare list).
+  - `/health` carries a `program_profiles` block with stub count.
+- `s4ight/index.html`:
+  - **Program profile panel** under the program dropdown — shows
+    canonical name, summary, emphasized + avoided vocabulary, and a
+    yellow STUB banner with the explanatory note.
+  - Quick-prompts panel filters items by the program's
+    `applicable_presets`. When PMS 300 is selected, Gate 4/5/6 / Program
+    Health / EVMS / IMS triage presets disappear; ILA readiness, full
+    sustainment, LCSP draft, ILS checklist, risk register, DMSMS,
+    sustaining engineering remain.
+  - "No applicable presets" fallback hint when the list is empty.
+
+**Validated locally:**
+- PMS 300 + `prepare my Gate 5 package` → planner returns `[]`
+  (correctly refuses the inapplicable chain).
+- PMS 325 + same prompt → 4-tool Gate 5 chain.
+- PMS 300 + `full ILA readiness sweep` → 3-tool chain runs.
+
+**Differentiation:** S4ight now starts genuinely differentiating per
+program. The next step is YOU (Nick) feeding actual program content
+into the profile — either by editing `program_profiles.py` directly or
+by setting `S4IGHT_PROGRAM_PROFILES_JSON` in Vercel env vars. Or upload
+program SOPs / brief decks via the Documents panel; per-session
+retrieval picks those up automatically.
+
+**Stub disclosure:** Every profile is flagged `stub: True` until a
+domain expert validates. The UI shows a yellow STUB banner. The LLM
+system prompt also includes a stub-note instructing it to defer to
+user-asserted practices.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health` — includes new
+  `program_profiles` block.
+- New: `https://s4ledger.com/api/s4ight/program-profile?program=PMS%20300`
+
+**Wave 6.2 (next):** I need your input. Either:
+- Send me a paragraph or bullet list per program describing how each
+  one actually operates (deliverables, gates if any, contracts,
+  reporting cadence, vocabulary). I'll encode it in `program_profiles.py`.
+- Or upload program SOPs / brief decks via the Documents panel. The
+  retrieval system already weights per-session uploads first; combined
+  with the program profile gating, this is how the system learns.
 
 ---
 

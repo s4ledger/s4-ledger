@@ -85,6 +85,34 @@ def _build_messages(
 ) -> List[Dict[str, str]]:
     system_extra = f"\nActive specialized agent: {agent_focus}." if agent_focus else ""
     program_line = f"Program in scope: {program}."
+
+    # Inject program-specific profile so the LLM uses the right vocabulary
+    # and avoids inapplicable constructs.
+    program_block = ""
+    try:
+        from program_profiles import get as _get_profile  # noqa: WPS433
+        prof = _get_profile(program)
+        canonical = prof.get("canonical_name") or program
+        summary = prof.get("short_summary") or ""
+        extra = (prof.get("system_prompt_extra") or "").strip()
+        emph = prof.get("vocabulary_emphasis") or []
+        avoid = prof.get("vocabulary_avoid") or []
+        stub_flag = (
+            "\n(NOTE: this program profile is a STUB; if the user asserts "
+            "different operating practices, defer to them and ask them to "
+            "confirm.)" if prof.get("stub") else ""
+        )
+        program_block = (
+            f"PROGRAM PROFILE — {canonical}\n"
+            f"Summary: {summary}\n"
+            + (f"Emphasize vocabulary: {', '.join(emph)}\n" if emph else "")
+            + (f"Avoid vocabulary: {', '.join(avoid)}\n" if avoid else "")
+            + (f"Extra guidance: {extra}\n" if extra else "")
+            + stub_flag
+        )
+    except Exception:
+        pass
+
     context_block = (
         f"CONTEXT (from S4ight knowledge base):\n{context}\n"
         if context.strip()
@@ -93,8 +121,10 @@ def _build_messages(
     messages: List[Dict[str, str]] = [
         {"role": "system", "content": SYSTEM_PROMPT + system_extra},
         {"role": "system", "content": program_line},
-        {"role": "system", "content": context_block},
     ]
+    if program_block:
+        messages.append({"role": "system", "content": program_block})
+    messages.append({"role": "system", "content": context_block})
     if history:
         for turn in history[-8:]:
             role = turn.get("role", "user")

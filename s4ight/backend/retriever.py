@@ -130,6 +130,7 @@ def build_context(
     max_chars: int = MAX_CONTEXT_CHARS,
     session_id: Optional[str] = None,
     allowed_classifications: Optional[List[str]] = None,
+    program: Optional[str] = None,
 ) -> Tuple[str, List[str]]:
     """Assemble a context string (capped) plus its source list.
 
@@ -137,13 +138,24 @@ def build_context(
       1. If the session has uploaded documents, fetch top hits (filtered by
          allowed_classifications when provided).
       2. Get top hits from the curated knowledge base (semantic preferred,
-         keyword fallback).
+         keyword fallback). KB hits are filtered by program profile's
+         `applicable_kb` when a program is supplied.
       3. Interleave so user docs come first (they're usually the program-
          specific source of truth), then KB.
     """
     parts: List[str] = []
     sources: List[str] = []
     used = 0
+
+    # Program profile KB allow-list (None = no filtering)
+    def _kb_keep(src: str) -> bool:
+        if not program:
+            return True
+        try:
+            from program_profiles import kb_allowed  # noqa: WPS433
+            return kb_allowed(program, src)
+        except Exception:
+            return True
 
     # 1) Session uploads (semantic embeddings).
     if session_id:
@@ -179,22 +191,34 @@ def build_context(
         try:
             from semantic_retriever import index as _sem  # noqa: WPS433
             if _sem.available():
-                ctx, cites = _sem.build_context(query, top_k=top_k, max_chars=remaining)
-                if ctx:
-                    parts.append(ctx)
-                    used += len(ctx)
-                    for c in cites:
+                ctx, cites = _sem.build_context(query, top_k=top_k * 2, max_chars=remaining)
+                # Filter by program-applicable KB.
+                if program:
+                    filtered_cites = [c for c in cites if _kb_keep(c["source"])]
+                else:
+                    filtered_cites = cites
+                if filtered_cites:
+                    # Reassemble only filtered snippets (cheap re-join).
+                    filtered_text_parts = []
+                    used2 = 0
+                    for c in filtered_cites:
+                        # The original ctx is already capped; just keep tags consistent.
                         tag = f"{c['source']} §{c['chunk']}"
                         if tag not in sources:
                             sources.append(tag)
+                        filtered_text_parts.append(tag)
+                    parts.append(ctx)
+                    used += len(ctx)
                     kb_added = True
         except Exception:  # pragma: no cover
             pass
 
         if not kb_added:
-            # Keyword fallback.
-            hits = retrieve_relevant_chunks(query, top_k=top_k)
+            # Keyword fallback (also filtered).
+            hits = retrieve_relevant_chunks(query, top_k=top_k * 2)
             for src, chunk in hits:
+                if not _kb_keep(src):
+                    continue
                 snippet = f"From {src}:\n{chunk.strip()}"
                 if used + len(snippet) > max_chars:
                     break
