@@ -1,5 +1,80 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.13 — S4ight Wave 5.3: Edge Streaming (LLM-only) (2026-06-26)
+## Last Updated: Session 43.14 — S4ight Wave 5.4: Cross-Session Document Persistence (2026-06-26)
+
+---
+
+## Session 43.14 — S4ight Wave 5.4: Document Persistence (2026-06-26)
+
+**Goal:** Survivable uploads. When the same `session_id` returns
+(e.g., after a refresh, or from a different device), S4ight should
+rehydrate that session's documents + chunk embeddings from durable
+storage rather than starting empty.
+
+**Approach:** opt-in Supabase persistence. When `SUPABASE_URL` +
+`SUPABASE_SERVICE_ROLE` are set, every ingestion fires a daemon thread
+that POSTs the doc metadata + chunks into Supabase. On first touch of a
+session that isn't in memory, we synchronously pull its docs/chunks
+from Supabase and rehydrate the in-memory store. If the env vars aren't
+set, behaviour is unchanged (current ephemeral).
+
+**New file:**
+- `s4ight/backend/doc_persistence.py` — `persist_document`, `delete_document`,
+  `clear_session`, `fetch_session`, `health()`. No new Python deps;
+  stdlib `urllib`. Daemon threads + 5s timeout — never blocks the
+  request meaningfully.
+
+**Modified:**
+- `s4ight/backend/ingestion.py`:
+  - `_rehydrate_if_needed(session_id)` rebuilds the in-memory session
+    from Supabase the first time we read it. Called by `info()`,
+    `has_documents()`, `search()`.
+  - `ingest`, `remove`, `clear` now fire the corresponding persistence
+    operation in the background.
+- `api/s4ight.py`, `s4ight/backend/main.py` — `/health` surfaces a new
+  `doc_persistence` block.
+- `s4ight/index.html` — status panel reports
+  `Uploads: persisted to Supabase` vs `ephemeral (this session only)`.
+
+**Schema (run once in Supabase SQL editor):**
+```sql
+CREATE TABLE public.s4ight_docs (
+  id            text primary key,
+  session_id    text not null,
+  name          text not null,
+  classification text not null default 'UNCLASSIFIED',
+  chars         int not null,
+  chunk_count   int not null,
+  uploaded_at   timestamptz not null default now()
+);
+CREATE INDEX ON public.s4ight_docs (session_id);
+
+CREATE TABLE public.s4ight_doc_chunks (
+  doc_id        text not null references public.s4ight_docs(id) on delete cascade,
+  idx           int  not null,
+  text          text not null,
+  classification text not null default 'UNCLASSIFIED',
+  embedding     jsonb not null,
+  primary key (doc_id, idx)
+);
+CREATE INDEX ON public.s4ight_doc_chunks (doc_id);
+```
+
+Env vars (same Supabase project as the audit drain):
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE`
+
+**Differentiation:** none of ChatGPT / Ask Sage persist your uploaded
+documents across sessions with per-user scope. S4ight does, and binds
+them to a `session_id` you control. RBAC + classification tagging
+already in place make this safe enough for invited testing.
+
+**Validation:** all modules import cleanly.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health` — now includes `doc_persistence` block.
+
+**Next (Wave 5.5):** Microsoft Entra OIDC sign-in.
 
 ---
 

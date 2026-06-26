@@ -4,6 +4,18 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 5.4 (Cross-Session Document Persistence)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/doc_persistence.py` (new) — Supabase REST adapter for `s4ight_docs` + `s4ight_doc_chunks` tables; daemon-thread writes; synchronous `fetch_session` for rehydration; `health()` exposes drain state.
+- `s4ight/backend/ingestion.py` — `_rehydrate_if_needed(session_id)` rebuilds in-memory state from Supabase the first time any read touches a session; `ingest/remove/clear` fire persistence ops.
+- `api/s4ight.py`, `s4ight/backend/main.py` — `/health` surfaces `doc_persistence` block.
+- `s4ight/index.html` — status panel shows persistence state.
+
+**Setup SQL + env vars in CONVERSATION_LOG Session 43.14.**
+
+---
+
 ### 2026-06-26 — S4ight Wave 5.3 (Edge Streaming — LLM-only)
 **Commit:** (pending)
 **Files Changed:**

@@ -764,6 +764,13 @@
         }
       }
 
+      // Document persistence state.
+      if (j.doc_persistence) {
+        const persistOn = !!j.doc_persistence.enabled;
+        const dot = `<span class="dot ${persistOn ? "ok" : "warn"}"></span>`;
+        line += `<br>${dot}Uploads: ${persistOn ? "persisted to Supabase (survive refresh)" : "ephemeral (this session only)"}`;
+      }
+
       if (!llmOk) {
         // Surface the precise reason so it's fixable.
         const reason = llm.reason || llm.error || "see /health for details";

@@ -226,6 +226,11 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             audit_info = _audit_health()
         except Exception as e:  # pragma: no cover
             audit_info = {"enabled": False, "error": str(e)}
+        try:
+            from doc_persistence import health as _persist_health  # noqa: WPS433
+            persist_info = _persist_health()
+        except Exception as e:  # pragma: no cover
+            persist_info = {"enabled": False, "error": str(e)}
         return self._send_json(200, {
             "status": "ok",
             "version": "1.0.0",
@@ -234,6 +239,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             "llm": provider.health(),
             "semantic": semantic_info,
             "audit": audit_info,
+            "doc_persistence": persist_info,
             "access": _access_health(),
             "supported_programs": SUPPORTED_PROGRAMS,
             "runtime": "vercel-python",

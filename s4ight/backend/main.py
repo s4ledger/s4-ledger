@@ -111,6 +111,11 @@ async def health() -> Dict[str, Any]:
     except Exception as e:
         audit_info = {"enabled": False, "error": str(e)}
     try:
+        from doc_persistence import health as _persist_health
+        persist_info = _persist_health()
+    except Exception as e:
+        persist_info = {"enabled": False, "error": str(e)}
+    try:
         from access import health as _access_health
         access_info = _access_health()
     except Exception as e:
@@ -123,6 +128,7 @@ async def health() -> Dict[str, Any]:
         "llm": provider.health(),
         "semantic": sem,
         "audit": audit_info,
+        "doc_persistence": persist_info,
         "access": access_info,
         "supported_programs": SUPPORTED_PROGRAMS,
     }

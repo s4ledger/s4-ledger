@@ -21,6 +21,7 @@ Supported formats:
 from __future__ import annotations
 
 import io
+import json
 import logging
 import math
 import os
@@ -176,13 +177,72 @@ class DocumentStore:
 
     def __init__(self):
         self._lock = threading.RLock()
-        # session_id -> { "docs": [meta], "chunks": [_DocChunk] }
+        # session_id -> { "docs": [meta], "chunks": [_DocChunk], "rehydrated": bool }
         self._sessions: Dict[str, Dict[str, Any]] = {}
         self._client = None
+
+    def _rehydrate_if_needed(self, session_id: str) -> None:
+        """If we don't have this session in memory yet, try to load it from Supabase."""
+        if not session_id:
+            return
+        with self._lock:
+            existing = self._sessions.get(session_id)
+            if existing is not None:
+                return  # already in memory
+        # Fetch outside the lock to avoid blocking other sessions.
+        try:
+            from doc_persistence import enabled as _persist_on, fetch_session  # noqa: WPS433
+            if not _persist_on():
+                return
+            data = fetch_session(session_id)
+            if not data or not data.get("docs"):
+                return
+            docs_by_id: Dict[str, Dict[str, Any]] = {d["id"]: d for d in data["docs"]}
+            doc_chunks_by_id: Dict[str, List[_DocChunk]] = {}
+            for row in data.get("chunks", []):
+                d = docs_by_id.get(row["doc_id"])
+                if not d:
+                    continue
+                emb = row.get("embedding") or []
+                if isinstance(emb, str):
+                    try:
+                        emb = json.loads(emb)
+                    except Exception:
+                        emb = []
+                chunk = _DocChunk(
+                    source=d["name"], idx=int(row["idx"]),
+                    text=row["text"] or "",
+                    embedding=emb,
+                    classification=row.get("classification") or DEFAULT_CLASSIFICATION,
+                )
+                doc_chunks_by_id.setdefault(row["doc_id"], []).append(chunk)
+            session_state = {"docs": [], "chunks": []}
+            for d in data["docs"]:
+                meta = {
+                    "id": d["id"],
+                    "name": d["name"],
+                    "chars": d["chars"],
+                    "chunks": d["chunk_count"],
+                    "classification": d.get("classification") or DEFAULT_CLASSIFICATION,
+                    "uploaded_at": d.get("uploaded_at"),
+                }
+                session_state["docs"].append(meta)
+                session_state["chunks"].extend(doc_chunks_by_id.get(d["id"], []))
+            with self._lock:
+                # Only install if still empty (another thread may have raced).
+                if session_id not in self._sessions:
+                    self._sessions[session_id] = session_state
+                    log.info(
+                        "Rehydrated session %s from Supabase: %d docs / %d chunks",
+                        session_id, len(session_state["docs"]), len(session_state["chunks"]),
+                    )
+        except Exception as e:  # pragma: no cover
+            log.warning("Rehydrate failed for %s: %s", session_id, e)
 
     # --- Public API ---
 
     def info(self, session_id: str) -> Dict[str, Any]:
+        self._rehydrate_if_needed(session_id)
         with self._lock:
             s = self._sessions.get(session_id) or {"docs": [], "chunks": []}
             return {
@@ -233,10 +293,14 @@ class DocumentStore:
                 )
             doc_id = f"doc_{int(time.time() * 1000)}_{len(sess['docs']) + 1}"
             cls = normalize_classification(classification)
+            new_chunks: List[Dict[str, Any]] = []
             for i, (c, v) in enumerate(zip(chunks, vectors), start=1):
                 sess["chunks"].append(_DocChunk(
                     source=filename, idx=i, text=c, embedding=v, classification=cls
                 ))
+                new_chunks.append({
+                    "idx": i, "text": c, "embedding": v, "classification": cls,
+                })
             meta = {
                 "id": doc_id,
                 "name": filename,
@@ -246,7 +310,15 @@ class DocumentStore:
                 "uploaded_at": time.time(),
             }
             sess["docs"].append(meta)
-            return {"status": "ok", "document": meta, "session": self.info(session_id)}
+
+        # Best-effort Supabase persistence (no-op if env vars absent).
+        try:
+            from doc_persistence import persist_document  # noqa: WPS433
+            persist_document(session_id, meta, new_chunks)
+        except Exception:  # pragma: no cover
+            pass
+
+        return {"status": "ok", "document": meta, "session": self.info(session_id)}
 
     def remove(self, session_id: str, doc_id: str) -> Dict[str, Any]:
         with self._lock:
@@ -260,6 +332,11 @@ class DocumentStore:
             sess["docs"] = [d for d in sess["docs"] if d["id"] != doc_id]
             before = len(sess["chunks"])
             sess["chunks"] = [c for c in sess["chunks"] if c.source != name]
+            try:
+                from doc_persistence import delete_document  # noqa: WPS433
+                delete_document(doc_id)
+            except Exception:  # pragma: no cover
+                pass
             return {
                 "status": "ok",
                 "removed": before - len(sess["chunks"]),
@@ -269,9 +346,15 @@ class DocumentStore:
     def clear(self, session_id: str) -> Dict[str, Any]:
         with self._lock:
             self._sessions.pop(session_id, None)
-            return {"status": "ok", "cleared": True, "session_id": session_id}
+        try:
+            from doc_persistence import clear_session  # noqa: WPS433
+            clear_session(session_id)
+        except Exception:  # pragma: no cover
+            pass
+        return {"status": "ok", "cleared": True, "session_id": session_id}
 
     def has_documents(self, session_id: str) -> bool:
+        self._rehydrate_if_needed(session_id)
         with self._lock:
             sess = self._sessions.get(session_id)
             return bool(sess and sess["chunks"])
@@ -279,6 +362,7 @@ class DocumentStore:
     def search(self, session_id: str, query: str, top_k: int = 4, allowed_classifications: Optional[List[str]] = None) -> List[Tuple[float, str, int, str, str]]:
         if not query or not query.strip():
             return []
+        self._rehydrate_if_needed(session_id)
         with self._lock:
             sess = self._sessions.get(session_id)
             if not sess or not sess["chunks"]:
