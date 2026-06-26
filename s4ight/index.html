@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>S4ight — S4 Systems AI (Preview)</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --bg-2: #111a2e;
+      --panel: #142038;
+      --line: #1f2c4a;
+      --text: #e7ecf5;
+      --muted: #94a3b8;
+      --accent: #4f8cff;
+      --accent-2: #22d3ee;
+      --user: #1e3a8a;
+      --assistant: #14213d;
+      --tool: #0f2e2a;
+      --danger: #ef4444;
+      --ok: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      color: var(--text);
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      height: 100vh;
+    }
+    aside {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand .logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 0 3px rgba(79,140,255,0.15);
+    }
+    .brand h1 { font-size: 16px; margin: 0; letter-spacing: 0.3px; }
+    .brand small { color: var(--muted); display: block; font-weight: 400; }
+
+    label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    select, input, textarea, button {
+      background: #0f1830; color: var(--text);
+      border: 1px solid var(--line); border-radius: 8px;
+      padding: 9px 10px; font-size: 14px; width: 100%;
+      font-family: inherit;
+    }
+    button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0a1020; font-weight: 600; border: none; cursor: pointer;
+    }
+    button.ghost { background: transparent; cursor: pointer; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    details summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+    details > div { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+
+    .status { font-size: 12px; color: var(--muted); line-height: 1.55; }
+    .status .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align: middle; }
+    .dot.ok { background: var(--ok); }
+    .dot.warn { background: #f59e0b; }
+    .dot.err { background: var(--danger); }
+
+    main { display: flex; flex-direction: column; height: 100vh; min-width: 0; }
+    header.bar {
+      padding: 14px 22px; border-bottom: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(15, 23, 42, 0.6);
+    }
+    header.bar h2 { margin: 0; font-size: 15px; font-weight: 600; }
+    header.bar .meta { color: var(--muted); font-size: 12px; }
+
+    #chat {
+      flex: 1; overflow-y: auto; padding: 22px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .msg {
+      max-width: 880px; padding: 14px 16px; border-radius: 12px;
+      border: 1px solid var(--line); line-height: 1.55;
+      white-space: pre-wrap; word-wrap: break-word;
+    }
+    .msg.user { background: var(--user); align-self: flex-end; }
+    .msg.assistant { background: var(--assistant); align-self: flex-start; }
+    .msg.tool { background: var(--tool); align-self: flex-start; border-color: #134e4a; }
+    .msg .head { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .msg pre {
+      background: #0a1326; border-radius: 8px; padding: 10px;
+      overflow-x: auto; font-size: 12.5px;
+    }
+    .sources { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .sources span { display: inline-block; background: #0f1830; padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
+
+    .composer {
+      border-top: 1px solid var(--line); padding: 14px 22px;
+      background: rgba(15, 23, 42, 0.6); display: flex; gap: 10px;
+    }
+    .composer textarea { flex: 1; resize: none; min-height: 46px; max-height: 200px; }
+    .composer button { width: 110px; }
+
+    .hint { color: var(--muted); font-size: 12px; }
+    .kbd { background: #0f1830; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); }
+
+    @media (max-width: 800px) {
+      .app { grid-template-columns: 1fr; }
+      aside { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>S4ight</h1>
+          <small>S4 Systems · PMS 300/325/385</small>
+        </div>
+      </div>
+
+      <div>
+        <label>Program</label>
+        <select id="program">
+          <option>PMS 325</option>
+          <option>PMS 300</option>
+          <option>PMS 385</option>
+        </select>
+      </div>
+
+      <details>
+        <summary>Advanced</summary>
+        <div>
+          <label>Backend</label>
+          <input id="apiBase" />
+          <button class="ghost" id="clearBtn">Clear conversation</button>
+        </div>
+      </details>
+
+      <div class="status" id="status">Checking backend…</div>
+
+      <div class="status">
+        <strong style="color: var(--text);">Try asking:</strong><br>
+        • Build a Supply Support checklist for T-AO 205.<br>
+        • Pre-MS C ILA readiness for a new auxiliary class.<br>
+        • Seed a risk register for PMS 325 sustainment.<br>
+        • EVMS variance triage on the ILS WBS leg.
+      </div>
+
+      <div class="hint">
+        <span class="kbd">Enter</span> to send · <span class="kbd">Shift</span>+<span class="kbd">Enter</span> for newline.
+      </div>
+      <div class="hint" style="opacity:.7;">Preview build — not for distribution.</div>
+    </aside>
+
+    <main>
+      <header class="bar">
+        <h2>S4ight Assistant <span style="color:var(--muted);font-weight:400;font-size:12px;">preview</span></h2>
+        <div class="meta" id="metaLine">session: —</div>
+      </header>
+
+      <div id="chat"></div>
+
+      <div class="composer">
+        <textarea id="input" placeholder="Ask about ILS, acquisition gates, EVMS, IMS, LCSP, risks…"></textarea>
+        <button class="primary" id="sendBtn">Send</button>
+      </div>
+    </main>
+  </div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const chat = $("chat");
+  const input = $("input");
+  const sendBtn = $("sendBtn");
+  const clearBtn = $("clearBtn");
+  const programSel = $("program");
+  const apiBaseInp = $("apiBase");
+  const statusEl = $("status");
+  const metaLine = $("metaLine");
+
+  const STORAGE_KEY = "s4ight_session_id";
+  const API_BASE_KEY = "s4ight_api_base";
+  let sessionId = localStorage.getItem(STORAGE_KEY) || "";
+
+  // Auto-detect API base:
+  //   - if hosted on s4ledger.com (or any non-local), use /api/s4ight (Vercel serverless)
+  //   - if opened locally (file:// or localhost), default to http://localhost:8000 (FastAPI)
+  function defaultApiBase() {
+    const h = location.hostname;
+    if (!h || h === "localhost" || h === "127.0.0.1" || location.protocol === "file:") {
+      return "http://localhost:8000";
+    }
+    return "/api/s4ight";
+  }
+  apiBaseInp.value = localStorage.getItem(API_BASE_KEY) || defaultApiBase();
+
+  function apiBase() {
+    const v = (apiBaseInp.value || "").trim().replace(/\/$/, "");
+    return v || defaultApiBase();
+  }
+
+  function setMeta() {
+    metaLine.textContent = `session: ${sessionId || "—"}`;
+  }
+  setMeta();
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  function addMsg(role, text, extras = {}) {
+    const el = document.createElement("div");
+    el.className = "msg " + role;
+    const head = document.createElement("div");
+    head.className = "head";
+    head.textContent = extras.head || (role === "user" ? "You"
+      : role === "tool" ? "Tool Output" : "S4ight");
+    el.appendChild(head);
+    const body = document.createElement("div");
+    body.innerHTML = text;
+    el.appendChild(body);
+    if (extras.sources && extras.sources.length) {
+      const s = document.createElement("div");
+      s.className = "sources";
+      s.innerHTML = "Sources: " + extras.sources.map(x => `<span>${escapeHtml(x)}</span>`).join("");
+      el.appendChild(s);
+    }
+    chat.appendChild(el);
+    chat.scrollTop = chat.scrollHeight;
+    return el;
+  }
+
+  function formatAssistant(text) {
+    return escapeHtml(text);
+  }
+
+  async function checkHealth() {
+    try {
+      const r = await fetch(apiBase() + "/health");
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const j = await r.json();
+      const llm = j.llm || {};
+      const dotApi = `<span class="dot ok"></span>`;
+      const llmOk = !!llm.available;
+      const dotLlm = `<span class="dot ${llmOk ? "ok" : "err"}"></span>`;
+      const provider = llm.provider || "unknown";
+      const model = llm.model || "?";
+      statusEl.innerHTML =
+        `${dotApi}API reachable (v${j.version}) · ${j.knowledge_docs} KB docs<br>` +
+        `${dotLlm}LLM: ${provider} · <code>${escapeHtml(model)}</code> ` +
+        (llmOk ? "ready" : "not ready") +
+        (llm.error ? `<br><span style="color: var(--danger)">${escapeHtml(String(llm.error))}</span>` : "");
+    } catch (e) {
+      statusEl.innerHTML = `<span class="dot err"></span>Backend unreachable at ${escapeHtml(apiBase())}<br>${escapeHtml(String(e.message || e))}`;
+    }
+  }
+  checkHealth();
+  apiBaseInp.addEventListener("change", () => {
+    localStorage.setItem(API_BASE_KEY, apiBaseInp.value);
+    checkHealth();
+  });
+
+  async function send() {
+    const text = input.value.trim();
+    if (!text) return;
+    sendBtn.disabled = true;
+    input.value = "";
+    addMsg("user", escapeHtml(text));
+    const placeholder = addMsg("assistant", "<em>Thinking…</em>");
+    try {
+      const r = await fetch(apiBase() + "/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          program: programSel.value,
+          session_id: sessionId || undefined
+        })
+      });
+      if (!r.ok) {
+        const errTxt = await r.text();
+        throw new Error("HTTP " + r.status + " — " + errTxt);
+      }
+      const j = await r.json();
+      sessionId = j.session_id || sessionId;
+      localStorage.setItem(STORAGE_KEY, sessionId);
+      setMeta();
+
+      const head = `${j.agent || "S4ight"} · ${j.engine || "engine"} · ${j.elapsed_ms}ms`;
+      placeholder.remove();
+      addMsg("assistant", formatAssistant(j.response || ""), {
+        head,
+        sources: j.sources || []
+      });
+
+      if (j.tool_result) {
+        const pretty = "<pre>" + escapeHtml(JSON.stringify(j.tool_result, null, 2)) + "</pre>";
+        addMsg("tool", pretty, { head: `tool: ${j.tool_used}` });
+      }
+    } catch (e) {
+      placeholder.remove();
+      addMsg("assistant", `<span style="color: var(--danger)">Error: ${escapeHtml(String(e.message || e))}</span>`);
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener("click", send);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  });
+
+  clearBtn.addEventListener("click", async () => {
+    if (sessionId) {
+      try { await fetch(apiBase() + `/session/${sessionId}/clear`, { method: "POST" }); } catch {}
+    }
+    chat.innerHTML = "";
+    sessionId = "";
+    localStorage.removeItem(STORAGE_KEY);
+    setMeta();
+  });
+
+  addMsg("assistant",
+    "S4ight is ready. I specialize in ILS (12 IPS elements), acquisition lifecycle / gate reviews, " +
+    "and programmatic controls (risk, IMS, EVMS) for PMS 300, 325, and 385.\n\n" +
+    "Pick a program in the sidebar and ask a focused question. I can also generate " +
+    "ILS checklists, gate-review outlines, and risk registers on demand.",
+    { head: "S4ight · ready" }
+  );
+})();
+</script>
+</body>
+</html>

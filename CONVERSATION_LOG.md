@@ -1,5 +1,70 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 42 — HORIZON v1 Ground-Up Build + Intake Tool + Site Reroute (2026-06-20)
+## Last Updated: Session 43 — S4ight v1 Build + Live Preview on s4ledger.com (2026-06-26)
+
+---
+
+## Session 43 — S4ight v1 Build + Live Preview on s4ledger.com (2026-06-26)
+
+**Goal:** Stand up S4ight (S4 Systems specialized agentic AI for PMS 300/325/385:
+ILS, acquisition, programmatic) as a complete local-runnable stack AND wire it
+into s4ledger.com as a live preview so Nick can interact with it and give
+real-time feedback.
+
+**Built (local stack — `s4ight/`):**
+- `s4ight/backend/` — FastAPI app with:
+  - `main.py` (chat, tools, health, knowledge, session/clear; CORS + security headers)
+  - `agents.py` (ILS / Acquisition / Programmatic agents, keyword router, tool firing, memory)
+  - `tools.py` (`generate_ils_checklist`, `generate_acquisition_outline`, `generate_risk_register`)
+  - `retriever.py` (keyword/overlap RAG over `s4ight_knowledge/`, cached, swap-ready for embeddings)
+  - `memory.py` (thread-safe per-`session_id` sliding-window memory)
+  - `llm_providers.py` (provider abstraction: OpenAI for prod, Ollama for local)
+  - `ollama_integration.py` (legacy direct Ollama client, kept for compatibility)
+  - `config.py` (env-overridable: paths, models, limits, CORS)
+- `s4ight/s4ight_knowledge/` — 10 seed domain docs (12 IPS elements, LCSP, ILA,
+  acquisition lifecycle, EVMS, IMS quality, risk mgmt, PMS 300/325/385 overviews, style guide).
+- `s4ight/index.html` — single-page UI; auto-detects API base (localhost vs `/api/s4ight`).
+- `s4ight/run.sh`, `s4ight/.gitignore`, `s4ight/README.md`.
+
+**Live-preview wiring (s4ledger.com):**
+- `api/s4ight.py` (new) — Vercel Python serverless function. Uses
+  `BaseHTTPRequestHandler` (matches existing `api/index.py` pattern). Imports
+  the canonical backend from `s4ight/backend/` via `includeFiles`. Routes:
+    - `POST /api/s4ight/chat`
+    - `GET  /api/s4ight/health`
+    - `GET  /api/s4ight/knowledge`
+    - `POST /api/s4ight/tool/<name>`
+    - `POST /api/s4ight/session/<id>/clear`
+- `vercel.json` updates:
+  - Added `api/s4ight.py` to `functions` with `maxDuration: 60`, `memory: 1024`, `includeFiles: "s4ight/**"`.
+  - Added rewrites: `/api/s4ight/:path*` → `/api/s4ight`; `/s4ight[/]` → `/s4ight/index.html`.
+  - Added no-cache header for `/s4ight(.*)` (matches HORIZON pattern).
+- `requirements.txt` — added `openai>=1.40.0` (used by Vercel Python runtime).
+
+**LLM choice:** OpenAI `gpt-4o-mini` (cheapest credible option, ~$0.15/1M input
+tokens). Provider abstraction means swapping to Anthropic / Bedrock / Azure is
+a one-file change.
+
+**Deployment safety:** Subpath deploy at `s4ledger.com/s4ight/` — does NOT
+touch any existing site content (about/, contact/, horizon-v1/, products/,
+etc.). Worst case, the new function/route can be rolled back with no impact
+to the rest of the site.
+
+**Required Vercel env var (Nick adds in dashboard, NOT pasted to assistant):**
+- `OPENAI_API_KEY` — required.
+- `S4IGHT_LLM_PROVIDER=openai` (optional; already the default).
+- `OPENAI_MODEL=gpt-4o-mini` (optional; already the default).
+
+**Validation done:**
+- All 8 backend modules import clean under system Python.
+- `api/s4ight.py` imports clean (path injection to `s4ight/backend/` works).
+- `vercel.json` validates as JSON.
+
+**Next (per Nick's prior ask):**
+- Embeddings + vector store to replace keyword scoring.
+- Document ingestion pipeline (PDF/DOCX/XLSX → classification-tagged chunks).
+- LangGraph-style orchestration once routing complexity grows.
+- Citations w/ offsets in the UI.
+- Eval harness, audit logging, auth proxy + RBAC.
 
 ---
 

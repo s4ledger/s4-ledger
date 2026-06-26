@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-06-26 — S4ight v1 Build + Live Preview on s4ledger.com
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/index.html` (new) — single-page UI; auto-detects API base.
+- `s4ight/backend/{main,agents,tools,retriever,memory,llm_providers,ollama_integration,config}.py` (new).
+- `s4ight/backend/{requirements.txt,.env.example}` (new).
+- `s4ight/s4ight_knowledge/*.md` (10 new seed domain docs).
+- `s4ight/{README.md,run.sh,.gitignore}` (new).
+- `api/s4ight.py` (new) — Vercel Python serverless function.
+- `vercel.json` — added s4ight function, rewrites, no-cache header.
+- `requirements.txt` — added `openai>=1.40.0`.
+- `CONVERSATION_LOG.md`, `CHANGE_LOG.md` — Session 43 entry.
+
+**Live URLs after deploy:**
+- UI: `https://s4ledger.com/s4ight/`
+- API health: `https://s4ledger.com/api/s4ight/health`
+
+**Action required (one-time):** add `OPENAI_API_KEY` in Vercel → Settings → Environment Variables.
+
+**Deployment safety:** Subpath only. No existing site content modified.
+
+---
+
 ### 2026-06-20 — HORIZON v1 Ground-Up Build + S4 Intake Tool + Site Reroute
 **Commit:** (pending)
 **Files Changed:**

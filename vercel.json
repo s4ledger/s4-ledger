@@ -6,6 +6,11 @@
     },
     "api/nserc-sync.ts": {
       "maxDuration": 60
+    },
+    "api/s4ight.py": {
+      "maxDuration": 60,
+      "memory": 1024,
+      "includeFiles": "s4ight/**"
     }
   },
   "buildCommand": "bash build.sh",
@@ -80,6 +85,15 @@
     },
     {
       "source": "/horizon(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/s4ight(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -564,6 +578,22 @@
     {
       "source": "/v/:path*",
       "destination": "/verify/index.html"
+    },
+    {
+      "source": "/api/s4ight/:path*",
+      "destination": "/api/s4ight"
+    },
+    {
+      "source": "/api/s4ight",
+      "destination": "/api/s4ight"
+    },
+    {
+      "source": "/s4ight",
+      "destination": "/s4ight/index.html"
+    },
+    {
+      "source": "/s4ight/",
+      "destination": "/s4ight/index.html"
     },
     {
       "source": "/demo",
