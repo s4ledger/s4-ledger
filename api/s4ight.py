@@ -54,7 +54,6 @@ from config import (  # noqa: E402
 log = logging.getLogger("s4ight.vercel")
 logging.basicConfig(level=logging.INFO)
 
-# Tight CORS — only same-origin (s4ledger.com) by default. Loosen via env.
 ALLOWED_ORIGINS = {
     o.strip().lower()
     for o in os.getenv(
@@ -88,8 +87,6 @@ def _strip_prefix(path: str) -> str:
 class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this exact name
     server_version = "S4ight/1.0"
 
-    # ---- response helpers ----
-
     def _send_json(self, status: int, payload: dict) -> None:
         body = json.dumps(payload, default=str).encode("utf-8")
         origin = _resolve_origin(self.headers.get("Origin", ""))
@@ -111,15 +108,13 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         length = int(self.headers.get("Content-Length") or 0)
         if length <= 0:
             return {}
-        if length > 1_000_000:  # 1MB hard cap
+        if length > 1_000_000:
             raise ValueError("payload too large")
         raw = self.rfile.read(length)
         try:
             return json.loads(raw.decode("utf-8") or "{}")
         except json.JSONDecodeError as e:
             raise ValueError(f"invalid JSON: {e}")
-
-    # ---- HTTP verbs ----
 
     def do_OPTIONS(self):  # noqa: N802
         origin = _resolve_origin(self.headers.get("Origin", ""))
@@ -161,37 +156,29 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             log.exception("POST failed")
             return self._send_json(500, {"error": "internal", "detail": str(e)})
 
-    # ---- route handlers ----
-
     def _handle_health(self):
         docs = load_knowledge_base()
         provider = get_provider()
-        return self._send_json(
-            200,
-            {
-                "status": "ok",
-                "version": "1.0.0",
-                "knowledge_dir": str(KNOWLEDGE_DIR),
-                "knowledge_docs": len(docs),
-                "llm": provider.health(),
-                "supported_programs": SUPPORTED_PROGRAMS,
-                "runtime": "vercel-python",
-            },
-        )
+        return self._send_json(200, {
+            "status": "ok",
+            "version": "1.0.0",
+            "knowledge_dir": str(KNOWLEDGE_DIR),
+            "knowledge_docs": len(docs),
+            "llm": provider.health(),
+            "supported_programs": SUPPORTED_PROGRAMS,
+            "runtime": "vercel-python",
+        })
 
     def _handle_knowledge(self):
         docs = load_knowledge_base()
-        return self._send_json(
-            200,
-            {
-                "directory": str(KNOWLEDGE_DIR),
-                "count": len(docs),
-                "documents": [
-                    {"source": d["source"], "chars": len(d["content"]), "chunks": len(d["chunks"])}
-                    for d in docs
-                ],
-            },
-        )
+        return self._send_json(200, {
+            "directory": str(KNOWLEDGE_DIR),
+            "count": len(docs),
+            "documents": [
+                {"source": d["source"], "chars": len(d["content"]), "chunks": len(d["chunks"])}
+                for d in docs
+            ],
+        })
 
     def _handle_chat(self):
         body = self._read_json()
@@ -202,38 +189,31 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         if not message:
             return self._send_json(400, {"error": "message_required"})
         if len(message) > MAX_MESSAGE_CHARS:
-            return self._send_json(
-                413,
-                {"error": "message_too_long", "max_chars": MAX_MESSAGE_CHARS},
-            )
+            return self._send_json(413, {"error": "message_too_long", "max_chars": MAX_MESSAGE_CHARS})
 
         start = time.perf_counter()
         try:
-            result = orchestrator.route(
-                query=message, program=program, session_id=session_id
-            )
+            result = orchestrator.route(query=message, program=program, session_id=session_id)
         except Exception as e:
             log.exception("Chat orchestrator failed")
-            return self._send_json(
-                500,
-                {"error": "chat_failed", "detail": str(e), "trace": traceback.format_exc(limit=4)},
-            )
+            return self._send_json(500, {
+                "error": "chat_failed",
+                "detail": str(e),
+                "trace": traceback.format_exc(limit=4),
+            })
         elapsed_ms = int((time.perf_counter() - start) * 1000)
 
-        return self._send_json(
-            200,
-            {
-                "response": result.get("response", ""),
-                "sources": result.get("sources", []),
-                "agent": result.get("agent"),
-                "focus": result.get("focus"),
-                "engine": result.get("engine"),
-                "tool_used": result.get("tool_used"),
-                "tool_result": result.get("tool_result"),
-                "session_id": session_id,
-                "elapsed_ms": elapsed_ms,
-            },
-        )
+        return self._send_json(200, {
+            "response": result.get("response", ""),
+            "sources": result.get("sources", []),
+            "agent": result.get("agent"),
+            "focus": result.get("focus"),
+            "engine": result.get("engine"),
+            "tool_used": result.get("tool_used"),
+            "tool_result": result.get("tool_result"),
+            "session_id": session_id,
+            "elapsed_ms": elapsed_ms,
+        })
 
     def _handle_tool(self, name: str):
         fn = AVAILABLE_TOOLS.get(name)
@@ -258,6 +238,5 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         memory_store.clear(session_id)
         return self._send_json(200, {"status": "ok", "session_id": session_id, "cleared": True})
 
-    # Quieter logs in Vercel
-    def log_message(self, format, *args):  # noqa: A002 — match stdlib signature
+    def log_message(self, format, *args):  # noqa: A002
         log.info("%s - %s", self.address_string(), format % args)
