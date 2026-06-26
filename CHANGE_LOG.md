@@ -4,6 +4,16 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 3.2 (Citation Popovers)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/chunk_lookup.py` (new) — resolves `(source, idx)` → chunk text (curated KB + session uploads).
+- `api/s4ight.py` — new `GET /chunk` route.
+- `s4ight/backend/main.py` — same `/chunk` on local FastAPI.
+- `s4ight/index.html` — citation chips are now clickable (chat + Sources line); centered modal shows the exact chunk text with origin label and copy button. Citation regex extended to accept user-uploaded extensions.
+
+---
+
 ### 2026-06-26 — S4ight Wave 3.1 (User Document Ingestion)
 **Commit:** (pending)
 **Files Changed:**

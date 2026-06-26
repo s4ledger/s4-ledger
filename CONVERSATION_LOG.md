@@ -1,5 +1,43 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.3 — S4ight Wave 3.1: User Document Ingestion (2026-06-26)
+## Last Updated: Session 43.4 — S4ight Wave 3.2: Citation Popovers (2026-06-26)
+
+---
+
+## Session 43.4 — S4ight Wave 3.2: Citation Popovers (2026-06-26)
+
+**Goal:** Make every citation in the UI clickable and reveal the exact
+chunk excerpt — turns "trust me" answers into "here's the proof".
+
+**New / modified files:**
+- `s4ight/backend/chunk_lookup.py` (new) — resolves `(source, idx)`
+  citations to chunk text, with the same chunker params (900/150) the
+  semantic retriever uses. Searches curated KB first, session uploads
+  second.
+- `api/s4ight.py` — new `GET /chunk?source=&idx=&session_id=` route
+  for the Vercel function.
+- `s4ight/backend/main.py` — same `/chunk` route on local FastAPI.
+- `s4ight/index.html`:
+  - Citation regex broadened to accept `.pdf|.docx|.xlsx|.txt|.csv|.log`
+    (so user-uploaded sources work the same as curated `.md`).
+  - Sidebar `Sources:` pills are now citation chips too.
+  - Chips carry `data-source` / `data-idx`; click opens a centered
+    modal with the exact chunk text, origin label (knowledge_base vs
+    your upload), Copy text + Close buttons, Esc to dismiss.
+
+**Differentiation:** competing AI tools cite sources at best. S4ight
+shows the **literal excerpt** that grounded the answer, in a single
+click — the same pattern enterprise reviewers expect when validating
+an AI deliverable for ATO / audit.
+
+**Validation:** all 12 backend modules + Vercel handler import cleanly.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health`
+
+**Next (Wave 3.3):** multi-step planner — chain tool runs for prompts
+like "prepare my Gate 5 package" (outline + risk register + LCSP draft
++ ILA gap analysis).
 
 ---
 

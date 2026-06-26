@@ -127,6 +127,15 @@ async def knowledge() -> Dict[str, Any]:
     }
 
 
+@app.get("/chunk")
+async def chunk(source: str, idx: int, session_id: Optional[str] = None) -> Dict[str, Any]:
+    from chunk_lookup import lookup_chunk
+    hit = lookup_chunk(source, idx, session_id=session_id)
+    if not hit:
+        raise HTTPException(status_code=404, detail="chunk_not_found")
+    return hit
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest) -> ChatResponse:
     start = time.perf_counter()

@@ -47,6 +47,7 @@ from memory import store as memory_store  # noqa: E402
 from llm_providers import get_provider  # noqa: E402
 from retriever import load_knowledge_base  # noqa: E402
 from ingestion import store as doc_store, INGEST_MAX_BYTES  # noqa: E402
+from chunk_lookup import lookup_chunk  # noqa: E402
 from audit import audit, new_request_id  # noqa: E402
 from config import (  # noqa: E402
     KNOWLEDGE_DIR,
@@ -138,6 +139,8 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
                 return self._handle_knowledge()
             if route == "/documents":
                 return self._handle_list_documents()
+            if route == "/chunk":
+                return self._handle_chunk()
             return self._send_json(404, {"error": "not_found", "route": route})
         except Exception as e:
             log.exception("GET failed")
@@ -292,6 +295,24 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         if not sid:
             return self._send_json(400, {"error": "session_id_required"})
         return self._send_json(200, doc_store.info(sid))
+
+    def _handle_chunk(self):
+        """GET /chunk?source=<filename>&idx=<int>&session_id=<id> — returns the chunk text."""
+        from urllib.parse import parse_qs, urlparse as _up
+        qs = parse_qs(_up(self.path).query or "")
+        source = (qs.get("source") or [""])[0]
+        idx_str = (qs.get("idx") or [""])[0]
+        sid = (qs.get("session_id") or [""])[0] or None
+        try:
+            idx = int(idx_str)
+        except (TypeError, ValueError):
+            return self._send_json(400, {"error": "idx_must_be_int"})
+        if not source:
+            return self._send_json(400, {"error": "source_required"})
+        hit = lookup_chunk(source, idx, session_id=sid)
+        if not hit:
+            return self._send_json(404, {"error": "chunk_not_found", "source": source, "idx": idx})
+        return self._send_json(200, hit)
 
     def _handle_upload_document(self):
         import base64
