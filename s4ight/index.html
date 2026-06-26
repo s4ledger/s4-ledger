@@ -679,6 +679,14 @@
         `${dotLlm}LLM: ${provider} · <code>${escapeHtml(model)}</code> ` +
         (llmOk ? "ready" : "not ready");
 
+      // Audit drain status (informational; never a hard error).
+      if (j.audit) {
+        const sb = (j.audit.supabase || {});
+        const drained = !!sb.configured;
+        const dot = `<span class="dot ${drained ? "ok" : "warn"}"></span>`;
+        line += `<br>${dot}Audit: stderr` + (drained ? ` + Supabase (table <code>${escapeHtml(sb.table)}</code>)` : " only (Supabase not configured)");
+      }
+
       if (!llmOk) {
         // Surface the precise reason so it's fixable.
         const reason = llm.reason || llm.error || "see /health for details";

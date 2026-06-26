@@ -4,6 +4,17 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 4.3 (Audit Drain to Supabase)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/audit.py` — extended to POST every event into Supabase `s4ight_audit` when `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE` are set. Fire-and-forget daemon thread, 3 s hard timeout. New `audit.health()` returns drain status.
+- `api/s4ight.py`, `s4ight/backend/main.py` — `/health` now surfaces an `audit` block.
+- `s4ight/index.html` — sidebar shows `Audit: stderr + Supabase (table …)` when fully configured; stderr-only otherwise.
+
+**Wave 4.2 (SSE streaming) deferred** — Vercel Python serverless functions buffer responses; Edge runtime would lose PyPDF2/python-docx/openpyxl. Will revisit by moving chat to a Node/Edge function.
+
+---
+
 ### 2026-06-26 — S4ight Wave 4.1 (Deliverable Export: MD / DOCX / PDF)
 **Commit:** (pending)
 **Files Changed:**

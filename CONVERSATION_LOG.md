@@ -1,5 +1,94 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.7 — S4ight Wave 4.1: Deliverable Export (MD/DOCX/PDF) (2026-06-26)
+## Last Updated: Session 43.8 — S4ight Wave 4.3: Audit Drain to Supabase (2026-06-26)
+
+---
+
+## Session 43.8 — S4ight Wave 4.3: Audit Drain to Supabase (2026-06-26)
+
+**Goal:** Persistent audit trail for every S4ight API event so we have
+ATO-grade evidence (who asked what, which agent / engine answered, which
+sources were cited, how long it took, success/failure).
+
+**Wave 4.2 (SSE streaming) — DEFERRED.** Vercel Python serverless
+functions buffer responses; true streaming requires the Edge runtime,
+which can't bundle PyPDF2 / python-docx / openpyxl. Not worth a
+mixed-quality ship right now — we'd revisit by moving just the chat
+endpoint to a Node/Edge function later.
+
+**New behaviour (Wave 4.3):**
+- `s4ight/backend/audit.py` extended:
+  - Continues to write JSON lines to **stderr** (Vercel logs).
+  - When `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE` env vars are set, the
+    same event is also POSTed to a Supabase table (default
+    `s4ight_audit`) via the REST API. No new Python deps — stdlib
+    `urllib` only.
+  - Supabase writes run in a **daemon thread** with a hard timeout
+    (`S4IGHT_AUDIT_TIMEOUT_S`, default 3s), so the request never waits
+    on the drain. Failures log a warning and are otherwise silent.
+  - Schema mapping preserves the original event fields and packs any
+    extras into a `jsonb` column.
+  - New `audit.health()` reports drain status (stderr always; supabase
+    configured/url_present/key_present/table).
+- `api/s4ight.py` and `s4ight/backend/main.py` `/health` endpoints now
+  surface the `audit` block.
+- UI: sidebar status panel shows `Audit: stderr + Supabase (table …)`
+  when fully configured, or `Audit: stderr only` otherwise. Never red
+  (informational).
+
+**Supabase one-time setup (idempotent):**
+```sql
+CREATE TABLE public.s4ight_audit (
+  id            uuid primary key default gen_random_uuid(),
+  ts            timestamptz not null default now(),
+  level         text,
+  event         text,
+  request_id    text,
+  session_id    text,
+  duration_ms   int,
+  agent         text,
+  engine        text,
+  provider      text,
+  model         text,
+  program       text,
+  sources       jsonb,
+  tool_used     text,
+  status_code   int,
+  message       text,
+  error         text,
+  extra         jsonb
+);
+CREATE INDEX ON public.s4ight_audit (ts DESC);
+CREATE INDEX ON public.s4ight_audit (session_id);
+CREATE INDEX ON public.s4ight_audit (event);
+```
+
+Then in Vercel → Settings → Environment Variables (Production):
+- `SUPABASE_URL` — e.g. `https://ysmwkkdpjgjokukxolel.supabase.co`
+- `SUPABASE_SERVICE_ROLE` — service role key (NOT the anon key)
+- (optional) `S4IGHT_AUDIT_TABLE` — defaults to `s4ight_audit`
+
+Until these env vars are added, S4ight behaves exactly as before —
+stderr-only logging. Adding them switches Supabase persistence on
+without any code change.
+
+**Differentiation:** every other AI tool says "trust me". S4ight gives
+you a replayable audit trail in a DB you control. That conversation
+turns into "show me everything Nick asked about PMS 325 last week,
+which agents answered, and which docs they cited" — and we already
+have the data.
+
+**Validation:**
+- All modules import cleanly.
+- `audit('test_event', ...)` writes a valid JSON line to stderr.
+- `audit.health()` correctly reports `configured: false` when env vars
+  are missing (today's state).
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health` — now includes `audit` block.
+
+**Next (Wave 4.4):** Expand the eval harness with multi-step goldens
+covering the planner chains (Gate 4/5/6, ILA readiness, program health).
 
 ---
 

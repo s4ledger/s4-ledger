@@ -104,6 +104,11 @@ async def health() -> Dict[str, Any]:
         sem["available"] = _sem.available()
     except Exception as e:
         sem = {"enabled": False, "error": str(e)}
+    try:
+        from audit import health as _audit_health
+        audit_info = _audit_health()
+    except Exception as e:
+        audit_info = {"enabled": False, "error": str(e)}
     return {
         "status": "ok",
         "version": app.version,
@@ -111,6 +116,7 @@ async def health() -> Dict[str, Any]:
         "knowledge_docs": len(docs),
         "llm": provider.health(),
         "semantic": sem,
+        "audit": audit_info,
         "supported_programs": SUPPORTED_PROGRAMS,
     }
 

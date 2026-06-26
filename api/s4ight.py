@@ -181,6 +181,11 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             semantic_info["available"] = _sem.available()
         except Exception as e:  # pragma: no cover
             semantic_info = {"enabled": False, "error": str(e)}
+        try:
+            from audit import health as _audit_health  # noqa: WPS433
+            audit_info = _audit_health()
+        except Exception as e:  # pragma: no cover
+            audit_info = {"enabled": False, "error": str(e)}
         return self._send_json(200, {
             "status": "ok",
             "version": "1.0.0",
@@ -188,6 +193,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             "knowledge_docs": len(docs),
             "llm": provider.health(),
             "semantic": semantic_info,
+            "audit": audit_info,
             "supported_programs": SUPPORTED_PROGRAMS,
             "runtime": "vercel-python",
         })
