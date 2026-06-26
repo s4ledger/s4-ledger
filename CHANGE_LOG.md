@@ -4,6 +4,19 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 5.5 (Entra OIDC Bearer Validation, server-side)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/oidc.py` (new) — JWKS-cached RS256 validation with issuer/audience checks + optional required-claim policy; builds normalized principals from JWT claims.
+- `s4ight/backend/access.py` — `authorize` accepts either static-token or OIDC bearer; `health()` reports both paths.
+- `api/requirements.txt`, `s4ight/backend/requirements.txt` — `PyJWT[crypto]>=2.8.0`.
+
+**Setup:** see CONVERSATION_LOG Session 43.15 (Azure App Registration + env vars).
+
+**Out of scope this commit (deferred to Wave 6.1):** browser-side authorization-code + PKCE flow with secure-cookie session.
+
+---
+
 ### 2026-06-26 — S4ight Wave 5.4 (Cross-Session Document Persistence)
 **Commit:** (pending)
 **Files Changed:**

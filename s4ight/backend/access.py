@@ -65,14 +65,26 @@ TOKENS: Dict[str, Dict[str, object]] = _parse_tokens(ACCESS_TOKENS_RAW)
 
 
 def is_enabled() -> bool:
-    return bool(TOKENS)
+    if TOKENS:
+        return True
+    try:
+        from oidc import enabled as _oidc_enabled
+        return _oidc_enabled()
+    except Exception:
+        return False
 
 
 def health() -> Dict[str, object]:
-    return {
+    info: Dict[str, object] = {
         "enabled": is_enabled(),
-        "token_count": len(TOKENS),
+        "static_tokens": {"enabled": bool(TOKENS), "count": len(TOKENS)},
     }
+    try:
+        from oidc import health as _oidc_health
+        info["oidc"] = _oidc_health()
+    except Exception as e:
+        info["oidc"] = {"enabled": False, "error": str(e)}
+    return info
 
 
 def _extract_token(headers: Dict[str, str], query_token: Optional[str]) -> Optional[str]:
@@ -96,20 +108,43 @@ def authorize(
 ) -> Tuple[bool, Optional[Dict[str, object]], Optional[str]]:
     """
     Returns (allowed, principal, reason).
-      allowed   : True if access is permitted.
-      principal : token metadata (label, programs) on success.
-      reason    : human-readable error on denial.
+
+    Auth strategy (in order):
+      1. If access is disabled, allow everyone (anonymous).
+      2. If the supplied token matches a static `S4IGHT_ACCESS_TOKENS`
+         entry, use that.
+      3. If OIDC is configured, try to validate the supplied token as a
+         JWT against the configured issuer/audience.
     """
     if not is_enabled():
         return True, {"label": "anonymous", "programs": "*"}, None
     token = _extract_token(headers, query_token)
     if not token:
         return False, None, "missing_token"
-    principal = TOKENS.get(token)
-    if not principal:
+
+    # 1) Static token table.
+    principal = TOKENS.get(token) if TOKENS else None
+    if principal is not None:
+        if program is not None:
+            allowed_programs = principal.get("programs") or "*"
+            if allowed_programs != "*" and program not in allowed_programs:
+                return False, principal, f"program_not_allowed: {program}"
+        return True, principal, None
+
+    # 2) OIDC bearer JWT.
+    try:
+        from oidc import enabled as _oidc_enabled, validate_token, principal_from_claims
+    except Exception:
         return False, None, "invalid_token"
-    if program is not None:
-        allowed_programs = principal.get("programs") or "*"
-        if allowed_programs != "*" and program not in allowed_programs:
-            return False, principal, f"program_not_allowed: {program}"
-    return True, principal, None
+    if _oidc_enabled():
+        ok, claims, reason = validate_token(token)
+        if ok and claims:
+            principal = principal_from_claims(claims)
+            if program is not None:
+                allowed_programs = principal.get("programs") or "*"
+                if allowed_programs != "*" and program not in allowed_programs:
+                    return False, principal, f"program_not_allowed: {program}"
+            return True, principal, None
+        return False, None, f"oidc_{reason or 'rejected'}"
+
+    return False, None, "invalid_token"

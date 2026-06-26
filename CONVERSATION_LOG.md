@@ -1,5 +1,78 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.14 — S4ight Wave 5.4: Cross-Session Document Persistence (2026-06-26)
+## Last Updated: Session 43.15 — S4ight Wave 5.5: Entra OIDC Bearer Validation (2026-06-26)
+
+---
+
+## Session 43.15 — S4ight Wave 5.5: Entra OIDC Bearer Validation (2026-06-26)
+
+**Scope honesty:** A full browser SSO flow (authorization code + PKCE,
+session cookies, browser redirect dance) is a significant build and
+needs an Entra tenant + app registration that only you can do. This
+sub-wave ships **the server-side half** so that once you register the
+S4ight API in Entra, it accepts Entra-issued bearer tokens. Browser
+login UI is the next sub-wave.
+
+**New / modified:**
+- `s4ight/backend/oidc.py` (new):
+  - Discovers `jwks_uri` from the issuer (`/.well-known/openid-
+    configuration`) with TTL cache (default 1 hour).
+  - `validate_token(jwt_str)` — RS256 signature check, `iss` + `aud`
+    + `exp` enforcement, plus optional required-claim policy.
+  - `principal_from_claims(claims)` — builds a normalized principal
+    `{label, programs, claims}` using configurable claim names.
+- `s4ight/backend/access.py`:
+  - `authorize` now has two paths: static `S4IGHT_ACCESS_TOKENS`
+    table OR a valid OIDC bearer JWT.
+  - `is_enabled()` returns True if either path is active.
+  - `health()` returns both the static token state and the OIDC state.
+- `api/requirements.txt`, `s4ight/backend/requirements.txt` — added
+  `PyJWT[crypto]>=2.8.0`.
+
+**Env vars (set these in Vercel when you're ready to switch on Entra):**
+- `S4IGHT_OIDC_ISSUER`  e.g. `https://login.microsoftonline.com/<tenant-id>/v2.0`
+- `S4IGHT_OIDC_AUDIENCE`  the API audience (Application ID URI or client_id)
+- `S4IGHT_OIDC_JWKS_URL`  optional override; otherwise auto-discovered
+- `S4IGHT_OIDC_PROGRAMS_CLAIM`  optional, defaults to `programs`
+- `S4IGHT_OIDC_LABEL_CLAIM`  optional, defaults to `preferred_username`
+- `S4IGHT_OIDC_REQUIRED_CLAIMS`  optional JSON (e.g.
+  `{"roles": "S4ight.User"}`) to require role assignment.
+
+**Azure / Entra setup (one-time, manual):**
+1. Entra admin centre → App registrations → New registration:
+   - Name: "S4ight API"
+   - Supported account types: single-tenant (recommended)
+2. Expose an API → Application ID URI → e.g. `api://<client-id>`.
+3. Add a custom scope (e.g. `s4ight.access`) and/or app roles.
+4. Add the role/claim to the user/group of testers.
+5. In Vercel env vars, set the four `S4IGHT_OIDC_*` vars above, then
+   redeploy.
+6. Until a real browser flow ships, your testers obtain a bearer
+   token via Azure CLI / MSAL / Postman and paste it into the Access
+   token field. The server will validate it on every request.
+
+**Backwards-compatible:** when none of those env vars are set, S4ight
+behaves exactly as today — either open or gated by the static
+`S4IGHT_ACCESS_TOKENS` map.
+
+**Validation:**
+- All 16 backend modules import cleanly with PyJWT absent (graceful
+  degradation; OIDC simply reports `pyjwt_installed: false`).
+- On Vercel, PyJWT[crypto] will install from `api/requirements.txt`
+  and OIDC will be available the moment the env vars are set.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health` — now reports the
+  combined `access` block with both `static_tokens` and `oidc`.
+
+**Wave 5 complete. The next-next wave (Wave 6) candidates:**
+- Browser-side Entra sign-in (authorization-code + PKCE, secure-cookie
+  session, sign-out).
+- Vector store upgrade (pgvector in Supabase instead of in-memory
+  cosine).
+- Conversation history persistence (currently per-session in memory).
+- Cross-program analytics dashboard (Supabase + a small queries page).
+- Programmable workflows (user-defined preset chains via JSON).
 
 ---
 
