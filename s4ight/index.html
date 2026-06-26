@@ -253,6 +253,14 @@
       </div>
 
       <div>
+        <label>Response mode</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text);background:#0f1830;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer">
+          <input type="checkbox" id="streamMode" style="width:auto;margin:0">
+          <span>Fast streaming (no RAG / no citations)</span>
+        </label>
+      </div>
+
+      <div>
         <label>Your documents (this session only)</label>
         <select id="uploadClassification" style="margin-bottom:6px">
           <option value="UNCLASSIFIED">UNCLASSIFIED (default)</option>
@@ -783,6 +791,69 @@
     sendBtn.disabled = true;
     input.value = "";
     addMsg("user", escapeHtml(text));
+
+    // Streaming mode: hits the Edge function. No RAG, no tools.
+    if ($("streamMode") && $("streamMode").checked) {
+      const placeholder = addMsg("assistant", "<em>Streaming…</em>", {
+        head: `S4ight · streaming · ${programSel.value}`
+      });
+      const body = placeholder.querySelector("div + div"); // body div
+      let acc = "";
+      try {
+        const base = location.origin; // edge function lives at /api/s4ight-stream (same origin)
+        const r = await fetch(base + "/api/s4ight-stream", {
+          method: "POST",
+          headers: Object.assign({ "Content-Type": "application/json" }, authHeaders()),
+          body: JSON.stringify({ message: text, program: programSel.value })
+        });
+        if (!r.ok || !r.body) {
+          const errTxt = await r.text();
+          throw new Error("HTTP " + r.status + " — " + errTxt);
+        }
+        body.innerHTML = "";
+        const reader = r.body.getReader();
+        const dec = new TextDecoder();
+        let buf = "";
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          // SSE: split on \n\n; each frame has lines starting with "event:" / "data:"
+          let idx;
+          while ((idx = buf.indexOf("\n\n")) >= 0) {
+            const frame = buf.slice(0, idx);
+            buf = buf.slice(idx + 2);
+            const lines = frame.split("\n");
+            let event = "message", data = "";
+            for (const l of lines) {
+              if (l.startsWith("event:")) event = l.slice(6).trim();
+              else if (l.startsWith("data:")) data += l.slice(5).trim();
+            }
+            if (event === "token") {
+              try { acc += JSON.parse(data).t || ""; }
+              catch { /* ignore */ }
+              body.innerHTML = formatAssistant(acc);
+              chat.scrollTop = chat.scrollHeight;
+            } else if (event === "error") {
+              body.innerHTML += `<div style="color:var(--danger)">stream error: ${escapeHtml(data)}</div>`;
+            }
+          }
+        }
+        if (acc.trim()) {
+          placeholder.appendChild(buildExportBar({
+            md: acc, html: renderMarkdown(acc),
+            title: `S4ight Streaming · ${programSel.value}`,
+          }));
+        }
+      } catch (e) {
+        body.innerHTML = `<span style="color: var(--danger)">Stream error: ${escapeHtml(String(e.message || e))}</span>`;
+      } finally {
+        sendBtn.disabled = false;
+        input.focus();
+      }
+      return;
+    }
+
     const placeholder = addMsg("assistant", "<em>Thinking…</em>");
     try {
       const r = await authedFetch(apiBase() + "/chat", {

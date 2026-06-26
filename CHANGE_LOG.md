@@ -4,6 +4,17 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 5.3 (Edge Streaming — LLM-only)
+**Commit:** (pending)
+**Files Changed:**
+- `api/s4ight-stream.js` (new) — Vercel Edge function. POST `/api/s4ight-stream` streams OpenAI tokens via SSE. Honors `S4IGHT_ACCESS_TOKENS` + program scope. No RAG, no tools, no audit.
+- `vercel.json` — new function entry + rewrite.
+- `s4ight/index.html` — sidebar "Fast streaming (no RAG / no citations)" toggle. When on, `send()` posts to `/api/s4ight-stream`, parses SSE frames, renders live tokens, and ends with an export bar.
+
+**Trade-off:** streaming gains first-token latency at the cost of grounding. Default mode (grounded) remains the recommendation for any cited deliverable.
+
+---
+
 ### 2026-06-26 — S4ight Wave 5.2 (Classification Tagging + Filterable Retrieval)
 **Commit:** (pending)
 **Files Changed:**

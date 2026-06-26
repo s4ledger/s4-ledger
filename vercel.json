@@ -11,6 +11,9 @@
       "maxDuration": 60,
       "memory": 1024,
       "includeFiles": "s4ight/**"
+    },
+    "api/s4ight-stream.js": {
+      "maxDuration": 60
     }
   },
   "buildCommand": "bash build.sh",
@@ -586,6 +589,10 @@
     {
       "source": "/api/s4ight",
       "destination": "/api/s4ight"
+    },
+    {
+      "source": "/api/s4ight-stream",
+      "destination": "/api/s4ight-stream"
     },
     {
       "source": "/s4ight",

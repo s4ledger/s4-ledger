@@ -1,5 +1,55 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.12 — S4ight Wave 5.2: Classification Tagging + Filterable Retrieval (2026-06-26)
+## Last Updated: Session 43.13 — S4ight Wave 5.3: Edge Streaming (LLM-only) (2026-06-26)
+
+---
+
+## Session 43.13 — S4ight Wave 5.3: Edge Streaming (2026-06-26)
+
+**Goal:** Drop first-token latency to ~500 ms for casual Q&A. Done by
+adding a second backend: a Vercel **Edge** function in JS that streams
+OpenAI tokens straight to the browser via Server-Sent Events.
+
+**Honest trade-off — documented in the UI:**
+- The Edge function does **not** run RAG, citations, document search,
+  the planner, tool calls, or audit logging. Those all live in the
+  Python function which can't run on Edge.
+- The UI has a new "Fast streaming (no RAG / no citations)" toggle.
+  Default off → grounded behaviour unchanged.
+
+**New:**
+- `api/s4ight-stream.js` — Vercel Edge function (`runtime: "edge"`).
+  - Reads `message` + `program` from request body.
+  - Honors the same `S4IGHT_ACCESS_TOKENS` and program-scope rules as
+    the Python function (re-implemented in JS, kept in sync).
+  - Calls OpenAI Chat Completions with `stream: true`.
+  - Re-emits OpenAI SSE chunks as our own minimal SSE protocol:
+      event: ready  → { model, program }
+      event: token  → { t: "delta text" }
+      event: error  → { detail }
+      event: done   → { ok: true }
+  - Returns SSE response with `X-Accel-Buffering: no` and CORS headers.
+- `vercel.json`:
+  - Function declaration for `api/s4ight-stream.js` (maxDuration 60).
+  - Rewrite `/api/s4ight-stream` → `/api/s4ight-stream`.
+
+**UI:**
+- New "Response mode" panel in the sidebar with a checkbox: **Fast
+  streaming (no RAG / no citations)**.
+- When checked, `send()` posts to `/api/s4ight-stream`, parses the SSE
+  frames, and renders tokens live into the message body. Final message
+  still gets an export bar.
+- When unchecked (default), behaviour is unchanged: full grounded chat
+  via the Python function.
+
+**Env vars required for streaming (already present from Wave 1):**
+- `OPENAI_API_KEY` — used by the Edge function as well.
+- Optionally `OPENAI_MODEL`, `OPENAI_TEMPERATURE`.
+- If `S4IGHT_ACCESS_TOKENS` is set, the Edge function enforces the same
+  tokens + program scope.
+
+**Validation:** vercel.json valid JSON; edge function loads cleanly.
+
+**Live URL:** `https://s4ledger.com/api/s4ight-stream` (POST only).
 
 ---
 
