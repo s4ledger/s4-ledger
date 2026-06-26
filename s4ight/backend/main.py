@@ -96,12 +96,20 @@ class ToolRequest(BaseModel):
 async def health() -> Dict[str, Any]:
     docs = load_knowledge_base()
     provider = get_provider()
+    sem: Dict[str, Any]
+    try:
+        from semantic_retriever import index as _sem  # noqa: WPS433
+        sem = _sem.info()
+        sem["available"] = _sem.available()
+    except Exception as e:
+        sem = {"enabled": False, "error": str(e)}
     return {
         "status": "ok",
         "version": app.version,
         "knowledge_dir": str(KNOWLEDGE_DIR),
         "knowledge_docs": len(docs),
         "llm": provider.health(),
+        "semantic": sem,
         "supported_programs": SUPPORTED_PROGRAMS,
     }
 

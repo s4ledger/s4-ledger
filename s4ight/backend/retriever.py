@@ -125,7 +125,24 @@ def retrieve_relevant_chunks(query: str, top_k: int = 4) -> List[Tuple[str, str]
 
 
 def build_context(query: str, top_k: int = 4, max_chars: int = MAX_CONTEXT_CHARS) -> Tuple[str, List[str]]:
-    """Assemble a context string (capped) plus its source list."""
+    """Assemble a context string (capped) plus its source list.
+
+    Tries semantic embeddings first (text-embedding-3-small via OpenAI). Falls
+    back to keyword scoring if semantic retrieval is unavailable.
+    """
+    # Try semantic path first.
+    try:
+        from semantic_retriever import index as _sem
+        if _sem.available():
+            ctx, cites = _sem.build_context(query, top_k=top_k, max_chars=max_chars)
+            if ctx:
+                # Format sources as "filename.md §N" so the LLM can echo them.
+                sources = [f"{c['source']} §{c['chunk']}" for c in cites]
+                return ctx, sources
+    except Exception:  # pragma: no cover - keep keyword fallback alive
+        pass
+
+    # Keyword fallback.
     hits = retrieve_relevant_chunks(query, top_k=top_k)
     if not hits:
         return "", []

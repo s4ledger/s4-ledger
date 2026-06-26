@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
   <title>S4ight — S4 Systems AI (Preview)</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js" crossorigin="anonymous"></script>
   <style>
     :root {
       --bg: #0b1220;
@@ -100,6 +102,23 @@
     .msg pre {
       background: #0a1326; border-radius: 8px; padding: 10px;
       overflow-x: auto; font-size: 12.5px;
+    }
+    .msg code { background: #0a1326; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+    .msg h1, .msg h2, .msg h3, .msg h4 { margin: 0.6em 0 0.3em; line-height: 1.25; }
+    .msg h1 { font-size: 1.25rem; }
+    .msg h2 { font-size: 1.10rem; }
+    .msg h3 { font-size: 1.00rem; color: var(--accent-2); }
+    .msg ul, .msg ol { padding-left: 1.4em; margin: 0.35em 0; }
+    .msg li { margin: 0.15em 0; }
+    .msg table { border-collapse: collapse; margin: 0.5em 0; font-size: 13px; }
+    .msg th, .msg td { border: 1px solid var(--line); padding: 6px 9px; text-align: left; }
+    .msg th { background: #0f1830; }
+    .msg blockquote { border-left: 3px solid var(--accent); padding: 0.2em 0.8em; margin: 0.5em 0; color: var(--muted); }
+    .msg a { color: var(--accent-2); }
+    .citation-chip {
+      display: inline-block; background: #0f1830; color: var(--accent-2);
+      border: 1px solid var(--line); padding: 1px 7px; border-radius: 999px;
+      font-size: 11.5px; margin: 0 2px; cursor: help;
     }
     .sources { color: var(--muted); font-size: 12px; margin-top: 6px; }
     .sources span { display: inline-block; background: #0f1830; padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
@@ -224,6 +243,27 @@
     }[c]));
   }
 
+  // Render markdown safely; fall back to escaped + line breaks if libs missing.
+  const MD_AVAILABLE = typeof window.marked === "object" && typeof window.DOMPurify === "object";
+  if (MD_AVAILABLE) {
+    window.marked.setOptions({ gfm: true, breaks: true });
+  }
+  function renderMarkdown(text) {
+    if (!MD_AVAILABLE) return escapeHtml(text).replace(/\n/g, "<br>");
+    const html = window.marked.parse(text || "");
+    return window.DOMPurify.sanitize(html, { ADD_ATTR: ["target"] });
+  }
+  // Convert "(Source: foo.md §3)" patterns into citation chips.
+  function citationize(html) {
+    return html.replace(
+      /\(Source:\s*([A-Za-z0-9_\-.]+\.md)(?:\s*§\s*(\d+))?\)/g,
+      function (_, file, idx) {
+        const tag = idx ? `${file} §${idx}` : file;
+        return `<span class="citation-chip" title="From the S4ight knowledge base">${escapeHtml(tag)}</span>`;
+      }
+    );
+  }
+
   function addMsg(role, text, extras = {}) {
     const el = document.createElement("div");
     el.className = "msg " + role;
@@ -247,7 +287,53 @@
   }
 
   function formatAssistant(text) {
-    return escapeHtml(text);
+    return citationize(renderMarkdown(text || ""));
+  }
+
+  function renderToolResult(name, result) {
+    if (!result || typeof result !== "object") {
+      return "<pre>" + escapeHtml(String(result)) + "</pre>";
+    }
+    let md = "";
+    if (name === "generate_ils_checklist" && result.checklist_items) {
+      md += `**ILS Checklist — ${result.element} on ${result.platform}**\n\n`;
+      md += result.checklist_items.map((x, i) => `${i + 1}. ${x}`).join("\n");
+      if (result.notes) md += `\n\n> ${result.notes}`;
+    } else if (name === "generate_acquisition_outline" && result.recommended_sections) {
+      md += `**${result.milestone} Outline — ${result.program}**\n\n`;
+      md += result.recommended_sections.map((x, i) => `${i + 1}. ${x}`).join("\n");
+      if (result.s4_recommendation) md += `\n\n> ${result.s4_recommendation}`;
+    } else if (name === "generate_risk_register" && Array.isArray(result.risks)) {
+      md += `**Risk Register — ${result.program}**\n\n`;
+      md += "| ID | Title | Category | L | C | Mitigation |\n";
+      md += "|----|-------|----------|---|---|------------|\n";
+      for (const r of result.risks) {
+        md += `| ${r.id} | ${r.title} | ${r.category} | ${r.likelihood} | ${r.consequence} | ${r.mitigation} |\n`;
+      }
+      if (result.notes) md += `\n> ${result.notes}`;
+    } else if (name === "draft_lcsp_section" && result.draft) {
+      md += `**LCSP Draft — ${result.section} (${result.program})**\n\n${result.draft}`;
+    } else if (name === "triage_ims_critical_path" && result.findings) {
+      md += `**IMS Critical-Path Triage — ${result.program}**\n\n`;
+      md += "| # | Finding | Severity | Action |\n|---|---------|----------|--------|\n";
+      result.findings.forEach((f, i) => {
+        md += `| ${i + 1} | ${f.finding} | ${f.severity} | ${f.action} |\n`;
+      });
+    } else if (name === "triage_evms_variance" && result.findings) {
+      md += `**EVMS Variance Triage — ${result.program}**\n\n`;
+      md += "| Metric | Value | Verdict | Action |\n|--------|-------|---------|--------|\n";
+      result.findings.forEach((f) => {
+        md += `| ${f.metric} | ${f.value} | ${f.verdict} | ${f.action} |\n`;
+      });
+    } else if (name === "gap_analyze_ila_finding" && result.gaps) {
+      md += `**ILA Gap Analysis — ${result.finding_title || ""}**\n\n`;
+      md += result.gaps.map((g, i) =>
+        `${i + 1}. **${g.ips_element}** — ${g.gap}\n   - Owner: ${g.owner}\n   - Due: ${g.due}\n   - Success: ${g.success_criteria}`
+      ).join("\n");
+    } else {
+      md = "```json\n" + JSON.stringify(result, null, 2) + "\n```";
+    }
+    return renderMarkdown(md);
   }
 
   async function checkHealth() {
@@ -310,8 +396,7 @@
       });
 
       if (j.tool_result) {
-        const pretty = "<pre>" + escapeHtml(JSON.stringify(j.tool_result, null, 2)) + "</pre>";
-        addMsg("tool", pretty, { head: `tool: ${j.tool_used}` });
+        addMsg("tool", renderToolResult(j.tool_used, j.tool_result), { head: `tool: ${j.tool_used}` });
       }
     } catch (e) {
       placeholder.remove();

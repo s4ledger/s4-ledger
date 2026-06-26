@@ -25,6 +25,7 @@ import sys
 import time
 import traceback
 from http.server import BaseHTTPRequestHandler
+from typing import Any, Dict
 from urllib.parse import urlparse
 from uuid import uuid4
 
@@ -45,6 +46,7 @@ from tools import AVAILABLE_TOOLS  # noqa: E402
 from memory import store as memory_store  # noqa: E402
 from llm_providers import get_provider  # noqa: E402
 from retriever import load_knowledge_base  # noqa: E402
+from audit import audit, new_request_id  # noqa: E402
 from config import (  # noqa: E402
     KNOWLEDGE_DIR,
     MAX_MESSAGE_CHARS,
@@ -159,12 +161,20 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
     def _handle_health(self):
         docs = load_knowledge_base()
         provider = get_provider()
+        semantic_info: Dict[str, Any] = {"enabled": False}
+        try:
+            from semantic_retriever import index as _sem  # noqa: WPS433
+            semantic_info = _sem.info()
+            semantic_info["available"] = _sem.available()
+        except Exception as e:  # pragma: no cover
+            semantic_info = {"enabled": False, "error": str(e)}
         return self._send_json(200, {
             "status": "ok",
             "version": "1.0.0",
             "knowledge_dir": str(KNOWLEDGE_DIR),
             "knowledge_docs": len(docs),
             "llm": provider.health(),
+            "semantic": semantic_info,
             "supported_programs": SUPPORTED_PROGRAMS,
             "runtime": "vercel-python",
         })
@@ -181,14 +191,17 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         })
 
     def _handle_chat(self):
+        request_id = new_request_id()
         body = self._read_json()
         message = (body.get("message") or "").strip()
         program = (body.get("program") or "PMS 325").strip()
         session_id = (body.get("session_id") or "").strip() or str(uuid4())
 
         if not message:
+            audit("chat", request_id=request_id, session_id=session_id, status_code=400, level="WARN", message="empty message")
             return self._send_json(400, {"error": "message_required"})
         if len(message) > MAX_MESSAGE_CHARS:
+            audit("chat", request_id=request_id, session_id=session_id, status_code=413, level="WARN", message="message too long")
             return self._send_json(413, {"error": "message_too_long", "max_chars": MAX_MESSAGE_CHARS})
 
         start = time.perf_counter()
@@ -196,12 +209,28 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             result = orchestrator.route(query=message, program=program, session_id=session_id)
         except Exception as e:
             log.exception("Chat orchestrator failed")
+            audit("chat", request_id=request_id, session_id=session_id, program=program,
+                  status_code=500, level="ERROR", error=str(e))
             return self._send_json(500, {
                 "error": "chat_failed",
                 "detail": str(e),
                 "trace": traceback.format_exc(limit=4),
             })
         elapsed_ms = int((time.perf_counter() - start) * 1000)
+
+        audit(
+            "chat",
+            request_id=request_id,
+            session_id=session_id,
+            program=program,
+            agent=result.get("agent"),
+            engine=result.get("engine"),
+            tool_used=result.get("tool_used"),
+            sources=result.get("sources"),
+            duration_ms=elapsed_ms,
+            status_code=200,
+            message="ok",
+        )
 
         return self._send_json(200, {
             "response": result.get("response", ""),
@@ -212,6 +241,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             "tool_used": result.get("tool_used"),
             "tool_result": result.get("tool_result"),
             "session_id": session_id,
+            "request_id": request_id,
             "elapsed_ms": elapsed_ms,
         })
 

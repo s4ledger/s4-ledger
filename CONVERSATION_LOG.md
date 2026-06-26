@@ -1,5 +1,100 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43 — S4ight v1 Live Preview on s4ledger.com (2026-06-26)
+## Last Updated: Session 43.2 — S4ight Wave 2: Semantic RAG, Citations, Markdown UI, Tools, Audit, Eval (2026-06-26)
+
+---
+
+## Session 43.2 — S4ight Wave 2 Differentiation Build (2026-06-26)
+
+**Goal:** Push S4ight past generic AI tools (ChatGPT / Ask Sage) on the
+specific axes that matter for PMS 300/325/385: grounded retrieval, traceable
+citations, structured deliverables, regression-tested quality, and audit
+evidence.
+
+**Added — Semantic retrieval:**
+- `s4ight/backend/semantic_retriever.py` — OpenAI `text-embedding-3-small`
+  index, in-memory cosine similarity, lazy build + cache, cheap signature
+  refresh when the knowledge base changes.
+- `s4ight/backend/retriever.py` — hybrid: semantic first, keyword fallback.
+  Sources are now formatted `filename.md §N` with chunk index.
+- `/health` (Vercel + FastAPI) reports `semantic` block: enabled, has_key,
+  built, chunk_count, model, error.
+
+**Added — UI quality:**
+- `s4ight/index.html` — pulled `marked@12` + `DOMPurify@3` from cdn.jsdelivr
+  (already allow-listed in CSP), markdown rendering, table/list/blockquote
+  styling, citation chips for `(Source: foo.md §N)` patterns, structured
+  rendering for every tool output (ILS checklist, gate outline, risk
+  register, LCSP draft, IMS triage, EVMS triage, ILA gap analysis).
+
+**Added — Citation discipline:**
+- `llm_providers.py` system prompt requires every non-trivial claim to cite
+  `(Source: filename.md §N)`. Forbids invented filenames.
+
+**Added — Knowledge base (7 new docs, on top of the 10 seed docs):**
+- `dcma_14_point_ims.md`
+- `evms_variance_triage.md`
+- `dmsms_obsolescence.md`
+- `requirements_traceability.md`
+- `sustaining_engineering_isea.md`
+- `gate_review_evidence.md`
+- `cybersecurity_rmf_ato.md`
+
+**Added — 4 new specialized tools:**
+- `draft_lcsp_section` (section drafter; LCSP §s)
+- `triage_ims_critical_path` (DCMA 14-point findings + actions)
+- `triage_evms_variance` (CPI/SPI parse from prompt, color verdict, VAR
+  recommendations)
+- `gap_analyze_ila_finding` (per-IPS-element decomposition + owners/dates)
+
+Trigger phrases wired in `agents.py`; per-agent tool filters updated so each
+specialist only auto-fires their own tools.
+
+**Added — Audit logging:**
+- `s4ight/backend/audit.py` — single-function `audit(...)` emits structured
+  JSON to stderr (captured by Vercel). Fields: ts, level, event, request_id,
+  session_id, agent, engine, provider, model, program, sources, tool_used,
+  status_code, duration_ms, message, error.
+- `api/s4ight.py` `/chat` handler now emits an audit line per request and
+  echoes `request_id` in the JSON response.
+
+**Added — Eval harness:**
+- `s4ight/eval/golden.py` — 11 golden Q/A items spanning ILS, acquisition,
+  programmatic, plus an out-of-scope guard test.
+- `s4ight/eval/run.py` — CI-friendly runner. Supports `--url` for live
+  testing (`http://localhost:8000` or `https://s4ledger.com/api/s4ight`)
+  and in-process fallback when no URL is supplied. Exits non-zero on any
+  failure.
+
+**Validation:**
+- All 10 backend modules (incl. new `semantic_retriever`, `audit`) + the
+  Vercel handler import cleanly.
+- `vercel.json` JSON valid.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API health: `https://s4ledger.com/api/s4ight/health`
+
+**Differentiation vs. generic tools (what's now true of S4ight):**
+- **Grounded.** Every answer pulls from the markdown KB via semantic
+  embeddings; LLM is told not to fabricate sources.
+- **Traceable.** Citations carry chunk indices, rendered as chips in the UI.
+- **Actionable.** Seven structured tools produce real deliverables, not chat.
+- **Auditable.** Every request emits a JSON line with sources + agent +
+  timing — the foundation for an ATO evidence trail.
+- **Testable.** Golden Q/A + runner catches regressions; runs in CI.
+- **Hot-swappable.** Provider abstraction (OpenAI today, Bedrock / Azure /
+  Anthropic in one file).
+
+**Next (Wave 3 candidates):**
+- Document ingestion pipeline (PDF/DOCX/XLSX → chunks → embeddings) with
+  classification tagging.
+- Persistent audit drain to Supabase (already in stack) for ATO retention.
+- Auth proxy (OIDC / mTLS) + program-scoped RBAC before any non-S4 users.
+- Citation popovers in UI that fetch the chunk text from `/knowledge` and
+  render the exact excerpt.
+- LangGraph-style multi-step planning when a task needs multiple tool
+  calls (e.g., "prepare my Gate 5 package" → outline + risk register +
+  LCSP draft chained).
 
 ---
 

@@ -4,6 +4,26 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 2 (Semantic RAG, Citations, Markdown UI, Tools, Audit, Eval)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/semantic_retriever.py` (new) — OpenAI embeddings index.
+- `s4ight/backend/retriever.py` — hybrid semantic → keyword fallback; `filename.md §N` sourcing.
+- `s4ight/backend/llm_providers.py` — citation-aware system prompt.
+- `s4ight/backend/tools.py` — 4 new tools: draft_lcsp_section, triage_ims_critical_path, triage_evms_variance, gap_analyze_ila_finding.
+- `s4ight/backend/agents.py` — new tool triggers + parameter extractors; per-agent tool filters expanded.
+- `s4ight/backend/audit.py` (new) — structured JSON audit log to stderr (captured by Vercel).
+- `s4ight/backend/main.py` — `/health` now reports the semantic-index block.
+- `s4ight/index.html` — markdown (marked@12) + sanitization (DOMPurify@3); citation chips; structured tool rendering.
+- `s4ight/s4ight_knowledge/{dcma_14_point_ims,evms_variance_triage,dmsms_obsolescence,requirements_traceability,sustaining_engineering_isea,gate_review_evidence,cybersecurity_rmf_ato}.md` (new).
+- `s4ight/eval/golden.py`, `s4ight/eval/run.py` (new) — regression harness.
+- `api/s4ight.py` — `request_id`, audit per request, `semantic` in `/health`.
+- `CONVERSATION_LOG.md`, `CHANGE_LOG.md` — Session 43.2 entry.
+
+**Required Vercel env var (unchanged):** `OPENAI_API_KEY`.
+
+---
+
 ### 2026-06-26 — S4ight v1 Live Preview on s4ledger.com
 **Commit:** (pending)
 **Files Changed:**

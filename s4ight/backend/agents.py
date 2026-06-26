@@ -36,6 +36,20 @@ ARTIFACT_TRIGGERS = {
     "generate_risk_register": [
         "risk register", "risks for", "seed risks", "top risks",
     ],
+    "draft_lcsp_section": [
+        "draft lcsp", "lcsp section", "write lcsp", "lcsp draft",
+    ],
+    "triage_ims_critical_path": [
+        "ims triage", "schedule triage", "critical path", "cpli", "bei",
+        "schedule health",
+    ],
+    "triage_evms_variance": [
+        "evms triage", "evms variance", "cpi variance", "spi variance",
+        "earned value triage",
+    ],
+    "gap_analyze_ila_finding": [
+        "ila gap", "ila finding", "ila corrective", "cap for ila",
+    ],
 }
 
 
@@ -45,6 +59,63 @@ def _detect_tool(query: str) -> Optional[str]:
         if any(t in q for t in triggers):
             return tool_name
     return None
+
+
+# --- Parameter extractors for tool invocation ---
+
+import re as _re
+
+_LCSP_SECTION_KEYWORDS = {
+    "sustainment strategy": "Sustainment Strategy & Performance Outcomes",
+    "performance outcomes": "Sustainment Strategy & Performance Outcomes",
+    "product support strategy": "Product Support Strategy",
+    "product support package": "Product Support Package (12 IPS Elements)",
+    "ips elements": "Product Support Package (12 IPS Elements)",
+    "funding profile": "Funding Profile",
+    "sustainment risks": "Sustainment Risks",
+    "performance measurement": "Performance Measurement & Reviews",
+    "reviews": "Performance Measurement & Reviews",
+    "configuration": "Configuration & Technical Data Management",
+    "technical data management": "Configuration & Technical Data Management",
+    "sustainment schedule": "Sustainment Schedule & Key Decisions",
+}
+
+
+def _extract_lcsp_section(query: str) -> str:
+    q = query.lower()
+    for k, v in _LCSP_SECTION_KEYWORDS.items():
+        if k in q:
+            return v
+    return "Sustainment Strategy & Performance Outcomes"
+
+
+_EVMS_RE = _re.compile(r"(cpi|spi)\s*[=:]?\s*(\d+(?:\.\d+)?)", _re.IGNORECASE)
+
+
+def _extract_evms_metrics(query: str) -> tuple:
+    cpi = 0.91
+    spi = 0.93
+    for m in _EVMS_RE.finditer(query):
+        metric, val = m.group(1).lower(), float(m.group(2))
+        if val > 5:  # tolerate "91" being typed for 0.91
+            val = val / 100.0
+        if metric == "cpi":
+            cpi = val
+        elif metric == "spi":
+            spi = val
+    return cpi, spi
+
+
+def _extract_ila_title(query: str) -> str:
+    # Cheap heuristic — first 120 chars after the trigger phrase.
+    q = query.strip()
+    for trig in ("ila finding", "ila gap", "cap for ila", "ila corrective"):
+        i = q.lower().find(trig)
+        if i >= 0:
+            tail = q[i + len(trig):].strip(" -:,")
+            if tail:
+                return tail[:120]
+    return q[:120] if q else "Provisioning data immature at MS C"
 
 
 # --- Base agent ---
@@ -143,6 +214,16 @@ class BaseAgent:
             return fn(milestone="Gate Review", program=program)
         if tool_name == "generate_risk_register":
             return fn(program=program, count=5)
+        if tool_name == "draft_lcsp_section":
+            section = _extract_lcsp_section(query)
+            return fn(section=section, program=program)
+        if tool_name == "triage_ims_critical_path":
+            return fn(program=program)
+        if tool_name == "triage_evms_variance":
+            cpi, spi = _extract_evms_metrics(query)
+            return fn(program=program, cpi=cpi, spi=spi)
+        if tool_name == "gap_analyze_ila_finding":
+            return fn(finding_title=_extract_ila_title(query), program=program)
         return fn()
 
 
@@ -154,8 +235,12 @@ class ILSAgent(BaseAgent):
 
     def _tool_for(self, query: str) -> Optional[str]:
         t = _detect_tool(query)
-        # ILS agent only auto-fires ILS-flavored tools.
-        if t in ("generate_ils_checklist", "generate_risk_register"):
+        if t in (
+            "generate_ils_checklist",
+            "generate_risk_register",
+            "draft_lcsp_section",
+            "gap_analyze_ila_finding",
+        ):
             return t
         return None
 
@@ -166,7 +251,11 @@ class AcquisitionAgent(BaseAgent):
 
     def _tool_for(self, query: str) -> Optional[str]:
         t = _detect_tool(query)
-        if t in ("generate_acquisition_outline", "generate_risk_register"):
+        if t in (
+            "generate_acquisition_outline",
+            "generate_risk_register",
+            "draft_lcsp_section",
+        ):
             return t
         return None
 
@@ -177,7 +266,11 @@ class ProgrammaticAgent(BaseAgent):
 
     def _tool_for(self, query: str) -> Optional[str]:
         t = _detect_tool(query)
-        if t in ("generate_risk_register",):
+        if t in (
+            "generate_risk_register",
+            "triage_ims_critical_path",
+            "triage_evms_variance",
+        ):
             return t
         return None
 
