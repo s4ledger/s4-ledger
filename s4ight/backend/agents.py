@@ -168,7 +168,7 @@ class BaseAgent:
         session_id: str = "default",
     ) -> Dict[str, Any]:
         mem: ConversationMemory = memory_store.get(session_id)
-        context, sources = build_context(query)
+        context, sources = build_context(query, session_id=session_id)
 
         base = self._llm_or_fallback(
             query=query,

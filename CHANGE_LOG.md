@@ -4,6 +4,21 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 3.1 (User Document Ingestion)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/ingestion.py` (new) — per-session ephemeral document store, OpenAI-embedded chunks.
+- `s4ight/backend/retriever.py` — hybrid `build_context(session_id=...)` (uploads → curated KB).
+- `s4ight/backend/agents.py` — pass `session_id` into `build_context`.
+- `s4ight/backend/main.py` — `/documents` CRUD + `/session/{id}/clear` also drops uploads.
+- `api/s4ight.py` — same route surface for the Vercel function; audit events for ingest/remove/clear.
+- `s4ight/index.html` — Documents panel (drag-drop, list, per-doc delete, errors).
+- `requirements.txt`, `s4ight/backend/requirements.txt` — PyPDF2, python-docx, openpyxl.
+
+**Limits (env-overridable):** 8 MB / file (`S4IGHT_INGEST_MAX_BYTES`), 400k chars (`S4IGHT_INGEST_MAX_CHARS`), 20 docs / session (`S4IGHT_INGEST_MAX_DOCS`).
+
+---
+
 ### 2026-06-26 — S4ight Wave 2 (Semantic RAG, Citations, Markdown UI, Tools, Audit, Eval)
 **Commit:** (pending)
 **Files Changed:**

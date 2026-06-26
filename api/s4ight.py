@@ -46,6 +46,7 @@ from tools import AVAILABLE_TOOLS  # noqa: E402
 from memory import store as memory_store  # noqa: E402
 from llm_providers import get_provider  # noqa: E402
 from retriever import load_knowledge_base  # noqa: E402
+from ingestion import store as doc_store, INGEST_MAX_BYTES  # noqa: E402
 from audit import audit, new_request_id  # noqa: E402
 from config import (  # noqa: E402
     KNOWLEDGE_DIR,
@@ -135,6 +136,8 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
                 return self._handle_health()
             if route == "/knowledge":
                 return self._handle_knowledge()
+            if route == "/documents":
+                return self._handle_list_documents()
             return self._send_json(404, {"error": "not_found", "route": route})
         except Exception as e:
             log.exception("GET failed")
@@ -145,6 +148,13 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             route = _strip_prefix(urlparse(self.path).path)
             if route == "/chat":
                 return self._handle_chat()
+            if route == "/documents":
+                return self._handle_upload_document()
+            if route == "/documents/clear":
+                return self._handle_clear_documents()
+            if route.startswith("/documents/") and route.endswith("/delete"):
+                doc_id = route[len("/documents/"):-len("/delete")]
+                return self._handle_delete_document(doc_id)
             if route.startswith("/tool/"):
                 tool_name = route[len("/tool/"):].strip("/")
                 return self._handle_tool(tool_name)
@@ -266,7 +276,75 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
 
     def _handle_clear(self, session_id: str):
         memory_store.clear(session_id)
+        doc_store.clear(session_id)
         return self._send_json(200, {"status": "ok", "session_id": session_id, "cleared": True})
+
+    # ------- Documents -------
+
+    def _session_from_query(self) -> str:
+        from urllib.parse import parse_qs, urlparse as _up
+        qs = parse_qs(_up(self.path).query or "")
+        sid = (qs.get("session_id") or [""])[0]
+        return sid
+
+    def _handle_list_documents(self):
+        sid = self._session_from_query()
+        if not sid:
+            return self._send_json(400, {"error": "session_id_required"})
+        return self._send_json(200, doc_store.info(sid))
+
+    def _handle_upload_document(self):
+        import base64
+        body = self._read_json()
+        sid = (body.get("session_id") or "").strip()
+        if not sid:
+            return self._send_json(400, {"error": "session_id_required"})
+        filename = (body.get("filename") or "").strip()
+        b64 = body.get("content_base64") or ""
+        if not filename or not b64:
+            return self._send_json(400, {"error": "filename_and_content_base64_required"})
+        try:
+            content = base64.b64decode(b64, validate=True)
+        except Exception as e:
+            return self._send_json(400, {"error": "invalid_base64", "detail": str(e)})
+        if len(content) > INGEST_MAX_BYTES:
+            return self._send_json(413, {"error": "file_too_large", "max_bytes": INGEST_MAX_BYTES})
+
+        start = time.perf_counter()
+        try:
+            result = doc_store.ingest(sid, filename, content)
+        except Exception as e:
+            log.warning("Ingestion failed: %s", e)
+            audit("ingest", session_id=sid, status_code=400, level="WARN", error=str(e), message=filename)
+            return self._send_json(400, {"error": "ingestion_failed", "detail": str(e)})
+        elapsed_ms = int((time.perf_counter() - start) * 1000)
+        audit(
+            "ingest",
+            session_id=sid,
+            status_code=200,
+            duration_ms=elapsed_ms,
+            message=filename,
+            extra={"bytes": len(content), "chunks": result["document"]["chunks"]},
+        )
+        return self._send_json(200, result)
+
+    def _handle_delete_document(self, doc_id: str):
+        body = self._read_json()
+        sid = (body.get("session_id") or "").strip()
+        if not sid:
+            return self._send_json(400, {"error": "session_id_required"})
+        result = doc_store.remove(sid, doc_id)
+        audit("ingest_remove", session_id=sid, status_code=200, message=doc_id)
+        return self._send_json(200, result)
+
+    def _handle_clear_documents(self):
+        body = self._read_json()
+        sid = (body.get("session_id") or "").strip()
+        if not sid:
+            return self._send_json(400, {"error": "session_id_required"})
+        result = doc_store.clear(sid)
+        audit("ingest_clear", session_id=sid, status_code=200, message="all")
+        return self._send_json(200, result)
 
     def log_message(self, format, *args):  # noqa: A002
         log.info("%s - %s", self.address_string(), format % args)

@@ -158,7 +158,60 @@ async def chat(req: ChatRequest) -> ChatResponse:
 @app.post("/session/{session_id}/clear")
 async def clear_session(session_id: str) -> Dict[str, Any]:
     memory_store.clear(session_id)
+    try:
+        from ingestion import store as _docs
+        _docs.clear(session_id)
+    except Exception:
+        pass
     return {"status": "ok", "session_id": session_id, "cleared": True}
+
+
+# ----- Documents (ephemeral session uploads) -----
+
+class DocUpload(BaseModel):
+    session_id: str
+    filename: str
+    content_base64: str
+
+
+class DocDelete(BaseModel):
+    session_id: str
+
+
+@app.get("/documents")
+async def list_documents(session_id: str) -> Dict[str, Any]:
+    from ingestion import store as _docs
+    return _docs.info(session_id)
+
+
+@app.post("/documents")
+async def upload_document(req: DocUpload) -> Dict[str, Any]:
+    import base64
+    from ingestion import store as _docs, INGEST_MAX_BYTES
+    if not req.session_id:
+        raise HTTPException(status_code=400, detail="session_id_required")
+    try:
+        content = base64.b64decode(req.content_base64, validate=True)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"invalid_base64: {e}")
+    if len(content) > INGEST_MAX_BYTES:
+        raise HTTPException(status_code=413, detail="file_too_large")
+    try:
+        return _docs.ingest(req.session_id, req.filename, content)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/documents/clear")
+async def clear_documents(req: DocDelete) -> Dict[str, Any]:
+    from ingestion import store as _docs
+    return _docs.clear(req.session_id)
+
+
+@app.post("/documents/{doc_id}/delete")
+async def delete_document(doc_id: str, req: DocDelete) -> Dict[str, Any]:
+    from ingestion import store as _docs
+    return _docs.remove(req.session_id, doc_id)
 
 
 @app.post("/tool/{name}")

@@ -10,7 +10,7 @@ import glob
 import os
 import re
 import time
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 
 from config import KNOWLEDGE_DIR, MAX_CONTEXT_CHARS
 
@@ -124,39 +124,74 @@ def retrieve_relevant_chunks(query: str, top_k: int = 4) -> List[Tuple[str, str]
     return [(src, chunk) for _, src, chunk in scored[:top_k]]
 
 
-def build_context(query: str, top_k: int = 4, max_chars: int = MAX_CONTEXT_CHARS) -> Tuple[str, List[str]]:
+def build_context(
+    query: str,
+    top_k: int = 4,
+    max_chars: int = MAX_CONTEXT_CHARS,
+    session_id: Optional[str] = None,
+) -> Tuple[str, List[str]]:
     """Assemble a context string (capped) plus its source list.
 
-    Tries semantic embeddings first (text-embedding-3-small via OpenAI). Falls
-    back to keyword scoring if semantic retrieval is unavailable.
+    Strategy:
+      1. If the session has uploaded documents, fetch top hits from them.
+      2. Get top hits from the curated knowledge base (semantic preferred,
+         keyword fallback).
+      3. Interleave so user docs come first (they're usually the program-
+         specific source of truth), then KB.
     """
-    # Try semantic path first.
-    try:
-        from semantic_retriever import index as _sem
-        if _sem.available():
-            ctx, cites = _sem.build_context(query, top_k=top_k, max_chars=max_chars)
-            if ctx:
-                # Format sources as "filename.md §N" so the LLM can echo them.
-                sources = [f"{c['source']} §{c['chunk']}" for c in cites]
-                return ctx, sources
-    except Exception:  # pragma: no cover - keep keyword fallback alive
-        pass
-
-    # Keyword fallback.
-    hits = retrieve_relevant_chunks(query, top_k=top_k)
-    if not hits:
-        return "", []
-    parts = []
-    used = 0
+    parts: List[str] = []
     sources: List[str] = []
-    for src, chunk in hits:
-        snippet = f"From {src}:\n{chunk.strip()}"
-        if used + len(snippet) > max_chars:
-            break
-        parts.append(snippet)
-        used += len(snippet)
-        if src not in sources:
-            sources.append(src)
+    used = 0
+
+    # 1) Session uploads (semantic embeddings).
+    if session_id:
+        try:
+            from ingestion import store as _docs  # noqa: WPS433
+            if _docs.has_documents(session_id):
+                for score, src, idx, text in _docs.search(session_id, query, top_k=top_k):
+                    if score <= 0:
+                        continue
+                    tag = f"{src} §{idx}"
+                    snippet = f"[uploaded: {tag}] (similarity {score:.2f})\n{text.strip()}"
+                    if used + len(snippet) > max_chars:
+                        break
+                    parts.append(snippet)
+                    used += len(snippet)
+                    sources.append(tag)
+        except Exception:  # pragma: no cover
+            pass
+
+    remaining = max_chars - used
+    if remaining > 200:
+        # 2) Curated knowledge base.
+        kb_added = False
+        try:
+            from semantic_retriever import index as _sem  # noqa: WPS433
+            if _sem.available():
+                ctx, cites = _sem.build_context(query, top_k=top_k, max_chars=remaining)
+                if ctx:
+                    parts.append(ctx)
+                    used += len(ctx)
+                    for c in cites:
+                        tag = f"{c['source']} §{c['chunk']}"
+                        if tag not in sources:
+                            sources.append(tag)
+                    kb_added = True
+        except Exception:  # pragma: no cover
+            pass
+
+        if not kb_added:
+            # Keyword fallback.
+            hits = retrieve_relevant_chunks(query, top_k=top_k)
+            for src, chunk in hits:
+                snippet = f"From {src}:\n{chunk.strip()}"
+                if used + len(snippet) > max_chars:
+                    break
+                parts.append(snippet)
+                used += len(snippet)
+                if src not in sources:
+                    sources.append(src)
+
     return "\n\n---\n\n".join(parts), sources
 
 

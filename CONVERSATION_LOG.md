@@ -1,5 +1,67 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.2 — S4ight Wave 2: Semantic RAG, Citations, Markdown UI, Tools, Audit, Eval (2026-06-26)
+## Last Updated: Session 43.3 — S4ight Wave 3.1: User Document Ingestion (2026-06-26)
+
+---
+
+## Session 43.3 — S4ight Wave 3.1: User Document Ingestion (2026-06-26)
+
+**Goal:** Let users drop their own program docs (LCSP, ILA report, IMS
+export, EVMS / CPR, CDD, contracts, etc.) into S4ight so it answers
+against their actual artifacts — the biggest single jump over ChatGPT /
+Ask Sage for this domain.
+
+**Design choices:**
+- **Per-session, in-memory only.** Vercel serverless filesystems are
+  read-only outside `/tmp`. Holding uploads in-process per `session_id`
+  is exactly the right ATO default (nothing persists). Closing the
+  session or hitting "Clear conversation" drops them. We will add a
+  Supabase / S3 drain later when needed.
+- **Extracted to text + embedded** (OpenAI `text-embedding-3-small`)
+  on upload. Session uploads are searched first; curated KB second.
+- **Hard limits:** 8 MB / file, 400 k characters of extracted text,
+  20 docs / session — keeps memory + embedding cost bounded.
+
+**New / modified files:**
+- `s4ight/backend/ingestion.py` (new) — `DocumentStore` with extractors
+  for PDF (PyPDF2), DOCX (python-docx), XLSX (openpyxl), plain text/MD/
+  CSV/LOG. Cosine search over chunk embeddings.
+- `s4ight/backend/retriever.py` — `build_context()` now takes `session_id`
+  and prepends session-doc hits to KB hits. Order: uploads → curated KB.
+- `s4ight/backend/agents.py` — `BaseAgent.run` passes `session_id` to
+  `build_context`.
+- `s4ight/backend/main.py` — new FastAPI routes:
+  - `GET  /documents?session_id=...`
+  - `POST /documents` (JSON: `{session_id, filename, content_base64}`)
+  - `POST /documents/{doc_id}/delete`
+  - `POST /documents/clear`
+  - `POST /session/{id}/clear` now also clears uploaded docs.
+- `api/s4ight.py` — parity on the same routes for the Vercel function.
+  Audit events `ingest`, `ingest_remove`, `ingest_clear` added.
+- `s4ight/index.html` — Documents panel in sidebar with drag-and-drop,
+  multi-file upload (base64), per-doc remove `×`, error display, auto
+  refresh after `/session/clear`.
+- `requirements.txt`, `s4ight/backend/requirements.txt` — added PyPDF2,
+  python-docx, openpyxl.
+
+**UX:** First user message now includes a callout to drop files into
+the sidebar; the dropzone accepts PDF/DOCX/XLSX/TXT/MD/CSV.
+
+**Differentiation:**
+- S4ight now answers "What's the top ILA gap in *my* LCSP?" using the
+  user's actual document, with semantic search across user docs +
+  curated KB, all cited.
+- No persistence by default — easy ATO posture.
+
+**Validation:**
+- All 11 backend modules + Vercel function import cleanly.
+- `vercel.json` JSON valid.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health`
+
+**Next (Wave 3.2):** citation popovers — click a chip → fetch the chunk
+text → show the exact excerpt in a modal/popover.
 
 ---
 

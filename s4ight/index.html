@@ -120,6 +120,27 @@
       border: 1px solid var(--line); padding: 1px 7px; border-radius: 999px;
       font-size: 11.5px; margin: 0 2px; cursor: help;
     }
+    .dropzone {
+      border: 1.5px dashed var(--line); border-radius: 10px;
+      padding: 14px 12px; text-align: center; font-size: 12.5px;
+      color: var(--muted); transition: all 0.15s ease;
+    }
+    .dropzone.drag { border-color: var(--accent-2); background: rgba(34,211,238,0.06); color: var(--text); }
+    .dropzone .filepick { color: var(--accent-2); cursor: pointer; text-decoration: underline; }
+    .dropzone .dz-sub { color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .doclist { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .docitem {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px; background: #0f1830; border: 1px solid var(--line);
+      border-radius: 8px; padding: 6px 9px; font-size: 12.5px;
+    }
+    .docitem .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+    .docitem .meta { color: var(--muted); font-size: 11px; }
+    .docitem .del {
+      background: transparent; color: var(--danger); border: none;
+      cursor: pointer; font-size: 14px; padding: 0 4px;
+    }
+    .docitem.uploading { opacity: 0.7; }
     .sources { color: var(--muted); font-size: 12px; margin-top: 6px; }
     .sources span { display: inline-block; background: #0f1830; padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
 
@@ -167,6 +188,18 @@
           <button class="ghost" id="clearBtn">Clear conversation</button>
         </div>
       </details>
+
+      <div>
+        <label>Your documents (this session only)</label>
+        <div id="dropZone" class="dropzone">
+          Drop files here, or
+          <label class="filepick">browse
+            <input type="file" id="fileInput" multiple accept=".pdf,.docx,.xlsx,.txt,.md,.csv,.log" style="display:none">
+          </label>
+          <div class="dz-sub">PDF · DOCX · XLSX · TXT · MD · CSV (max 8 MB each)</div>
+        </div>
+        <div id="docList" class="doclist"></div>
+      </div>
 
       <div class="status" id="status">Checking backend…</div>
 
@@ -423,13 +456,126 @@
     sessionId = "";
     localStorage.removeItem(STORAGE_KEY);
     setMeta();
+    refreshDocs();
   });
+
+  // ----- Document upload (per-session, ephemeral) -----
+  const dropZone = $("dropZone");
+  const fileInput = $("fileInput");
+  const docList = $("docList");
+
+  function ensureSession() {
+    if (!sessionId) {
+      sessionId = (crypto && crypto.randomUUID) ? crypto.randomUUID()
+        : "s-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(STORAGE_KEY, sessionId);
+      setMeta();
+    }
+    return sessionId;
+  }
+
+  function renderDocs(info) {
+    docList.innerHTML = "";
+    if (!info || !info.docs || !info.docs.length) return;
+    info.docs.forEach(d => {
+      const row = document.createElement("div");
+      row.className = "docitem";
+      row.innerHTML = `
+        <div><div class="name" title="${escapeHtml(d.name)}">${escapeHtml(d.name)}</div>
+        <div class="meta">${d.chunks} chunks · ${Math.round(d.chars/1000)}k chars</div></div>
+        <button class="del" title="Remove" data-id="${escapeHtml(d.id)}">×</button>`;
+      row.querySelector(".del").addEventListener("click", async () => {
+        try {
+          await fetch(apiBase() + `/documents/${encodeURIComponent(d.id)}/delete`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ session_id: ensureSession() })
+          });
+          refreshDocs();
+        } catch (e) { /* silent */ }
+      });
+      docList.appendChild(row);
+    });
+  }
+
+  async function refreshDocs() {
+    if (!sessionId) { docList.innerHTML = ""; return; }
+    try {
+      const r = await fetch(apiBase() + `/documents?session_id=${encodeURIComponent(sessionId)}`);
+      if (!r.ok) return;
+      renderDocs(await r.json());
+    } catch (e) { /* silent */ }
+  }
+
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => {
+        const s = fr.result || "";
+        const comma = s.indexOf(",");
+        resolve(comma >= 0 ? s.slice(comma + 1) : s);
+      };
+      fr.onerror = () => reject(fr.error || new Error("read failed"));
+      fr.readAsDataURL(file);
+    });
+  }
+
+  async function uploadFiles(files) {
+    if (!files || !files.length) return;
+    ensureSession();
+    for (const file of files) {
+      const tmp = document.createElement("div");
+      tmp.className = "docitem uploading";
+      tmp.innerHTML = `<div><div class="name">${escapeHtml(file.name)}</div>
+        <div class="meta">uploading…</div></div>`;
+      docList.appendChild(tmp);
+      try {
+        const b64 = await readFileAsBase64(file);
+        const r = await fetch(apiBase() + "/documents", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: sessionId,
+            filename: file.name,
+            content_base64: b64
+          })
+        });
+        if (!r.ok) {
+          const t = await r.text();
+          throw new Error(t || ("HTTP " + r.status));
+        }
+      } catch (e) {
+        tmp.querySelector(".meta").innerHTML =
+          `<span style="color:var(--danger)">${escapeHtml(String(e.message || e))}</span>`;
+        // Keep the error visible briefly, then refresh.
+        setTimeout(refreshDocs, 2500);
+        continue;
+      }
+      tmp.remove();
+    }
+    refreshDocs();
+  }
+
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault(); dropZone.classList.add("drag");
+  });
+  dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag"));
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault(); dropZone.classList.remove("drag");
+    uploadFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener("change", () => {
+    uploadFiles(fileInput.files);
+    fileInput.value = "";
+  });
+  refreshDocs();
 
   addMsg("assistant",
     "S4ight is ready. I specialize in ILS (12 IPS elements), acquisition lifecycle / gate reviews, " +
     "and programmatic controls (risk, IMS, EVMS) for PMS 300, 325, and 385.\n\n" +
-    "Pick a program in the sidebar and ask a focused question. I can also generate " +
-    "ILS checklists, gate-review outlines, and risk registers on demand.",
+    "Pick a program in the sidebar and ask a focused question. **Drop your own documents** " +
+    "(LCSP, ILA report, IMS export, EVMS report, CDD, etc.) into the sidebar — they'll be " +
+    "searched alongside the curated knowledge base for your session only.",
     { head: "S4ight · ready" }
   );
 })();
