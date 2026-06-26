@@ -56,6 +56,17 @@ def score(item: Dict[str, Any], resp: Dict[str, Any]) -> Tuple[int, int, List[st
     else:
         reasons.append(f"agent mismatch (got '{agent}', expected '{expected}')")
 
+    # Planner expectations (only when set)
+    expect_plan = item.get("expect_plan_tools")
+    if expect_plan:
+        plan_steps = resp.get("plan_steps") or []
+        got_tools = [s.get("tool") for s in plan_steps if isinstance(s, dict)]
+        total += 1
+        if got_tools == list(expect_plan):
+            passed += 1
+        else:
+            reasons.append(f"plan steps mismatch (got {got_tools}, expected {expect_plan})")
+
     # Must-cite
     for cite in item.get("must_cite", []):
         total += 1

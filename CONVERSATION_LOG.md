@@ -1,5 +1,54 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.8 — S4ight Wave 4.3: Audit Drain to Supabase (2026-06-26)
+## Last Updated: Session 43.9 — S4ight Wave 4.4: Expanded Eval Harness (2026-06-26)
+
+---
+
+## Session 43.9 — S4ight Wave 4.4: Expanded Eval Harness (2026-06-26)
+
+**Goal:** Add regression coverage for the multi-step planner so we
+catch any drift in tool chaining or agent routing.
+
+**Changes:**
+- `s4ight/eval/golden.py` — 6 new planner-aware goldens:
+  - `planner-gate-5-package` (4-step chain)
+  - `planner-gate-4-package` (3-step)
+  - `planner-gate-6-package` (4-step, includes IMS triage)
+  - `planner-ila-readiness` (3-step)
+  - `planner-program-health` (3-step, EVMS + IMS + risk)
+  - `planner-full-sustainment` (4-step)
+  - New field `expect_plan_tools` — ordered list of tools the planner
+    must actually execute.
+- `s4ight/eval/run.py` — scoring checks `plan_steps` against
+  `expect_plan_tools` (strict ordered equality). Failure surfaces both
+  the expected and actual tool list.
+
+**Local result (heuristic planner, in-process):**
+
+```
+[PASS] planner-gate-5-package      4/4
+[PASS] planner-gate-4-package      3/3
+[PASS] planner-gate-6-package      3/3
+[PASS] planner-ila-readiness       3/3
+[PASS] planner-program-health      3/3
+[PASS] planner-full-sustainment    3/3
+Summary: 19/19 checks in 42ms across 6 items.
+```
+
+**Runs against any environment:**
+
+```bash
+# In-process (uses local backend modules)
+python s4ight/eval/run.py
+
+# Against the live API
+python s4ight/eval/run.py --url https://s4ledger.com/api/s4ight
+
+# Filtered
+python s4ight/eval/run.py --only planner-gate-5-package,evms-triage --verbose
+```
+
+**Next (Wave 4.5):** Auth + program-scoped RBAC — required before any
+non-S4 user touches real program data.
 
 ---
 

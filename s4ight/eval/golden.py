@@ -2,13 +2,14 @@
 S4ight golden Q/A set.
 
 Each item declares:
-  q          : the user prompt
-  program    : program in scope
-  expect_agent: which agent should answer (loose check; "any" allowed)
-  must_cite  : list of substrings that should appear in the cited source list
-  must_have  : list of substrings the response MUST contain (case-insensitive)
-  should_have: list of substrings the response SHOULD contain (warn if missing)
-  forbid     : substrings that MUST NOT appear (anti-hallucination guardrails)
+  q                : the user prompt
+  program          : program in scope
+  expect_agent     : which agent should answer (loose check; "any" allowed)
+  must_cite        : list of substrings that should appear in the cited source list
+  must_have        : list of substrings the response MUST contain (case-insensitive)
+  should_have      : list of substrings the response SHOULD contain (warn if missing)
+  forbid           : substrings that MUST NOT appear (anti-hallucination guardrails)
+  expect_plan_tools: ordered list of tool names the planner MUST run (planner cases)
 
 This file is read by run.py — keep it pure Python data.
 """
@@ -123,5 +124,100 @@ GOLDEN = [
         "must_have": [],
         "should_have": [],
         "forbid": ["sunset", "haiku"],
+    },
+
+    # --- Planner (multi-step) goldens ---
+    {
+        "id": "planner-gate-5-package",
+        "q": "Please prepare my Gate 5 package for PMS 325.",
+        "program": "PMS 325",
+        "expect_agent": "Planner",
+        "expect_plan_tools": [
+            "generate_acquisition_outline",
+            "draft_lcsp_section",
+            "generate_risk_register",
+            "gap_analyze_ila_finding",
+        ],
+        "must_cite": [],
+        "must_have": ["Multi-step plan", "Deliverables"],
+        "should_have": ["Gate"],
+        "forbid": [],
+    },
+    {
+        "id": "planner-gate-4-package",
+        "q": "I need my Gate 4 package put together fast.",
+        "program": "PMS 325",
+        "expect_agent": "Planner",
+        "expect_plan_tools": [
+            "generate_acquisition_outline",
+            "draft_lcsp_section",
+            "generate_risk_register",
+        ],
+        "must_cite": [],
+        "must_have": ["Multi-step plan"],
+        "should_have": [],
+        "forbid": [],
+    },
+    {
+        "id": "planner-gate-6-package",
+        "q": "Build the Gate 6 package for FRP readiness.",
+        "program": "PMS 325",
+        "expect_agent": "Planner",
+        "expect_plan_tools": [
+            "generate_acquisition_outline",
+            "draft_lcsp_section",
+            "generate_risk_register",
+            "triage_ims_critical_path",
+        ],
+        "must_cite": [],
+        "must_have": ["Multi-step plan"],
+        "should_have": [],
+        "forbid": [],
+    },
+    {
+        "id": "planner-ila-readiness",
+        "q": "Do a full ILA readiness sweep for me.",
+        "program": "PMS 325",
+        "expect_agent": "Planner",
+        "expect_plan_tools": [
+            "gap_analyze_ila_finding",
+            "draft_lcsp_section",
+            "generate_risk_register",
+        ],
+        "must_cite": [],
+        "must_have": ["Multi-step plan"],
+        "should_have": [],
+        "forbid": [],
+    },
+    {
+        "id": "planner-program-health",
+        "q": "Run a program health sweep — give me everything.",
+        "program": "PMS 325",
+        "expect_agent": "Planner",
+        "expect_plan_tools": [
+            "triage_evms_variance",
+            "triage_ims_critical_path",
+            "generate_risk_register",
+        ],
+        "must_cite": [],
+        "must_have": ["Multi-step plan"],
+        "should_have": [],
+        "forbid": [],
+    },
+    {
+        "id": "planner-full-sustainment",
+        "q": "Draft the full sustainment package for PMS 325.",
+        "program": "PMS 325",
+        "expect_agent": "Planner",
+        "expect_plan_tools": [
+            "draft_lcsp_section",
+            "generate_ils_checklist",
+            "generate_risk_register",
+            "gap_analyze_ila_finding",
+        ],
+        "must_cite": [],
+        "must_have": ["Multi-step plan"],
+        "should_have": [],
+        "forbid": [],
     },
 ]

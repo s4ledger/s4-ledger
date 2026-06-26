@@ -4,6 +4,16 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 4.4 (Expanded Eval Harness)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/eval/golden.py` — added 6 planner-aware goldens (Gate 4/5/6, ILA readiness, program health, full sustainment) with new `expect_plan_tools` field for ordered chain validation.
+- `s4ight/eval/run.py` — scores `plan_steps` against expectations.
+
+**Local result:** 19/19 planner checks pass in 42 ms.
+
+---
+
 ### 2026-06-26 — S4ight Wave 4.3 (Audit Drain to Supabase)
 **Commit:** (pending)
 **Files Changed:**
