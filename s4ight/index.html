@@ -435,11 +435,22 @@
       const dotLlm = `<span class="dot ${llmOk ? "ok" : "err"}"></span>`;
       const provider = llm.provider || "unknown";
       const model = llm.model || "?";
-      statusEl.innerHTML =
-        `${dotApi}API reachable (v${j.version}) · ${j.knowledge_docs} KB docs<br>` +
+
+      let line = `${dotApi}API reachable (v${j.version}) · ${j.knowledge_docs} KB docs<br>` +
         `${dotLlm}LLM: ${provider} · <code>${escapeHtml(model)}</code> ` +
-        (llmOk ? "ready" : "not ready") +
-        (llm.error ? `<br><span style="color: var(--danger)">${escapeHtml(String(llm.error))}</span>` : "");
+        (llmOk ? "ready" : "not ready");
+
+      if (!llmOk) {
+        // Surface the precise reason so it's fixable.
+        const reason = llm.reason || llm.error || "see /health for details";
+        line += `<div style="margin-top:6px;color:var(--danger);font-size:11.5px;line-height:1.45">${escapeHtml(String(reason))}</div>`;
+        if (llm.key_present === false) {
+          line += `<div style="margin-top:4px;font-size:11.5px">Fix: add <code>OPENAI_API_KEY</code> in Vercel → Project → Settings → Environment Variables (apply to <b>Production</b>), then redeploy. <a href="${apiBase()}/health" target="_blank" rel="noopener">View raw /health →</a></div>`;
+        } else if (llm.ping_ok === false && llm.key_present === true) {
+          line += `<div style="margin-top:4px;font-size:11.5px">The key is set but the API ping failed. Verify it's a valid <code>sk-…</code> key and has credit. <a href="${apiBase()}/health" target="_blank" rel="noopener">Raw /health →</a></div>`;
+        }
+      }
+      statusEl.innerHTML = line;
     } catch (e) {
       statusEl.innerHTML = `<span class="dot err"></span>Backend unreachable at ${escapeHtml(apiBase())}<br>${escapeHtml(String(e.message || e))}`;
     }

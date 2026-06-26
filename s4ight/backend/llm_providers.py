@@ -114,27 +114,60 @@ class OpenAIProvider(LLMProvider):
 
     def __init__(self):
         self._client = None
+        self._init_error: Optional[str] = None
+        self._package_installed = False
         try:
             from openai import OpenAI  # type: ignore
+            self._package_installed = True
             if OPENAI_API_KEY:
                 kwargs = {"api_key": OPENAI_API_KEY, "timeout": OPENAI_TIMEOUT_S}
                 if OPENAI_BASE_URL:
                     kwargs["base_url"] = OPENAI_BASE_URL
                 self._client = OpenAI(**kwargs)
         except Exception as e:  # pragma: no cover
+            self._init_error = str(e)
             log.warning("OpenAI client init failed: %s", e)
 
     def available(self) -> bool:
         return self._client is not None
 
     def health(self) -> Dict[str, object]:
-        return {
+        info: Dict[str, object] = {
             "provider": "openai",
             "model": OPENAI_MODEL,
-            "configured": bool(OPENAI_API_KEY),
-            "available": self.available(),
+            "package_installed": self._package_installed,
+            "key_present": bool(OPENAI_API_KEY),
+            "key_source_env": "OPENAI_API_KEY",
+            "configured": bool(OPENAI_API_KEY) and self._package_installed,
+            "available": False,
+            "ping_ok": False,
             "base_url": OPENAI_BASE_URL or "https://api.openai.com/v1",
+            "error": self._init_error,
         }
+        # Diagnostic: explain *why* it's not ready, if it isn't.
+        if not self._package_installed:
+            info["reason"] = "openai python package is not installed in the runtime"
+        elif not OPENAI_API_KEY:
+            info["reason"] = (
+                "OPENAI_API_KEY env var is not set in the server runtime. "
+                "Add it in Vercel → Settings → Environment Variables (Production), then redeploy."
+            )
+        elif self._client is None:
+            info["reason"] = f"OpenAI client failed to initialize: {self._init_error or 'unknown'}"
+        else:
+            # Real round-trip ping so we know the key actually works.
+            try:
+                # cheap probe — small embedding call
+                self._client.embeddings.create(  # type: ignore[union-attr]
+                    model=os.getenv("S4IGHT_EMBED_MODEL", "text-embedding-3-small"),
+                    input=["ping"],
+                )
+                info["ping_ok"] = True
+                info["available"] = True
+            except Exception as e:  # pragma: no cover - depends on env
+                info["reason"] = f"OpenAI API ping failed: {e}"
+                info["error"] = str(e)
+        return info
 
     def chat(
         self,
