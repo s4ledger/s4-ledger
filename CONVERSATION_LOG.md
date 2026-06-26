@@ -1,5 +1,75 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.9 — S4ight Wave 4.4: Expanded Eval Harness (2026-06-26)
+## Last Updated: Session 43.10 — S4ight Wave 4.5: Auth + Program-Scoped RBAC (2026-06-26)
+
+---
+
+## Session 43.10 — S4ight Wave 4.5: Auth + Program-Scoped RBAC (2026-06-26)
+
+**Goal:** Gate S4ight behind a server-issued token so we can hand out
+preview access to specific people and bind each token to specific PMS
+programs. Backwards-compatible: if the env var is unset, S4ight stays
+open (today's behaviour).
+
+**New:**
+- `s4ight/backend/access.py` — token registry parsed from
+  `S4IGHT_ACCESS_TOKENS` (either a JSON map `{token: {label, programs}}`
+  or a comma-separated bare-token list). Function `authorize(headers,
+  query_token, program)` returns `(allowed, principal, reason)`.
+  Accepts the token via `Authorization: Bearer …`, `Authorization:
+  Token …`, `X-S4ight-Token`, or `?token=`.
+- `api/s4ight.py` — protected GETs (`/knowledge`, `/documents`,
+  `/chunk`) and **all POSTs** call `_gate()` before doing any work.
+  `/health` stays public so the status panel can prompt for a token.
+  `/chat` re-authorizes against the per-token program scope after
+  reading the body (so RBAC denies cross-program use even if the
+  global gate passed).
+- `/health` now reports `access: { enabled, token_count }`.
+- `s4ight/backend/main.py` mirrors the `/health` surface for parity
+  (gating itself is enforced in the Vercel function; the local dev
+  server stays simple).
+- `s4ight/index.html`:
+  - Sidebar Advanced section now has an **Access token** field;
+    stored in localStorage and applied to every protected call.
+  - All protected fetches use a new `authedFetch()` wrapper.
+  - Status panel shows "Access: token required · token set" or
+    "no token" depending on state.
+
+**Validated:**
+- `access.authorize` correctly handles: no token (denied), valid token
+  on allowed program (granted), valid token outside scope (denied),
+  valid token on allowed program (granted).
+- `S4IGHT_ACCESS_TOKENS` left **unset** in Vercel by default → S4ight
+  continues to behave exactly as before (open). No change in user-
+  visible behaviour until the env var is set.
+
+**Activation (when you're ready to lock the preview):**
+1. Pick token strings (any opaque string; `openssl rand -hex 24` is fine).
+2. Vercel → Project → Settings → Environment Variables (Production):
+   ```json
+   S4IGHT_ACCESS_TOKENS = {
+     "<token-1>": {"label": "Nick (S4)", "programs": "*"},
+     "<token-2>": {"label": "PMO pilot", "programs": ["PMS 325"]}
+   }
+   ```
+3. Redeploy. Anyone without a valid token sees a 401 from the API.
+4. Share each token with the right person; they paste it into the
+   sidebar's **Access token** field.
+
+**Differentiation:** the only AI tools in this space that gate access
+are the enterprise ones. Now S4ight does too — and binds access to
+specific PMS programs, not just "logged in / not".
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health` — now includes `access` block.
+
+**Wave 4 complete. Up next (Wave 5 candidates):**
+- Streaming via a separate Node/Edge function for `/chat` only.
+- True identity (OIDC w/ Microsoft Entra / Okta) when we cross out of
+  invite-only.
+- Per-document classification tagging + filterable retrieval.
+- Saved-prompt library (preset domain workflows on the sidebar).
+- Cross-session document persistence (Supabase + per-user namespace).
 
 ---
 

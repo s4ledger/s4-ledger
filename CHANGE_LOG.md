@@ -4,6 +4,18 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 4.5 (Auth + Program-Scoped RBAC)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/access.py` (new) — token registry parsed from `S4IGHT_ACCESS_TOKENS`; `authorize(headers, query_token, program)` enforces presence + per-token program scope. Bearer / Token / X-S4ight-Token / `?token=` all accepted.
+- `api/s4ight.py` — `_gate()` runs before every protected route; `/chat` re-checks the program scope after reading the body. `/health` stays public.
+- `s4ight/backend/main.py` — `/health` mirrors the `access` block.
+- `s4ight/index.html` — Access token field in sidebar Advanced; `authedFetch` wrapper on every protected call; status panel shows token-required state.
+
+**Activation:** set `S4IGHT_ACCESS_TOKENS` env var in Vercel (Production). Until set, S4ight remains open. See CONVERSATION_LOG (Session 43.10) for exact JSON format.
+
+---
+
 ### 2026-06-26 — S4ight Wave 4.4 (Expanded Eval Harness)
 **Commit:** (pending)
 **Files Changed:**

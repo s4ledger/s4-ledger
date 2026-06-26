@@ -49,6 +49,7 @@ from retriever import load_knowledge_base  # noqa: E402
 from ingestion import store as doc_store, INGEST_MAX_BYTES  # noqa: E402
 from chunk_lookup import lookup_chunk  # noqa: E402
 from audit import audit, new_request_id  # noqa: E402
+from access import authorize as _authorize, is_enabled as _access_enabled, health as _access_health  # noqa: E402
 from config import (  # noqa: E402
     KNOWLEDGE_DIR,
     MAX_MESSAGE_CHARS,
@@ -90,6 +91,36 @@ def _strip_prefix(path: str) -> str:
 
 class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this exact name
     server_version = "S4ight/1.0"
+
+    # ---- access control ----
+
+    def _request_headers(self) -> Dict[str, str]:
+        # http.server's Message object exposes get_all/get; convert to a plain dict.
+        out: Dict[str, str] = {}
+        for k, v in self.headers.items():
+            out[k] = v
+        return out
+
+    def _query_token(self) -> str:
+        from urllib.parse import parse_qs, urlparse as _up
+        qs = parse_qs(_up(self.path).query or "")
+        return (qs.get("token") or [""])[0]
+
+    def _gate(self, program: str = None) -> bool:
+        """Run the access check. On denial, write a 401/403 and return False."""
+        allowed, principal, reason = _authorize(self._request_headers(), self._query_token(), program=program)
+        if allowed:
+            self._principal = principal
+            return True
+        status = 401 if reason in ("missing_token", "invalid_token") else 403
+        audit(
+            "auth_denied",
+            status_code=status,
+            message=reason,
+            program=program,
+        )
+        self._send_json(status, {"error": "unauthorized", "reason": reason})
+        return False
 
     def _send_json(self, status: int, payload: dict) -> None:
         body = json.dumps(payload, default=str).encode("utf-8")
@@ -134,7 +165,12 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         try:
             route = _strip_prefix(urlparse(self.path).path)
             if route in ("/", "/health"):
+                # Public — needed so the UI can show the status panel
+                # before the user has authenticated.
                 return self._handle_health()
+            # Everything else requires auth (when enabled).
+            if not self._gate():
+                return
             if route == "/knowledge":
                 return self._handle_knowledge()
             if route == "/documents":
@@ -149,6 +185,10 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
     def do_POST(self):  # noqa: N802
         try:
             route = _strip_prefix(urlparse(self.path).path)
+            # All POSTs require auth (when enabled). For /chat we re-check
+            # against the per-token program scope after reading the body.
+            if not self._gate():
+                return
             if route == "/chat":
                 return self._handle_chat()
             if route == "/documents":
@@ -194,6 +234,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
             "llm": provider.health(),
             "semantic": semantic_info,
             "audit": audit_info,
+            "access": _access_health(),
             "supported_programs": SUPPORTED_PROGRAMS,
             "runtime": "vercel-python",
         })
@@ -215,6 +256,13 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         message = (body.get("message") or "").strip()
         program = (body.get("program") or "PMS 325").strip()
         session_id = (body.get("session_id") or "").strip() or str(uuid4())
+
+        # Program-scoped re-check (do_POST already authenticated; this enforces RBAC).
+        allowed, _principal, reason = _authorize(self._request_headers(), self._query_token(), program=program)
+        if not allowed:
+            audit("auth_denied", request_id=request_id, session_id=session_id, program=program,
+                  status_code=403, message=reason)
+            return self._send_json(403, {"error": "unauthorized", "reason": reason})
 
         if not message:
             audit("chat", request_id=request_id, session_id=session_id, status_code=400, level="WARN", message="empty message")

@@ -226,6 +226,8 @@
         <div>
           <label>Backend</label>
           <input id="apiBase" />
+          <label>Access token (if required)</label>
+          <input id="accessToken" placeholder="Paste your S4ight token" autocomplete="off" />
           <button class="ghost" id="clearBtn">Clear conversation</button>
         </div>
       </details>
@@ -301,7 +303,9 @@
 
   const STORAGE_KEY = "s4ight_session_id";
   const API_BASE_KEY = "s4ight_api_base";
+  const TOKEN_KEY = "s4ight_access_token";
   let sessionId = localStorage.getItem(STORAGE_KEY) || "";
+  let accessToken = localStorage.getItem(TOKEN_KEY) || "";
 
   // Auto-detect API base:
   //   - if hosted on s4ledger.com (or any non-local), use /api/s4ight (Vercel serverless)
@@ -314,6 +318,23 @@
     return "/api/s4ight";
   }
   apiBaseInp.value = localStorage.getItem(API_BASE_KEY) || defaultApiBase();
+  const tokenInp = $("accessToken");
+  tokenInp.value = accessToken;
+  tokenInp.addEventListener("change", () => {
+    accessToken = tokenInp.value.trim();
+    if (accessToken) localStorage.setItem(TOKEN_KEY, accessToken);
+    else localStorage.removeItem(TOKEN_KEY);
+    checkHealth();
+  });
+
+  function authHeaders() {
+    return accessToken ? { "Authorization": "Bearer " + accessToken } : {};
+  }
+  // Convenience wrapper that always sends auth headers and merges with caller's.
+  function authedFetch(url, opts = {}) {
+    const headers = Object.assign({}, opts.headers || {}, authHeaders());
+    return fetch(url, Object.assign({}, opts, { headers }));
+  }
 
   function apiBase() {
     const v = (apiBaseInp.value || "").trim().replace(/\/$/, "");
@@ -687,6 +708,18 @@
         line += `<br>${dot}Audit: stderr` + (drained ? ` + Supabase (table <code>${escapeHtml(sb.table)}</code>)` : " only (Supabase not configured)");
       }
 
+      // Access control state.
+      if (j.access) {
+        const accessOn = !!j.access.enabled;
+        if (accessOn) {
+          const hasToken = !!accessToken;
+          const dot = `<span class="dot ${hasToken ? "ok" : "warn"}"></span>`;
+          line += `<br>${dot}Access: token required` + (hasToken ? " · token set" : " · no token — chat will be blocked until you paste one in Advanced");
+        } else {
+          line += `<br><span class="dot warn"></span>Access: open (no token required)`;
+        }
+      }
+
       if (!llmOk) {
         // Surface the precise reason so it's fixable.
         const reason = llm.reason || llm.error || "see /health for details";
@@ -716,7 +749,7 @@
     addMsg("user", escapeHtml(text));
     const placeholder = addMsg("assistant", "<em>Thinking…</em>");
     try {
-      const r = await fetch(apiBase() + "/chat", {
+      const r = await authedFetch(apiBase() + "/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -782,7 +815,7 @@
 
   clearBtn.addEventListener("click", async () => {
     if (sessionId) {
-      try { await fetch(apiBase() + `/session/${sessionId}/clear`, { method: "POST" }); } catch {}
+      try { await authedFetch(apiBase() + `/session/${sessionId}/clear`, { method: "POST" }); } catch {}
     }
     chat.innerHTML = "";
     sessionId = "";
@@ -818,7 +851,7 @@
         <button class="del" title="Remove" data-id="${escapeHtml(d.id)}">×</button>`;
       row.querySelector(".del").addEventListener("click", async () => {
         try {
-          await fetch(apiBase() + `/documents/${encodeURIComponent(d.id)}/delete`, {
+          await authedFetch(apiBase() + `/documents/${encodeURIComponent(d.id)}/delete`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ session_id: ensureSession() })
@@ -833,7 +866,7 @@
   async function refreshDocs() {
     if (!sessionId) { docList.innerHTML = ""; return; }
     try {
-      const r = await fetch(apiBase() + `/documents?session_id=${encodeURIComponent(sessionId)}`);
+      const r = await authedFetch(apiBase() + `/documents?session_id=${encodeURIComponent(sessionId)}`);
       if (!r.ok) return;
       renderDocs(await r.json());
     } catch (e) { /* silent */ }
@@ -863,7 +896,7 @@
       docList.appendChild(tmp);
       try {
         const b64 = await readFileAsBase64(file);
-        const r = await fetch(apiBase() + "/documents", {
+        const r = await authedFetch(apiBase() + "/documents", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -932,7 +965,7 @@
     try {
       const params = new URLSearchParams({ source, idx: String(idx || 1) });
       if (sessionId) params.set("session_id", sessionId);
-      const r = await fetch(apiBase() + "/chunk?" + params.toString());
+      const r = await authedFetch(apiBase() + "/chunk?" + params.toString());
       if (!r.ok) {
         const t = await r.text();
         throw new Error(t || ("HTTP " + r.status));
