@@ -1,5 +1,27 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.10 — S4ight Wave 4.5: Auth + Program-Scoped RBAC (2026-06-26)
+## Last Updated: Session 43.11 — S4ight Wave 5.1: Saved-Prompt Library (2026-06-26)
+
+---
+
+## Session 43.11 — S4ight Wave 5.1: Saved-Prompt Library (2026-06-26)
+
+**Goal:** Surface high-value workflows directly in the sidebar so users
+discover capabilities without typing.
+
+**Added:**
+- `s4ight/index.html` — new **Quick prompts** panel in the sidebar, grouped:
+  - **Planner chains** — Gate 4 / 5 / 6 packages, ILA readiness, program
+    health, full sustainment. Each fires the deterministic planner chain.
+  - **Single deliverables** — ILS checklist, risk register, IMS triage,
+    EVMS triage, LCSP draft, ILA gap analysis.
+  - **Domain Q&A** — 12 IPS primer, requirements traceability, DMSMS,
+    sustaining engineering sizing, cyber sustainment.
+- Each preset substitutes the currently-selected `program` and submits.
+- Pure client-side; no backend changes.
+
+**UX:** the page now answers the question "what can S4ight actually do
+here?" before the user has to know. One-click runs make the planner +
+tools discoverable.
 
 ---
 

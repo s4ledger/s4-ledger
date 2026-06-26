@@ -4,6 +4,13 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 5.1 (Saved-Prompt Library)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/index.html` — Quick-prompts panel (planner chains / single deliverables / domain Q&A); each preset substitutes the current program and submits.
+
+---
+
 ### 2026-06-26 — S4ight Wave 4.5 (Auth + Program-Scoped RBAC)
 **Commit:** (pending)
 **Files Changed:**

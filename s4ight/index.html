@@ -172,6 +172,21 @@
       cursor: pointer; font-size: 14px; padding: 0 4px;
     }
     .docitem.uploading { opacity: 0.7; }
+    .presets {
+      display: flex; flex-direction: column; gap: 6px; margin-top: 4px;
+    }
+    .preset-group { display: flex; flex-direction: column; gap: 4px; }
+    .preset-group .gtitle {
+      color: var(--muted); font-size: 10.5px; text-transform: uppercase;
+      letter-spacing: 0.08em; margin-top: 4px;
+    }
+    .preset-btn {
+      width: 100%; text-align: left; padding: 7px 10px; font-size: 12.5px;
+      background: #0f1830; color: var(--text); border: 1px solid var(--line);
+      border-radius: 8px; cursor: pointer; line-height: 1.3;
+    }
+    .preset-btn:hover { border-color: var(--accent-2); color: var(--accent-2); }
+    .preset-btn .sub { display: block; color: var(--muted); font-size: 10.5px; margin-top: 2px; }
     .export-bar {
       display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
       padding-top: 8px; border-top: 1px dashed var(--line);
@@ -231,6 +246,11 @@
           <button class="ghost" id="clearBtn">Clear conversation</button>
         </div>
       </details>
+
+      <div>
+        <label>Quick prompts</label>
+        <div id="presets" class="presets"></div>
+      </div>
 
       <div>
         <label>Your documents (this session only)</label>
@@ -823,6 +843,61 @@
     setMeta();
     refreshDocs();
   });
+
+  // ----- Quick prompts (one-click presets) -----
+  const PRESETS = [
+    { group: "Planner chains", items: [
+      { label: "Prepare Gate 5 package", sub: "outline + LCSP draft + risks + ILA gaps", prompt: "Please prepare my Gate 5 package for ${program}." },
+      { label: "Prepare Gate 4 package", sub: "outline + LCSP draft + risks", prompt: "I need my Gate 4 package put together for ${program}." },
+      { label: "Prepare Gate 6 package", sub: "outline + LCSP draft + risks + IMS triage", prompt: "Build the Gate 6 / FRP-readiness package for ${program}." },
+      { label: "Full ILA readiness sweep", sub: "gap + LCSP + risks", prompt: "Do a full ILA readiness sweep for ${program}." },
+      { label: "Program health sweep", sub: "EVMS + IMS + risks", prompt: "Run a program health sweep for ${program}. Use cpi=0.91 spi=0.93 as the starting point." },
+      { label: "Full sustainment package", sub: "LCSP + ILS checklist + risks + ILA gap", prompt: "Draft the full sustainment package for ${program}." },
+    ]},
+    { group: "Single deliverables", items: [
+      { label: "ILS supply-support checklist", sub: "12 elements, platform-specific", prompt: "Build an ILS Supply Support checklist for ${program}." },
+      { label: "Seed risk register", sub: "5 risks, sustainment focus", prompt: "Generate a seed risk register for ${program} sustainment." },
+      { label: "IMS critical-path triage", sub: "DCMA-14 style", prompt: "Triage the IMS for ${program}. Report the 14-point findings and actions." },
+      { label: "EVMS variance triage", sub: "CPI/SPI verdict + VAR plan", prompt: "Triage EVMS for ${program}. cpi=0.88 spi=0.92." },
+      { label: "Draft LCSP section", sub: "Sustainment Strategy & Performance Outcomes", prompt: "Draft the LCSP section 'Sustainment Strategy & Performance Outcomes' for ${program}." },
+      { label: "ILA gap analysis", sub: "Provisioning data immature at MS C", prompt: "Run an ILA gap analysis for ${program}: provisioning data immature at MS C." },
+    ]},
+    { group: "Domain Q&A", items: [
+      { label: "12 IPS elements primer", sub: "what each one owns", prompt: "Walk me through the 12 IPS elements for ${program} and what each one owns." },
+      { label: "Requirements traceability", sub: "CDD → CDRL → LCSP", prompt: "Show me how a CDD KPP threads to a CDRL and the LCSP for ${program}." },
+      { label: "DMSMS playbook", sub: "treatment options", prompt: "Recommend a DMSMS treatment path for a critical obsolete part on ${program}." },
+      { label: "Sustaining engineering sizing", sub: "ISEA capacity planning", prompt: "How should I size sustaining engineering capacity for ${program}?" },
+      { label: "Cyber sustainment in IPS-7", sub: "STIG / POA&M / ATO", prompt: "What belongs in cybersecurity sustainment (IPS Element 7) for ${program}?" },
+    ]},
+  ];
+
+  function renderPresets() {
+    const root = $("presets");
+    if (!root) return;
+    root.innerHTML = "";
+    PRESETS.forEach(g => {
+      const wrap = document.createElement("div");
+      wrap.className = "preset-group";
+      const t = document.createElement("div");
+      t.className = "gtitle";
+      t.textContent = g.group;
+      wrap.appendChild(t);
+      g.items.forEach(it => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "preset-btn";
+        b.innerHTML = `${escapeHtml(it.label)}<span class="sub">${escapeHtml(it.sub || "")}</span>`;
+        b.addEventListener("click", () => {
+          const prompt = (it.prompt || "").replace("${program}", programSel.value);
+          input.value = prompt;
+          input.focus();
+          send();
+        });
+        wrap.appendChild(b);
+      });
+      root.appendChild(wrap);
+    });
+  }
+  renderPresets();
 
   // ----- Document upload (per-session, ephemeral) -----
   const dropZone = $("dropZone");
