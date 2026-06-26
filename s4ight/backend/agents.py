@@ -167,9 +167,13 @@ class BaseAgent:
         query: str,
         program: str,
         session_id: str = "default",
+        allowed_classifications: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         mem: ConversationMemory = memory_store.get(session_id)
-        context, sources = build_context(query, session_id=session_id)
+        context, sources = build_context(
+            query, session_id=session_id,
+            allowed_classifications=allowed_classifications,
+        )
 
         base = self._llm_or_fallback(
             query=query,
@@ -319,6 +323,7 @@ class Orchestrator:
         query: str,
         program: str = "PMS 325",
         session_id: str = "default",
+        allowed_classifications: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         # 1) Try the multi-step planner. Triggers on phrases like
         #    "prepare my Gate 5 package", "full sustainment package", etc.
@@ -342,7 +347,10 @@ class Orchestrator:
 
         # 2) Single-agent fallback (existing behaviour).
         agent = self._pick(query)
-        return agent.run(query=query, program=program, session_id=session_id)
+        return agent.run(
+            query=query, program=program, session_id=session_id,
+            allowed_classifications=allowed_classifications,
+        )
 
     # ----- Multi-step response composer -----
 

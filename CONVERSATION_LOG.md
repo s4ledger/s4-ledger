@@ -1,5 +1,58 @@
 # S4 Ledger — Conversation Log & Fix Tracker
-## Last Updated: Session 43.11 — S4ight Wave 5.1: Saved-Prompt Library (2026-06-26)
+## Last Updated: Session 43.12 — S4ight Wave 5.2: Classification Tagging + Filterable Retrieval (2026-06-26)
+
+---
+
+## Session 43.12 — S4ight Wave 5.2: Classification Tagging (2026-06-26)
+
+**Goal:** Tag every uploaded document with a classification label
+(UNCLASSIFIED / FOUO / CUI / PROPRIETARY) and let users filter
+retrieval by label. Foundation for ATO data-handling discipline.
+
+**Backend:**
+- `s4ight/backend/ingestion.py`:
+  - `_DocChunk` gains `classification` slot.
+  - `ingest(..., classification=None)` normalizes the label; default
+    `UNCLASSIFIED` (env-overridable via `S4IGHT_DEFAULT_CLASSIFICATION`).
+  - `search(..., allowed_classifications=None)` filters chunks by the
+    caller's allow-list.
+  - `info()` returns `allowed_classifications`, `default_classification`,
+    and the classification per document.
+- `s4ight/backend/retriever.build_context` accepts
+  `allowed_classifications`, forwards to ingestion search, and tags
+  each snippet `[uploaded: filename §N | CLASSIFICATION]` so the LLM
+  is aware of provenance.
+- `s4ight/backend/agents.BaseAgent.run` and `Orchestrator.route` accept
+  `allowed_classifications` and pipe it through.
+- `api/s4ight.py` `_handle_chat` reads `allowed_classifications` from
+  the request body; `_handle_upload_document` reads `classification`.
+- `s4ight/backend/main.py` mirrors both.
+
+**UI:**
+- Sidebar dropdown above the dropzone — set the classification for the
+  next upload.
+- Each document tile now shows its classification label.
+- New **Retrieval filter** pill row — checkboxes for each allowed
+  classification (persisted in localStorage). When all are checked the
+  filter is removed (`null`); otherwise only matching chunks are used
+  for retrieval. Defaults to all-checked on first load.
+- Chat requests send `allowed_classifications` only when the filter is
+  active.
+
+**Behaviour:** today's experience is unchanged (default = all checked
+= no filter). Users who want stricter retrieval can uncheck what they
+don't want; e.g. answering an FOUO question from only CUI-tagged docs.
+
+**Validation:** all 14 modules import cleanly.
+
+**Live URLs (unchanged):**
+- UI: `https://s4ledger.com/s4ight/`
+- API: `https://s4ledger.com/api/s4ight/health`
+
+**Wave 5.3 (Streaming via separate Edge function) — pending; complex
+deploy.** I'll set up a stub Node Edge function endpoint with the chat
+proxy + token-by-token streaming; you'll need to confirm Vercel's edge
+runtime is on for the project.
 
 ---
 

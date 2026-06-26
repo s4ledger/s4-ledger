@@ -64,6 +64,7 @@ class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=MAX_MESSAGE_CHARS)
     program: str = Field(default="PMS 325")
     session_id: Optional[str] = Field(default=None, max_length=128)
+    allowed_classifications: Optional[List[str]] = None
 
     @field_validator("program")
     @classmethod
@@ -158,6 +159,7 @@ async def chat(req: ChatRequest) -> ChatResponse:
             query=req.message.strip(),
             program=req.program,
             session_id=session_id,
+            allowed_classifications=req.allowed_classifications,
         )
     except Exception as e:
         log.exception("Chat failed")
@@ -195,6 +197,7 @@ class DocUpload(BaseModel):
     session_id: str
     filename: str
     content_base64: str
+    classification: Optional[str] = None
 
 
 class DocDelete(BaseModel):
@@ -220,7 +223,7 @@ async def upload_document(req: DocUpload) -> Dict[str, Any]:
     if len(content) > INGEST_MAX_BYTES:
         raise HTTPException(status_code=413, detail="file_too_large")
     try:
-        return _docs.ingest(req.session_id, req.filename, content)
+        return _docs.ingest(req.session_id, req.filename, content, classification=req.classification)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

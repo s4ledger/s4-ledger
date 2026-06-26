@@ -38,6 +38,24 @@ INGEST_MAX_BYTES = int(os.getenv("S4IGHT_INGEST_MAX_BYTES", str(8 * 1024 * 1024)
 INGEST_MAX_CHARS = int(os.getenv("S4IGHT_INGEST_MAX_CHARS", str(400_000)))         # ~80–100 pages
 INGEST_MAX_DOCS_PER_SESSION = int(os.getenv("S4IGHT_INGEST_MAX_DOCS", "20"))
 
+# Allowed classification labels (informational; we don't enforce policy here).
+ALLOWED_CLASSIFICATIONS = [
+    "UNCLASSIFIED",
+    "UNCLASSIFIED//FOUO",
+    "CUI",
+    "CUI//SP-PRVCY",
+    "CUI//SP-PROCUREMENT",
+    "PROPRIETARY",
+]
+DEFAULT_CLASSIFICATION = os.getenv("S4IGHT_DEFAULT_CLASSIFICATION", "UNCLASSIFIED")
+
+
+def normalize_classification(label: Optional[str]) -> str:
+    if not label:
+        return DEFAULT_CLASSIFICATION
+    lbl = str(label).strip().upper()
+    return lbl if lbl else DEFAULT_CLASSIFICATION
+
 
 def _cosine(a: List[float], b: List[float]) -> float:
     if not a or not b or len(a) != len(b):
@@ -143,13 +161,14 @@ def _extract_text(filename: str, content: bytes) -> str:
 # ---------------- Store ----------------
 
 class _DocChunk:
-    __slots__ = ("source", "idx", "text", "embedding")
+    __slots__ = ("source", "idx", "text", "embedding", "classification")
 
-    def __init__(self, source: str, idx: int, text: str, embedding: Optional[List[float]] = None):
+    def __init__(self, source: str, idx: int, text: str, embedding: Optional[List[float]] = None, classification: str = DEFAULT_CLASSIFICATION):
         self.source = source
         self.idx = idx
         self.text = text
         self.embedding = embedding or []
+        self.classification = classification
 
 
 class DocumentStore:
@@ -170,19 +189,22 @@ class DocumentStore:
                 "session_id": session_id,
                 "doc_count": len(s["docs"]),
                 "chunk_count": len(s["chunks"]),
+                "allowed_classifications": ALLOWED_CLASSIFICATIONS,
+                "default_classification": DEFAULT_CLASSIFICATION,
                 "docs": [
                     {
                         "id": d["id"],
                         "name": d["name"],
                         "chars": d["chars"],
                         "chunks": d["chunks"],
+                        "classification": d.get("classification", DEFAULT_CLASSIFICATION),
                         "uploaded_at": d["uploaded_at"],
                     }
                     for d in s["docs"]
                 ],
             }
 
-    def ingest(self, session_id: str, filename: str, content: bytes) -> Dict[str, Any]:
+    def ingest(self, session_id: str, filename: str, content: bytes, classification: Optional[str] = None) -> Dict[str, Any]:
         if not OPENAI_API_KEY:
             raise RuntimeError("Ingestion requires OPENAI_API_KEY to compute embeddings.")
         if not content:
@@ -210,13 +232,17 @@ class DocumentStore:
                     f"Session document limit reached ({INGEST_MAX_DOCS_PER_SESSION})."
                 )
             doc_id = f"doc_{int(time.time() * 1000)}_{len(sess['docs']) + 1}"
+            cls = normalize_classification(classification)
             for i, (c, v) in enumerate(zip(chunks, vectors), start=1):
-                sess["chunks"].append(_DocChunk(source=filename, idx=i, text=c, embedding=v))
+                sess["chunks"].append(_DocChunk(
+                    source=filename, idx=i, text=c, embedding=v, classification=cls
+                ))
             meta = {
                 "id": doc_id,
                 "name": filename,
                 "chars": len(text),
                 "chunks": len(chunks),
+                "classification": cls,
                 "uploaded_at": time.time(),
             }
             sess["docs"].append(meta)
@@ -250,7 +276,7 @@ class DocumentStore:
             sess = self._sessions.get(session_id)
             return bool(sess and sess["chunks"])
 
-    def search(self, session_id: str, query: str, top_k: int = 4) -> List[Tuple[float, str, int, str]]:
+    def search(self, session_id: str, query: str, top_k: int = 4, allowed_classifications: Optional[List[str]] = None) -> List[Tuple[float, str, int, str, str]]:
         if not query or not query.strip():
             return []
         with self._lock:
@@ -263,10 +289,16 @@ class DocumentStore:
         except Exception as e:  # pragma: no cover
             log.warning("Doc search embed failed: %s", e)
             return []
-        scored: List[Tuple[float, str, int, str]] = []
+        allow = (
+            {c.strip().upper() for c in allowed_classifications}
+            if allowed_classifications else None
+        )
+        scored: List[Tuple[float, str, int, str, str]] = []
         for c in chunks_snapshot:
+            if allow is not None and c.classification.upper() not in allow:
+                continue
             sim = _cosine(qvec, c.embedding)
-            scored.append((sim, c.source, c.idx, c.text))
+            scored.append((sim, c.source, c.idx, c.text, c.classification))
         scored.sort(reverse=True, key=lambda x: x[0])
         return scored[:top_k]
 

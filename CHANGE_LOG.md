@@ -4,6 +4,17 @@
 
 ---
 
+### 2026-06-26 — S4ight Wave 5.2 (Classification Tagging + Filterable Retrieval)
+**Commit:** (pending)
+**Files Changed:**
+- `s4ight/backend/ingestion.py` — chunk gains `classification`; `ingest`/`search` accept it; allowed list + default labels declared.
+- `s4ight/backend/retriever.py` — `build_context(allowed_classifications=...)`; snippet tagging includes the label.
+- `s4ight/backend/agents.py` — `run`/`route` pipe the filter through.
+- `api/s4ight.py`, `s4ight/backend/main.py` — `/chat` reads `allowed_classifications`; `/documents` upload reads `classification`.
+- `s4ight/index.html` — classification dropdown above the dropzone; per-doc label badge; sidebar pill-checkbox row to filter retrieval; persisted in localStorage.
+
+---
+
 ### 2026-06-26 — S4ight Wave 5.1 (Saved-Prompt Library)
 **Commit:** (pending)
 **Files Changed:**

@@ -273,7 +273,13 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
 
         start = time.perf_counter()
         try:
-            result = orchestrator.route(query=message, program=program, session_id=session_id)
+            allowed_cls = body.get("allowed_classifications")
+            if allowed_cls is not None and not isinstance(allowed_cls, list):
+                allowed_cls = None
+            result = orchestrator.route(
+                query=message, program=program, session_id=session_id,
+                allowed_classifications=allowed_cls,
+            )
         except Exception as e:
             log.exception("Chat orchestrator failed")
             audit("chat", request_id=request_id, session_id=session_id, program=program,
@@ -386,9 +392,10 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 — Vercel requires this ex
         if len(content) > INGEST_MAX_BYTES:
             return self._send_json(413, {"error": "file_too_large", "max_bytes": INGEST_MAX_BYTES})
 
+        classification = body.get("classification")
         start = time.perf_counter()
         try:
-            result = doc_store.ingest(sid, filename, content)
+            result = doc_store.ingest(sid, filename, content, classification=classification)
         except Exception as e:
             log.warning("Ingestion failed: %s", e)
             audit("ingest", session_id=sid, status_code=400, level="WARN", error=str(e), message=filename)

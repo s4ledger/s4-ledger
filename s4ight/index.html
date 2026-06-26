@@ -254,14 +254,30 @@
 
       <div>
         <label>Your documents (this session only)</label>
+        <select id="uploadClassification" style="margin-bottom:6px">
+          <option value="UNCLASSIFIED">UNCLASSIFIED (default)</option>
+          <option value="UNCLASSIFIED//FOUO">UNCLASSIFIED//FOUO</option>
+          <option value="CUI">CUI</option>
+          <option value="CUI//SP-PRVCY">CUI//SP-PRVCY</option>
+          <option value="CUI//SP-PROCUREMENT">CUI//SP-PROCUREMENT</option>
+          <option value="PROPRIETARY">PROPRIETARY</option>
+        </select>
         <div id="dropZone" class="dropzone">
           Drop files here, or
           <label class="filepick">browse
             <input type="file" id="fileInput" multiple accept=".pdf,.docx,.xlsx,.txt,.md,.csv,.log" style="display:none">
           </label>
           <div class="dz-sub">PDF · DOCX · XLSX · TXT · MD · CSV (max 8 MB each)</div>
+          <div class="dz-sub" style="margin-top:4px;color:var(--accent-2)">
+            Tag with classification above before dropping.
+          </div>
         </div>
         <div id="docList" class="doclist"></div>
+      </div>
+
+      <div>
+        <label>Retrieval filter (classifications to search)</label>
+        <div id="filterRow" style="display:flex;flex-wrap:wrap;gap:4px;font-size:11.5px"></div>
       </div>
 
       <div class="status" id="status">Checking backend…</div>
@@ -775,7 +791,8 @@
         body: JSON.stringify({
           message: text,
           program: programSel.value,
-          session_id: sessionId || undefined
+          session_id: sessionId || undefined,
+          allowed_classifications: allowedClassifications || undefined
         })
       });
       if (!r.ok) {
@@ -916,13 +933,17 @@
 
   function renderDocs(info) {
     docList.innerHTML = "";
+    if (info && info.allowed_classifications) {
+      renderClassificationFilter(info.allowed_classifications);
+    }
     if (!info || !info.docs || !info.docs.length) return;
     info.docs.forEach(d => {
       const row = document.createElement("div");
       row.className = "docitem";
+      const cls = d.classification || "UNCLASSIFIED";
       row.innerHTML = `
         <div><div class="name" title="${escapeHtml(d.name)}">${escapeHtml(d.name)}</div>
-        <div class="meta">${d.chunks} chunks · ${Math.round(d.chars/1000)}k chars</div></div>
+        <div class="meta">${escapeHtml(cls)} · ${d.chunks} chunks · ${Math.round(d.chars/1000)}k chars</div></div>
         <button class="del" title="Remove" data-id="${escapeHtml(d.id)}">×</button>`;
       row.querySelector(".del").addEventListener("click", async () => {
         try {
@@ -935,6 +956,48 @@
         } catch (e) { /* silent */ }
       });
       docList.appendChild(row);
+    });
+  }
+
+  // --- classification filter -----
+  const FILTER_KEY = "s4ight_class_filter";
+  let allowedClassifications = (() => {
+    try { return JSON.parse(localStorage.getItem(FILTER_KEY) || "null"); }
+    catch { return null; }
+  })();
+  function persistFilter() {
+    if (allowedClassifications && allowedClassifications.length) {
+      localStorage.setItem(FILTER_KEY, JSON.stringify(allowedClassifications));
+    } else {
+      localStorage.removeItem(FILTER_KEY);
+    }
+  }
+  function renderClassificationFilter(options) {
+    const row = $("filterRow");
+    if (!row) return;
+    row.innerHTML = "";
+    // Default = all selected (i.e., no filter — null means all).
+    const active = allowedClassifications || options.slice();
+    options.forEach(opt => {
+      const id = "cls_" + opt.replace(/[^a-z0-9]/gi, "_");
+      const wrap = document.createElement("label");
+      wrap.style.cssText = "display:flex;align-items:center;gap:4px;background:#0f1830;border:1px solid var(--line);padding:2px 8px;border-radius:999px;cursor:pointer";
+      wrap.innerHTML = `<input type="checkbox" id="${id}" ${active.includes(opt) ? "checked" : ""} style="width:auto;margin:0">${escapeHtml(opt)}`;
+      wrap.querySelector("input").addEventListener("change", (e) => {
+        if (e.target.checked) {
+          allowedClassifications = (allowedClassifications || options.slice()).concat([opt]);
+          // dedupe
+          allowedClassifications = [...new Set(allowedClassifications)];
+        } else {
+          allowedClassifications = (allowedClassifications || options.slice()).filter(x => x !== opt);
+        }
+        // if everything is selected, clear the filter (= null)
+        if (allowedClassifications.length === options.length) {
+          allowedClassifications = null;
+        }
+        persistFilter();
+      });
+      row.appendChild(wrap);
     });
   }
 
@@ -977,7 +1040,8 @@
           body: JSON.stringify({
             session_id: sessionId,
             filename: file.name,
-            content_base64: b64
+            content_base64: b64,
+            classification: ($("uploadClassification") || {}).value || "UNCLASSIFIED"
           })
         });
         if (!r.ok) {

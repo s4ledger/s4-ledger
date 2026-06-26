@@ -129,11 +129,13 @@ def build_context(
     top_k: int = 4,
     max_chars: int = MAX_CONTEXT_CHARS,
     session_id: Optional[str] = None,
+    allowed_classifications: Optional[List[str]] = None,
 ) -> Tuple[str, List[str]]:
     """Assemble a context string (capped) plus its source list.
 
     Strategy:
-      1. If the session has uploaded documents, fetch top hits from them.
+      1. If the session has uploaded documents, fetch top hits (filtered by
+         allowed_classifications when provided).
       2. Get top hits from the curated knowledge base (semantic preferred,
          keyword fallback).
       3. Interleave so user docs come first (they're usually the program-
@@ -148,11 +150,20 @@ def build_context(
         try:
             from ingestion import store as _docs  # noqa: WPS433
             if _docs.has_documents(session_id):
-                for score, src, idx, text in _docs.search(session_id, query, top_k=top_k):
+                hits = _docs.search(
+                    session_id, query, top_k=top_k,
+                    allowed_classifications=allowed_classifications,
+                )
+                for hit in hits:
+                    # New signature: (score, source, idx, text, classification)
+                    score, src, idx, text, classification = hit
                     if score <= 0:
                         continue
                     tag = f"{src} §{idx}"
-                    snippet = f"[uploaded: {tag}] (similarity {score:.2f})\n{text.strip()}"
+                    snippet = (
+                        f"[uploaded: {tag} | {classification}] "
+                        f"(similarity {score:.2f})\n{text.strip()}"
+                    )
                     if used + len(snippet) > max_chars:
                         break
                     parts.append(snippet)
